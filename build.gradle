@@ -1,0 +1,7 @@
+allprojects {
+    repositories {
+        jcenter()
+    }
+    group = 'net.plshark.users'
+    version = '0.0.1'
+}
