@@ -13,9 +13,10 @@ dependencyManagement {
 
 dependencies {
     compile 'org.slf4j:slf4j-api'
-    compile project(':users-repo-api')
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'javax.inject:javax.inject:1'
+    compile 'io.projectreactor:reactor-core'
+    compile project(':users-api')
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'io.projectreactor:reactor-test'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.10'

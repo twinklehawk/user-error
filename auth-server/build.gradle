@@ -9,7 +9,7 @@ plugins {
 dependencies {
     compile 'org.slf4j:slf4j-api'
     compile project(':auth-api')
-    compile project(':users-repo-api')
+    compile project(':users-repo-jdbc')
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'javax.inject:javax.inject:1'
@@ -26,5 +26,4 @@ dependencies {
     testRuntime 'org.objenesis:objenesis:2.5.1'
     runtime 'com.h2database:h2'
     runtime 'org.flywaydb:flyway-core'
-    runtime project(':users-repo-jdbc')
 }
