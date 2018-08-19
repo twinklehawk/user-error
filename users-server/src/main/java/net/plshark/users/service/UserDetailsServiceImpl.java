@@ -8,16 +8,16 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.plshark.users.model.Role;
+import net.plshark.users.model.User;
+import net.plshark.users.repo.UserRolesRepository;
+import net.plshark.users.repo.UsersRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import net.plshark.users.Role;
-import net.plshark.users.User;
-import net.plshark.users.repo.UserRolesRepository;
-import net.plshark.users.repo.UsersRepository;
 import reactor.core.publisher.Mono;
 
 /**

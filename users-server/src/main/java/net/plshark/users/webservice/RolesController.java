@@ -2,6 +2,8 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 
+import net.plshark.users.model.Role;
+import net.plshark.users.service.UserManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.plshark.BadRequestException;
-import net.plshark.users.Role;
-import net.plshark.users.service.UserManagementService;
 import reactor.core.publisher.Mono;
 
 /**

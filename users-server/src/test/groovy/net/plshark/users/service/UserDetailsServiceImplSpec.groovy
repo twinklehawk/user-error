@@ -1,13 +1,13 @@
 package net.plshark.users.service
 
+import net.plshark.users.repo.UserRolesRepository
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
-import net.plshark.users.Role
-import net.plshark.users.User
-import net.plshark.users.repo.UserRolesRepository
+import net.plshark.users.model.Role
+import net.plshark.users.model.User
 import net.plshark.users.repo.UsersRepository
 import net.plshark.users.service.UserDetailsServiceImpl.UserInfo
 import reactor.core.publisher.Flux

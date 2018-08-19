@@ -1,13 +1,13 @@
 package net.plshark.users
 
-import net.plshark.users.Role
+
 import spock.lang.Specification
 
 class RoleSpec extends Specification {
 
     def "default constructor sets id to empty and sets name"() {
         when:
-        Role role = new Role("name")
+        net.plshark.users.model.Role role = new net.plshark.users.model.Role("name")
 
         then:
         role.id != null
@@ -17,7 +17,7 @@ class RoleSpec extends Specification {
 
     def "two-arg constructor sets id and name"() {
         when:
-        Role role = new Role(12, "name")
+        net.plshark.users.model.Role role = new net.plshark.users.model.Role(12, "name")
 
         then:
         role.id.present
@@ -27,13 +27,13 @@ class RoleSpec extends Specification {
 
     def "name cannot be set to null"() {
         when:
-        new Role(null)
+        new net.plshark.users.model.Role(null)
 
         then:
         thrown(NullPointerException)
 
         when:
-        Role role = new Role("name")
+        net.plshark.users.model.Role role = new net.plshark.users.model.Role("name")
         role.name = null
 
         then:

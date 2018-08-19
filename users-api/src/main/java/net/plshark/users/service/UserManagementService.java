@@ -1,7 +1,7 @@
 package net.plshark.users.service;
 
-import net.plshark.users.Role;
-import net.plshark.users.User;
+import net.plshark.users.model.Role;
+import net.plshark.users.model.User;
 import reactor.core.publisher.Mono;
 
 /**
