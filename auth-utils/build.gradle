@@ -15,6 +15,7 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile project(':users-api')
     compile 'org.springframework:spring-webflux'
+    compile 'com.github.ben-manes.caffeine:caffeine:2.6.2'
     testCompile 'io.projectreactor:reactor-test'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.10'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'

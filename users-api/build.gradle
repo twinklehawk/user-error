@@ -16,6 +16,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations'
     // TODO maybe remove
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'io.projectreactor:reactor-core'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.10'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'

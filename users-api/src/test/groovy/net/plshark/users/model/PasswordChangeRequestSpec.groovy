@@ -1,13 +1,12 @@
-package net.plshark.users
+package net.plshark.users.model
 
-
-import spock.lang.*
+import spock.lang.Specification
 
 class PasswordChangeRequestSpec extends Specification {
 
     def "constructor sets correct fields"() {
         when:
-        net.plshark.users.model.PasswordChangeRequest request = net.plshark.users.model.PasswordChangeRequest.create("current pass", "new pass")
+        PasswordChangeRequest request = new PasswordChangeRequest("current pass", "new pass")
 
         then:
         request.currentPassword == "current pass"

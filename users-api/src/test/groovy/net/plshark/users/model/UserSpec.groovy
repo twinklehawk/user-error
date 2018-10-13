@@ -1,4 +1,4 @@
-package net.plshark.users
+package net.plshark.users.model
 
 
 import spock.lang.Specification
@@ -7,17 +7,17 @@ class UserSpec extends Specification {
 
     def "username cannot be null in constructor"() {
         when:
-        new net.plshark.users.model.User(null, "pass")
+        new User(null, "pass")
 
         then:
         thrown(NullPointerException)
     }
 
     def "constructor without ID sets ID to empty"() {
-        net.plshark.users.model.User user
+        User user
 
         when:
-        user = new net.plshark.users.model.User("name", "pass")
+        user = new User("name", "pass")
 
         then:
         user.id != null
@@ -25,7 +25,7 @@ class UserSpec extends Specification {
     }
 
     def "cannot set username to null through setter"() {
-        net.plshark.users.model.User user = new net.plshark.users.model.User("user", "pass")
+        User user = new User("user", "pass")
 
         when:
         user.setUsername(null)

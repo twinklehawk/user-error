@@ -13,14 +13,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import net.plshark.auth.throttle.LoginAttemptService;
 import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
-import net.plshark.auth.throttle.LoginThrottlingConfig;
 import net.plshark.auth.throttle.impl.BasicAuthenticationUsernameExtractor;
 
 /**
  * Notes web security configuration
  */
 @EnableWebFluxSecurity
-@Import(LoginThrottlingConfig.class)
+// TODO login throttling config
 public class WebSecurityConfig {
 
     @Inject

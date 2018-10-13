@@ -13,6 +13,7 @@ dependencyManagement {
 
 dependencies {
     compile 'org.springframework:spring-jdbc'
+    compile 'org.springframework.security:spring-security-core'
     compile 'javax.inject:javax.inject:1'
     compile project(':users-api')
     testCompile 'org.springframework.boot:spring-boot-starter-test'
