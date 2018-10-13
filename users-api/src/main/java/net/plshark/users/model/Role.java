@@ -30,10 +30,10 @@ public class Role {
     }
 
     /**
-     * @return the ID, can be empty if not saved yet
+     * @return the ID, can be null if not saved yet
      */
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+    public Long getId() {
+        return id;
     }
 
     /**

@@ -57,7 +57,7 @@ public class SyncJdbcUsersRepository {
      * @return the created user
      */
     public User insert(User user) {
-        if (user.getId().isPresent())
+        if (user.getId() != null)
             throw new IllegalArgumentException("Cannot insert user with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
@@ -65,13 +65,13 @@ public class SyncJdbcUsersRepository {
                 con -> con.prepareStatement(INSERT, new int[] { 1 }),
                 stmt-> {
                     stmt.setString(1, user.getUsername());
-                    stmt.setString(2, user.getPassword().get());
+                    stmt.setString(2, user.getPassword());
                 }),
             holder);
         Long id = Optional.ofNullable(holder.getKey())
-                .map(num -> num.longValue())
+                .map(Number::longValue)
                 .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
-        return new User(id, user.getUsername(), user.getPassword().get());
+        return new User(id, user.getUsername(), user.getPassword());
     }
 
     /**

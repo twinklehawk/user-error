@@ -71,42 +71,37 @@ public class AuthToken {
         return scope;
     }
 
-    public static GenerateTokenResponseBuilder builder() {
-        return new GenerateTokenResponseBuilder().withTokenType(DEFAULT_TOKEN_TYPE);
-    }
-
-    public static class GenerateTokenResponseBuilder {
+    /**
+     * Builder for creating an AuthToken
+     */
+    public static class Builder {
         private String accessToken;
-        private String tokenType;
+        private String tokenType = DEFAULT_TOKEN_TYPE;
         private long expiresIn;
         private String refreshToken;
         private String scope;
 
-        private GenerateTokenResponseBuilder() {
-
-        }
-
-        public GenerateTokenResponseBuilder withAccessToken(String accessToken) {
+        public Builder accessToken(String accessToken) {
             this.accessToken = accessToken;
             return this;
         }
 
-        public GenerateTokenResponseBuilder withTokenType(String tokenType) {
+        public Builder tokenType(String tokenType) {
             this.tokenType = tokenType;
             return this;
         }
 
-        public GenerateTokenResponseBuilder withExpiresIn(long expiresIn) {
+        public Builder expiresIn(long expiresIn) {
             this.expiresIn = expiresIn;
             return this;
         }
 
-        public GenerateTokenResponseBuilder withRefreshToken(String refreshToken) {
+        public Builder refreshToken(String refreshToken) {
             this.refreshToken = refreshToken;
             return this;
         }
 
-        public GenerateTokenResponseBuilder withScope(String scope) {
+        public Builder scope(String scope) {
             this.scope = scope;
             return this;
         }

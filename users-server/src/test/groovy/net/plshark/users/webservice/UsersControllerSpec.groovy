@@ -3,6 +3,7 @@ package net.plshark.users.webservice
 import net.plshark.BadRequestException
 import net.plshark.users.model.User
 import net.plshark.users.model.PasswordChangeRequest
+import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -13,14 +14,6 @@ class UsersControllerSpec extends Specification {
 
     UserManagementService service = Mock()
     UsersController controller = new UsersController(service)
-
-    def "constructor does not accept null args"() {
-        when:
-        new UsersController(null)
-
-        then:
-        thrown(NullPointerException)
-    }
 
     def "inserting a user with an ID throws BadRequestException"() {
         when:
@@ -35,7 +28,7 @@ class UsersControllerSpec extends Specification {
 
         expect:
         StepVerifier.create(controller.insert(new User("name", "pass")))
-            .expectNextMatches({ User user -> !user.password.present })
+            .expectNextMatches({ UserInfo user -> user.id == 1 && user.username == 'user' })
             .verifyComplete()
     }
 

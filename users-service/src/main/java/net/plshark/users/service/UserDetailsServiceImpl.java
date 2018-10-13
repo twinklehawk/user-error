@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
     public Mono<UserDetails> findByUsername(String username) {
         return userRepo.getForUsername(username)
             .switchIfEmpty(Mono.error(new UsernameNotFoundException("No matching user for " + username)))
-            .flatMap(user -> userRolesRepo.getRolesForUser(user.getId().get())
+            .flatMap(user -> userRolesRepo.getRolesForUser(user.getId())
                 .collectList()
                 .map(roles -> UserInfo.forUser(user, roles)));
     }
@@ -57,7 +57,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
             userId = Mono.just(((UserInfo) auth.getPrincipal()).getUserId());
         else
             userId = userRepo.getForUsername(auth.getName())
-                .map(user -> user.getId().get());
+                .map(User::getId);
 
         return userId;
     }
@@ -70,8 +70,8 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         private static final long serialVersionUID = -5943477264654485111L;
         private final long userId;
 
-        public UserInfo(long userId, String username, String password,
-                Collection<? extends GrantedAuthority> authorities) {
+        UserInfo(long userId, String username, String password,
+                 Collection<? extends GrantedAuthority> authorities) {
             super(username, password, authorities);
             this.userId = userId;
         }
@@ -89,7 +89,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         public static UserInfo forUser(User user, List<Role> userRoles) {
             Set<GrantedAuthority> authorities = new HashSet<>(userRoles.size());
             userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
-            return new UserInfo(user.getId().get(), user.getUsername(), user.getPassword().get(), authorities);
+            return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), authorities);
         }
 
         @Override

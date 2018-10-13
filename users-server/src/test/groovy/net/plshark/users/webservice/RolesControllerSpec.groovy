@@ -28,7 +28,7 @@ class RolesControllerSpec extends Specification {
     }
 
     def "insert passes role through to service"() {
-        service.saveRole({ Role role -> !role.id.present && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
+        service.saveRole({ Role role -> role.id == null && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
 
         expect:
         StepVerifier.create(controller.insert(new Role("admin")))

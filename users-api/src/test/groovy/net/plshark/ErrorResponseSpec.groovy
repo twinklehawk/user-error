@@ -3,36 +3,10 @@ package net.plshark
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import spock.lang.*
+import spock.lang.Specification
 
 class ErrorResponseSpec extends Specification {
-
-    def "constructor sets correct fields"() {
-        when:
-        ErrorResponse response = ErrorResponse.create(400, "status", "something happened", "1/2/3")
-
-        then:
-        response.status == 400
-        response.statusDetail == "status"
-        response.message == "something happened"
-        response.path == "1/2/3"
-        response.timestamp != null
-    }
-
-    def "full constructor sets correct fields"() {
-        when:
-        ErrorResponse response = ErrorResponse.create(OffsetDateTime.now(), 400, "status", "something happened", "1/2/3")
-
-        then:
-        response.status == 400
-        response.statusDetail == "status"
-        response.message == "something happened"
-        response.path == "1/2/3"
-        response.timestamp != null
-    }
 
     def "serialized to correct JSON"() {
         ObjectMapper mapper = new ObjectMapper()

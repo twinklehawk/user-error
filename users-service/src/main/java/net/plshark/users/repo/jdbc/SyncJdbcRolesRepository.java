@@ -46,7 +46,7 @@ public class SyncJdbcRolesRepository {
      * @throws DataAccessException if the insert fails
      */
     public Role insert(Role role) {
-        if (role.getId().isPresent())
+        if (role.getId() != null)
             throw new IllegalArgumentException("Cannot insert role with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
@@ -55,7 +55,7 @@ public class SyncJdbcRolesRepository {
                 stmt -> stmt.setString(1, role.getName())),
             holder);
         Long id = Optional.ofNullable(holder.getKey())
-                .map(num -> num.longValue())
+                .map(Number::longValue)
                 .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
         return new Role(id, role.getName());
     }

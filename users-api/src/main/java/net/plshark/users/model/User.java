@@ -1,7 +1,6 @@
 package net.plshark.users.model;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Data for a user
@@ -23,21 +22,21 @@ public class User {
 
     /**
      * Create a new instance
-     * @param id the user ID, can be null
+     * @param id the user ID, can be null if not saved yet
      * @param username the username
-     * @param password the password, can be null
+     * @param password the password
      */
     public User(Long id, String username, String password) {
         this.id = id;
-        this.username = Objects.requireNonNull(username);
-        this.password = password;
+        setUsername(username);
+        setPassword(password);
     }
 
     /**
-     * @return the ID, not set if the user has not been saved yet
+     * @return the ID, null if the user has not been saved yet
      */
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+    public Long getId() {
+        return id;
     }
 
     /**
@@ -55,17 +54,17 @@ public class User {
     }
 
     /**
-     * @return the password, can be null when hiding the password
+     * @return the password
      */
-    public Optional<String> getPassword() {
-        return Optional.ofNullable(password);
+    public String getPassword() {
+        return password;
     }
 
     /**
      * @param password the password, can be null
      */
     public void setPassword(String password) {
-        this.password = password;
+        this.password = Objects.requireNonNull(password, "password cannot be null");
     }
 
     @Override

@@ -39,7 +39,7 @@ public class RolesController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Role> insert(@RequestBody Role role) {
-        if (role.getId().isPresent())
+        if (role.getId() != null)
             return Mono.error(new BadRequestException("Cannot insert role with ID already set"));
         return userMgmtService.saveRole(role);
     }
