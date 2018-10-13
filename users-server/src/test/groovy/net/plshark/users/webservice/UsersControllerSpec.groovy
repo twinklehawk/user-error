@@ -1,6 +1,8 @@
 package net.plshark.users.webservice
 
 import net.plshark.BadRequestException
+import net.plshark.users.model.User
+import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -22,18 +24,18 @@ class UsersControllerSpec extends Specification {
 
     def "inserting a user with an ID throws BadRequestException"() {
         when:
-        controller.insert(new net.plshark.users.model.User(1, "name", "pass"))
+        controller.insert(new User(1, "name", "pass"))
 
         then:
         thrown(BadRequestException)
     }
 
     def "password is not returned when creating a user"() {
-        service.saveUser(_) >> Mono.just(new net.plshark.users.model.User(1, "user", "pass-encoded"))
+        service.saveUser(_) >> Mono.just(new User(1, "user", "pass-encoded"))
 
         expect:
-        StepVerifier.create(controller.insert(new net.plshark.users.model.User("name", "pass")))
-            .expectNextMatches({ net.plshark.users.model.User user -> user.password.present == false})
+        StepVerifier.create(controller.insert(new User("name", "pass")))
+            .expectNextMatches({ User user -> !user.password.present })
             .verifyComplete()
     }
 
@@ -54,7 +56,7 @@ class UsersControllerSpec extends Specification {
         service.updateUserPassword(100, "current", "new") >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.changePassword(100, net.plshark.users.model.PasswordChangeRequest.create("current", "new")))
+        StepVerifier.create(controller.changePassword(100, new PasswordChangeRequest("current", "new")))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
