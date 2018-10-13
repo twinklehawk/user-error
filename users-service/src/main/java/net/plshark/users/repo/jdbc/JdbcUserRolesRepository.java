@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import net.plshark.jdbc.ReactiveUtils;
+import net.plshark.utils.ReactiveUtils;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.UserRolesRepository;
 import reactor.core.publisher.Flux;

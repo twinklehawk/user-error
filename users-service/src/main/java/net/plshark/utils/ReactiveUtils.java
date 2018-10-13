@@ -1,4 +1,4 @@
-package net.plshark.jdbc;
+package net.plshark.utils;
 
 import java.util.List;
 import java.util.concurrent.Callable;
