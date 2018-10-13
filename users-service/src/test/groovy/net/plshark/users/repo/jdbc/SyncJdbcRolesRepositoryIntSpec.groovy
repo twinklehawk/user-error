@@ -20,24 +20,24 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
         Role inserted = repo.insert(new Role("test-role"))
 
         then:
-        inserted.id.isPresent()
+        inserted.id != null
         inserted.name == "test-role"
 
         cleanup:
-        repo.delete(inserted.id.get())
+        repo.delete(inserted.id)
     }
 
     def "can retrieve a previously inserted role by ID"() {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        Role role = repo.getForId(inserted.id.get()).get()
+        Role role = repo.getForId(inserted.id).get()
 
         then:
         role == inserted
 
         cleanup:
-        repo.delete(inserted.id.get())
+        repo.delete(inserted.id)
     }
 
     def "retrieving a role by ID when no role matches returns an empty optional"() {
@@ -55,7 +55,7 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
         role == inserted
 
         cleanup:
-        repo.delete(inserted.id.get())
+        repo.delete(inserted.id)
     }
 
     def "retrieving a role by name when no role matches throws EmptyResultDataAccessException"() {
@@ -70,8 +70,8 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        repo.delete(inserted.id.get())
-        Optional<Role> retrieved = repo.getForId(inserted.id.get())
+        repo.delete(inserted.id)
+        Optional<Role> retrieved = repo.getForId(inserted.id)
 
         then: "get should return empty since the row should be gone"
         !retrieved.isPresent()

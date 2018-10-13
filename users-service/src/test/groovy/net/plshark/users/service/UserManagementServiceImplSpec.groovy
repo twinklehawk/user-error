@@ -30,14 +30,6 @@ class UserManagementServiceImplSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def "cannot insert user with null password"() {
-        when:
-        service.saveUser(new User("name", null))
-
-        then:
-        thrown(NoSuchElementException)
-    }
-
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
 
