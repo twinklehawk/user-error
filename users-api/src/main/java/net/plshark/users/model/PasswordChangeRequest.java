@@ -41,37 +41,20 @@ public class PasswordChangeRequest {
 
     @Override
     public String toString() {
-        return "PasswordChangeRequest [currentPassword=" + currentPassword + ", newPassword=" + newPassword + "]";
+        return "PasswordChangeRequest{}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PasswordChangeRequest that = (PasswordChangeRequest) o;
+        return Objects.equals(currentPassword, that.currentPassword) &&
+                Objects.equals(newPassword, that.newPassword);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((currentPassword == null) ? 0 : currentPassword.hashCode());
-        result = prime * result + ((newPassword == null) ? 0 : newPassword.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PasswordChangeRequest other = (PasswordChangeRequest) obj;
-        if (currentPassword == null) {
-            if (other.currentPassword != null)
-                return false;
-        } else if (!currentPassword.equals(other.currentPassword))
-            return false;
-        if (newPassword == null) {
-            if (other.newPassword != null)
-                return false;
-        } else if (!newPassword.equals(other.newPassword))
-            return false;
-        return true;
+        return Objects.hash(currentPassword, newPassword);
     }
 }
