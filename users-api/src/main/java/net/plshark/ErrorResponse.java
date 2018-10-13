@@ -18,9 +18,7 @@ public class ErrorResponse {
     private final String message;
     private final String path;
 
-    private ErrorResponse(@JsonProperty("timestamp") OffsetDateTime timestamp, @JsonProperty("status") int status,
-            @JsonProperty("error") String statusDetail, @JsonProperty("message") String message,
-            @JsonProperty("path") String path) {
+    private ErrorResponse(OffsetDateTime timestamp, int status, String statusDetail, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
         this.statusDetail = statusDetail;
