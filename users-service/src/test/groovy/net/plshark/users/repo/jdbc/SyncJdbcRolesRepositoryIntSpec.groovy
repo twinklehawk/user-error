@@ -42,7 +42,7 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
 
     def "retrieving a role by ID when no role matches returns an empty optional"() {
         expect:
-        repo.getForId(1000).isPresent() == false
+        !repo.getForId(1000).isPresent()
     }
 
     def "can retrieve a previously inserted role by name"() {
@@ -63,7 +63,7 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
         Optional<Role> role = repo.getForName("test-role")
 
         then:
-        role.isPresent() == false
+        !role.isPresent()
     }
 
     def "can delete a previously inserted role by ID"() {
@@ -74,7 +74,7 @@ class SyncJdbcRolesRepositoryIntSpec extends Specification {
         Optional<Role> retrieved = repo.getForId(inserted.id.get())
 
         then: "get should return empty since the row should be gone"
-        retrieved.isPresent() == false
+        !retrieved.isPresent()
     }
 
     def "no exception is thrown when attempting to delete a role that does not exist"() {

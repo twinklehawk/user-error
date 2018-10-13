@@ -22,32 +22,6 @@ class UserManagementServiceImplSpec extends Specification {
     PasswordEncoder encoder = Mock()
     UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, encoder)
 
-    def "constructor does not accept null arguments"() {
-        when: "user repository is null"
-        new UserManagementServiceImpl(null, roleRepo, userRolesRepo, encoder)
-
-        then:
-        thrown(NullPointerException)
-
-        when: "role repository is null"
-        new UserManagementServiceImpl(userRepo, null, userRolesRepo, encoder)
-
-        then:
-        thrown(NullPointerException)
-
-        when: "user roles repository is null"
-        new UserManagementServiceImpl(userRepo, roleRepo, null, encoder)
-
-        then:
-        thrown(NullPointerException)
-
-        when: "password encoder is null"
-        new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, null)
-
-        then:
-        thrown(NullPointerException)
-    }
-
     def "cannot save user with ID set"() {
         when:
         service.saveUser(new User(12, "name", "pass"))

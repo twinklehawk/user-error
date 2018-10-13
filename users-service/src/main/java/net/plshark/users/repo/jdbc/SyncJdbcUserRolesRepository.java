@@ -73,9 +73,7 @@ public class SyncJdbcUserRolesRepository {
      * @param userId the user ID
      */
     public void deleteUserRolesForUser(long userId) {
-        jdbc.update(DELETE_USER_ROLES_BY_USER, stmt -> {
-            stmt.setLong(1, userId);
-        });
+        jdbc.update(DELETE_USER_ROLES_BY_USER, stmt -> stmt.setLong(1, userId));
     }
 
     /**
@@ -83,8 +81,6 @@ public class SyncJdbcUserRolesRepository {
      * @param roleId the role ID
      */
     public void deleteUserRolesForRole(long roleId) {
-        jdbc.update(DELETE_USER_ROLES_BY_ROLE, stmt -> {
-            stmt.setLong(1, roleId);
-        });
+        jdbc.update(DELETE_USER_ROLES_BY_ROLE, stmt -> stmt.setLong(1, roleId));
     }
 }

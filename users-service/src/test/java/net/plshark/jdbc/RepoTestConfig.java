@@ -12,6 +12,6 @@ import net.plshark.users.repo.config.UsersRepoJdbcConfig;
 @Import({
     UsersRepoJdbcConfig.class
 })
-class RepoTestConfig {
+public class RepoTestConfig {
 
 }

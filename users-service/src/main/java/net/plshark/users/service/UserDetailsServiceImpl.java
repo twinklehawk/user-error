@@ -94,32 +94,23 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(super.toString()).append(": ");
-            sb.append("UserID: ").append(this.userId);
-            return sb.toString();
+            return "UserInfo{" +
+                    "userId=" + userId +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            UserInfo userInfo = (UserInfo) o;
+            return userId == userInfo.userId;
         }
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + (int) (userId ^ (userId >>> 32));
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!super.equals(obj))
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            UserInfo other = (UserInfo) obj;
-            if (userId != other.userId)
-                return false;
-            return true;
+            return Objects.hash(super.hashCode(), userId);
         }
     }
 }

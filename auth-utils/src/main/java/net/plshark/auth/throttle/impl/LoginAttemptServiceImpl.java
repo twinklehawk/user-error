@@ -2,18 +2,13 @@ package net.plshark.auth.throttle.impl;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
 import net.plshark.auth.throttle.LoginAttemptService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default LoginAttemptService implementation
@@ -63,12 +58,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         this.maxAttempts = maxAttempts;
         this.timeFrameMinutes = TimeUnit.MINUTES.convert(timeFrame, timeFrameUnit);
         cache = Caffeine.newBuilder().expireAfterWrite(timeFrame, timeFrameUnit)
-                .build(new CacheLoader<String, AtomicInteger>() {
-                    @Override
-                    public AtomicInteger load(String key) throws Exception {
-                        return new AtomicInteger(0);
-                    }
-                });
+                .build(key -> new AtomicInteger(0));
     }
 
     @Override
