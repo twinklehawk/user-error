@@ -20,7 +20,7 @@ public class BasicAuthenticationUsernameExtractor implements UsernameExtractor {
     @Override
     public Optional<String> extractUsername(ServerHttpRequest request) {
         return Optional.ofNullable(request.getHeaders().getFirst("Authorization"))
-            .flatMap(header -> extractUsername(header));
+            .flatMap(this::extractUsername);
     }
 
     /**

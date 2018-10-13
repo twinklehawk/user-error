@@ -1,5 +1,6 @@
 package net.plshark.auth.throttle;
 
+import java.net.InetSocketAddress;
 import java.nio.file.AccessDeniedException;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class LoginAttemptThrottlingFilter implements WebFilter {
         boolean blocked = false;
 
         String clientIp = getClientIp(httpRequest);
-        String username = getUsername(httpRequest).orElse("");
+        String username = getUsername(httpRequest);
         if (service.isIpBlocked(clientIp)) {
             blocked = true;
             log.debug("blocked request from {}", clientIp);
@@ -71,16 +72,17 @@ public class LoginAttemptThrottlingFilter implements WebFilter {
         return Optional.ofNullable(request.getHeaders().getFirst("X-Forwarded-For"))
             .map(header -> header.split(",")[0])
             .orElse(Optional.ofNullable(request.getRemoteAddress())
-                .map(inetAddr -> inetAddr.getHostString())
+                .map(InetSocketAddress::getHostString)
                 .orElse(""));
     }
 
     /**
      * Get the username for the authentication in a request
      * @param request the request
-     * @return the username or empty if not found
+     * @return the username
      */
-    private Optional<String> getUsername(ServerHttpRequest request) {
-        return usernameExtractor.extractUsername(request);
+    private String getUsername(ServerHttpRequest request) {
+        return usernameExtractor.extractUsername(request)
+                .orElse("");
     }
 }

@@ -2,8 +2,6 @@ package net.plshark.auth.throttle.impl;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import net.plshark.auth.throttle.LoginAttemptService;
@@ -13,8 +11,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default LoginAttemptService implementation
  */
-@Named
-@Singleton
 public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     /** The default max failed authentication attempts */
@@ -59,11 +55,6 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         this.timeFrameMinutes = TimeUnit.MINUTES.convert(timeFrame, timeFrameUnit);
         cache = Caffeine.newBuilder().expireAfterWrite(timeFrame, timeFrameUnit)
                 .build(key -> new AtomicInteger(0));
-    }
-
-    @Override
-    public void onLoginSucceeded(String username, String clientIp) {
-        // not resetting the login attempts
     }
 
     @Override

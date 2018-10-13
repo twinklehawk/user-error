@@ -7,13 +7,6 @@ package net.plshark.auth.throttle;
 public interface LoginAttemptService {
 
     /**
-     * Record a successful login attempt
-     * @param username the username that was logged in
-     * @param clientIp the source IP address for the attempt
-     */
-    void onLoginSucceeded(String username, String clientIp);
-
-    /**
      * Record an unsuccessful login attempt
      * @param username the username that attempted to logged in
      * @param clientIp the source IP address for the attempt
