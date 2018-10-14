@@ -1,10 +1,12 @@
 .gradle/
 */build/
 */bin/
+*/out/
 .project
 */.project
 .settings/
 */.settings/
 */.classpath
 */.groovy/
-
+.idea/
+*.iml

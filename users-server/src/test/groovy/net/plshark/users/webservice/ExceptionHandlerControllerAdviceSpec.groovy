@@ -5,7 +5,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest
 
 import net.plshark.BadRequestException
 import net.plshark.ObjectNotFoundException
-import net.plshark.users.webservice.ExceptionHandlerControllerAdvice
 import spock.lang.Specification
 
 class ExceptionHandlerControllerAdviceSpec extends Specification {

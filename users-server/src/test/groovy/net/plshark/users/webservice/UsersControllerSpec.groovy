@@ -1,10 +1,10 @@
 package net.plshark.users.webservice
 
 import net.plshark.BadRequestException
-import net.plshark.users.PasswordChangeRequest
-import net.plshark.users.User
+import net.plshark.users.model.User
+import net.plshark.users.model.PasswordChangeRequest
+import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
-import net.plshark.users.webservice.UsersController
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -14,14 +14,6 @@ class UsersControllerSpec extends Specification {
 
     UserManagementService service = Mock()
     UsersController controller = new UsersController(service)
-
-    def "constructor does not accept null args"() {
-        when:
-        new UsersController(null)
-
-        then:
-        thrown(NullPointerException)
-    }
 
     def "inserting a user with an ID throws BadRequestException"() {
         when:
@@ -36,7 +28,7 @@ class UsersControllerSpec extends Specification {
 
         expect:
         StepVerifier.create(controller.insert(new User("name", "pass")))
-            .expectNextMatches({User user -> user.password.present == false})
+            .expectNextMatches({ UserInfo user -> user.id == 1 && user.username == 'user' })
             .verifyComplete()
     }
 
@@ -57,7 +49,7 @@ class UsersControllerSpec extends Specification {
         service.updateUserPassword(100, "current", "new") >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.changePassword(100, PasswordChangeRequest.create("current", "new")))
+        StepVerifier.create(controller.changePassword(100, new PasswordChangeRequest("current", "new")))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()

@@ -1,9 +1,10 @@
 package net.plshark.users.webservice;
 
-import javax.inject.Inject;
-
+import net.plshark.auth.throttle.LoginAttemptService;
+import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
+import net.plshark.auth.throttle.impl.BasicAuthenticationUsernameExtractor;
+import net.plshark.auth.throttle.impl.LoginAttemptServiceImpl;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -11,20 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import net.plshark.auth.throttle.LoginAttemptService;
-import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
-import net.plshark.auth.throttle.LoginThrottlingConfig;
-import net.plshark.auth.throttle.impl.BasicAuthenticationUsernameExtractor;
-
 /**
  * Notes web security configuration
  */
 @EnableWebFluxSecurity
-@Import(LoginThrottlingConfig.class)
 public class WebSecurityConfig {
-
-    @Inject
-    private LoginAttemptService loginAttemptService;
 
     /**
      * Set up the security filter chain
@@ -54,6 +46,10 @@ public class WebSecurityConfig {
     }
 
     private LoginAttemptThrottlingFilter loginAttemptThrottlingFilter() {
-        return new LoginAttemptThrottlingFilter(loginAttemptService, new BasicAuthenticationUsernameExtractor());
+        return new LoginAttemptThrottlingFilter(loginAttemptService(), new BasicAuthenticationUsernameExtractor());
+    }
+
+    private LoginAttemptService loginAttemptService() {
+        return new LoginAttemptServiceImpl();
     }
 }

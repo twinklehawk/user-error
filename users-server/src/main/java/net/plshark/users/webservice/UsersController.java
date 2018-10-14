@@ -2,6 +2,10 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 
+import net.plshark.users.model.PasswordChangeRequest;
+import net.plshark.users.model.User;
+import net.plshark.users.model.UserInfo;
+import net.plshark.users.service.UserManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.plshark.BadRequestException;
-import net.plshark.users.PasswordChangeRequest;
-import net.plshark.users.User;
-import net.plshark.users.service.UserManagementService;
 import reactor.core.publisher.Mono;
 
 /**
@@ -39,14 +40,14 @@ public class UsersController {
      * @return the inserted user
      * @throws BadRequestException if attempting to insert a user with an ID already set
      */
+    // TODO return UserInfo
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<User> insert(@RequestBody User user) throws BadRequestException {
-        if (user.getId().isPresent())
+    public Mono<UserInfo> insert(@RequestBody User user) throws BadRequestException {
+        if (user.getId() != null)
             throw new BadRequestException("Cannot insert user with ID already set");
 
         return userMgmtService.saveUser(user)
-             // don't send back the password
-            .map(savedUser -> new User(savedUser.getId().get(), savedUser.getUsername(), null));
+            .map(UserInfo::fromUser);
     }
 
     /**

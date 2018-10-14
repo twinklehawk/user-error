@@ -1,6 +1,6 @@
 rootProject.name = 'bad-users'
 
-include 'auth-api'
+include 'users-api'
 include 'users-server'
-include 'users-repo-api'
-include 'users-repo-jdbc'
+include 'users-service'
+include 'auth-utils'

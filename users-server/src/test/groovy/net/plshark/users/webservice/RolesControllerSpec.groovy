@@ -1,9 +1,8 @@
 package net.plshark.users.webservice
 
 import net.plshark.BadRequestException
-import net.plshark.users.Role
+import net.plshark.users.model.Role
 import net.plshark.users.service.UserManagementService
-import net.plshark.users.webservice.RolesController
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -29,7 +28,7 @@ class RolesControllerSpec extends Specification {
     }
 
     def "insert passes role through to service"() {
-        service.saveRole({ Role role -> !role.id.present && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
+        service.saveRole({ Role role -> role.id == null && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
 
         expect:
         StepVerifier.create(controller.insert(new Role("admin")))

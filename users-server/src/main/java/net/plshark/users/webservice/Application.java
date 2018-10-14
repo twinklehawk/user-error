@@ -1,5 +1,6 @@
 package net.plshark.users.webservice;
 
+import net.plshark.users.repo.jdbc.UsersRepoJdbcConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,11 +13,11 @@ import net.plshark.users.service.UsersServiceConfig;
  */
 @SpringBootApplication
 @Import({
-    UsersServiceConfig.class
+        UsersServiceConfig.class,
+        UsersRepoJdbcConfig.class
 })
 @ComponentScan({
-    "net.plshark.users.webservice",
-    "net.plshark.users.repo.config"
+    "net.plshark.users.webservice"
 })
 public class Application {
 

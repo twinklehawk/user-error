@@ -1,5 +1,9 @@
 package net.plshark.users.webservice
 
+import net.plshark.users.model.Role
+import net.plshark.users.model.User
+import net.plshark.users.service.UserManagementService
+
 import java.nio.charset.StandardCharsets
 
 import javax.inject.Inject
@@ -10,11 +14,6 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.test.web.reactive.server.WebTestClient
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import net.plshark.users.Role
-import net.plshark.users.User
-import net.plshark.users.service.UserManagementService
-import net.plshark.users.webservice.Application
 import spock.lang.Ignore
 import spock.lang.Specification
 
