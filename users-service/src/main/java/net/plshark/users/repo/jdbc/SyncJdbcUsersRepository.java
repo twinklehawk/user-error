@@ -25,7 +25,7 @@ public class SyncJdbcUsersRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";
-    private static final String INSERT = "INSERT INTO users (username, password) VALUES (?, ?)";
+    private static final String INSERT = "INSERT INTO users (username, password) VALUES (?, ?) RETURNING id";
     private static final String DELETE = "DELETE FROM users WHERE id = ?";
     private static final String UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE id = ? AND password = ?";
 
@@ -62,7 +62,7 @@ public class SyncJdbcUsersRepository {
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
         jdbc.update(new SafePreparedStatementCreator(
-                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                con -> con.prepareStatement(INSERT, new String[] { "id" }),
                 stmt-> {
                     stmt.setString(1, user.getUsername());
                     stmt.setString(2, user.getPassword());
