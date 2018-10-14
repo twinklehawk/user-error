@@ -24,4 +24,5 @@ dependencies {
     testCompile 'com.fasterxml.jackson.core:jackson-databind'
     testRuntime 'net.bytebuddy:byte-buddy:1.6.5'
     testRuntime 'org.objenesis:objenesis:2.5.1'
+    testRuntime 'ch.qos.logback:logback-classic'
 }

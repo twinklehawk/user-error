@@ -23,7 +23,7 @@ import net.plshark.jdbc.SafePreparedStatementCreator;
 @Singleton
 public class SyncJdbcRolesRepository {
 
-    private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
+    private static final String INSERT = "INSERT INTO roles (name) VALUES (?) RETURNING id";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM roles WHERE id = ?";
     private static final String SELECT_BY_NAME = "SELECT * FROM roles WHERE name = ?";
@@ -51,7 +51,7 @@ public class SyncJdbcRolesRepository {
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
         jdbc.update(new SafePreparedStatementCreator(
-                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                con -> con.prepareStatement(INSERT, new String[] { "id" }),
                 stmt -> stmt.setString(1, role.getName())),
             holder);
         Long id = Optional.ofNullable(holder.getKey())

@@ -5,7 +5,7 @@ import javax.inject.Inject
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = [ Application.class, TestConfig.class ])
 class ApplicationIntSpec extends Specification {
 
     @Inject

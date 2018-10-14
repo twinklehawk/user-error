@@ -58,8 +58,8 @@ class LoginAttemptServiceImplSpec extends Specification {
         service.isUsernameBlocked("test")
     }
 
-    def "failed login attempts expire after the configured number of minutes"() {
-        LoginAttemptServiceImpl service = new LoginAttemptServiceImpl(5, 5, TimeUnit.SECONDS)
+    def "failed login attempts expire after the configured amount of time"() {
+        LoginAttemptServiceImpl service = new LoginAttemptServiceImpl(5, 1, TimeUnit.SECONDS)
 
         when:
         service.onLoginFailed("test", "192.168.1.2")
@@ -68,7 +68,7 @@ class LoginAttemptServiceImplSpec extends Specification {
         service.onLoginFailed("test", "192.168.1.2")
         service.onLoginFailed("test", "192.168.1.2")
         service.onLoginFailed("test", "192.168.1.2")
-        Thread.sleep(6 * 1000)
+        Thread.sleep(2 * 1000)
 
         then:
         !service.isIpBlocked("192.168.1.2")

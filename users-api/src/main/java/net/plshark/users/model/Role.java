@@ -1,7 +1,6 @@
 package net.plshark.users.model;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Data for a role

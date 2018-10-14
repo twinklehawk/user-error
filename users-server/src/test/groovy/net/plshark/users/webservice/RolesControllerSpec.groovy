@@ -13,14 +13,6 @@ class RolesControllerSpec extends Specification {
     UserManagementService service = Mock()
     RolesController controller = new RolesController(service)
 
-    def "constructor does not accept null args"() {
-        when:
-        new RolesController(null)
-
-        then:
-        thrown(NullPointerException)
-    }
-
     def "cannot insert a role with ID already set"() {
         expect:
         StepVerifier.create(controller.insert(new Role(1, "name")))
