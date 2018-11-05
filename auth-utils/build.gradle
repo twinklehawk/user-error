@@ -16,6 +16,7 @@ dependencies {
     compile 'org.springframework:spring-webflux'
     compile 'com.github.ben-manes.caffeine:caffeine:2.6.2'
     compile 'com.auth0:java-jwt:3.4.0'
+    compile 'org.springframework.security:spring-security-web'
     testCompile 'io.projectreactor:reactor-test'
     testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     testCompile "org.spockframework:spock-core:${spockVersion}"
@@ -23,5 +24,6 @@ dependencies {
     testRuntime "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
     testRuntime "org.objenesis:objenesis:${objenesisVersion}"
     testCompile 'org.springframework:spring-context'
+    testCompile 'org.springframework:spring-test'
     testRuntime 'ch.qos.logback:logback-classic'
 }
