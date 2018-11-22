@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import net.plshark.auth.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -16,8 +17,6 @@ import reactor.core.scheduler.Schedulers;
  * Authentication manager that validates JWT authentication
  */
 public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
-
-    public static final String AUTHORITIES_CLAIM = "https://users.plshark.net/authorities";
 
     private final JWTVerifier verifier;
 
@@ -65,7 +64,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
      * @return the list of authorities from the token
      */
     private List<String> parseAuthorities(DecodedJWT jwt) {
-        return Optional.ofNullable(jwt.getClaim(AUTHORITIES_CLAIM).asList(String.class))
+        return Optional.ofNullable(jwt.getClaim(AuthService.AUTHORITIES_CLAIM).asList(String.class))
                 .orElse(Collections.emptyList());
     }
 }
