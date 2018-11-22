@@ -17,6 +17,7 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile project(':users-api')
     compile 'org.postgresql:postgresql'
+    compile 'com.auth0:java-jwt:3.4.0'
     testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     testCompile "org.spockframework:spock-core:${spockVersion}"
     testCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
@@ -25,4 +26,5 @@ dependencies {
     testCompile 'io.projectreactor:reactor-test'
     testCompile 'com.opentable.components:otj-pg-embedded:0.12.1'
     testCompile 'org.flywaydb:flyway-core'
+    testRuntime 'ch.qos.logback:logback-classic'
 }
