@@ -32,7 +32,7 @@ public class DefaultTokenVerifier implements TokenVerifier{
     @Override
     public Mono<String> verifyRefreshToken(String token) {
         return decodeToken(token)
-                .filter(validToken -> Boolean.TRUE == validToken.getClaim(AuthService.REFRESH_CLAIM).asBoolean())
+                .filter(validToken -> Boolean.TRUE.equals(validToken.getClaim(AuthService.REFRESH_CLAIM).asBoolean()))
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Token is not a refresh token"))))
                 .map(Payload::getSubject);
     }
