@@ -3,6 +3,7 @@ package net.plshark.auth.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import net.plshark.auth.service.AuthService
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import reactor.test.StepVerifier
@@ -15,7 +16,7 @@ class JwtReactiveAuthenticationManagerSpec extends Specification {
     JwtReactiveAuthenticationManager manager = new JwtReactiveAuthenticationManager(verifier)
 
     def 'should parse the username and authorities from the token and set the authorized flag'() {
-        def str = JWT.create().withSubject('test-user').withArrayClaim(JwtReactiveAuthenticationManager.AUTHORITIES_CLAIM,
+        def str = JWT.create().withSubject('test-user').withArrayClaim(AuthService.AUTHORITIES_CLAIM,
                 ['a', 'b'] as String[]).sign(algorithm)
         def token = JwtAuthenticationToken.builder().withToken(str).build()
 
