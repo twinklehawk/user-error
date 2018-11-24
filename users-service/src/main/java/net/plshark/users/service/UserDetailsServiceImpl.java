@@ -1,23 +1,19 @@
 package net.plshark.users.service;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import reactor.core.publisher.Mono;
 
 /**
@@ -25,7 +21,7 @@ import reactor.core.publisher.Mono;
  */
 @Named
 @Singleton
-public class UserDetailsServiceImpl implements UserAuthenticationService {
+public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
 
     private final UsersRepository userRepo;
     private final UserRolesRepository userRolesRepo;
@@ -46,71 +42,31 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
             .switchIfEmpty(Mono.error(new UsernameNotFoundException("No matching user for " + username)))
             .flatMap(user -> userRolesRepo.getRolesForUser(user.getId())
                 .collectList()
-                .map(roles -> UserInfo.forUser(user, roles)));
-    }
-
-    @Override
-    public Mono<Long> getUserIdForAuthentication(Authentication auth) {
-        Mono<Long> userId;
-
-        if (auth.getPrincipal() instanceof UserInfo)
-            userId = Mono.just(((UserInfo) auth.getPrincipal()).getUserId());
-        else
-            userId = userRepo.getForUsername(auth.getName())
-                .map(User::getId);
-
-        return userId;
+                .map(roles -> buildUserDetails(user, roles)));
     }
 
     /**
-     * UserDetails implementation that allows retrieving the user ID
+     * Build a UserDetails for a User and its Roles
+     * @param user the user
+     * @param roles the user's roles
+     * @return the UserDetails
      */
-    static class UserInfo extends org.springframework.security.core.userdetails.User {
+    private UserDetails buildUserDetails(User user, List<Role> roles) {
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(roles.stream()
+                        .map(this::buildGrantedAuthority)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 
-        private static final long serialVersionUID = -5943477264654485111L;
-        private final long userId;
-
-        UserInfo(long userId, String username, String password,
-                 Collection<? extends GrantedAuthority> authorities) {
-            super(username, password, authorities);
-            this.userId = userId;
-        }
-
-        public long getUserId() {
-            return userId;
-        }
-
-        /**
-         * Build a UserInfo for a user and its roles
-         * @param user the user
-         * @param userRoles the user's roles
-         * @return the built UserInfo
-         */
-        public static UserInfo forUser(User user, List<Role> userRoles) {
-            Set<GrantedAuthority> authorities = new HashSet<>(userRoles.size());
-            userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
-            return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), authorities);
-        }
-
-        @Override
-        public String toString() {
-            return "UserInfo{" +
-                    "userId=" + userId +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            if (!super.equals(o)) return false;
-            UserInfo userInfo = (UserInfo) o;
-            return userId == userInfo.userId;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(super.hashCode(), userId);
-        }
+    /**
+     * Build a GrantedAuthority from a Role
+     * @param role the role
+     * @return the granted authority
+     */
+    private GrantedAuthority buildGrantedAuthority(Role role) {
+        return new SimpleGrantedAuthority("ROLE_" + role.getName());
     }
 }

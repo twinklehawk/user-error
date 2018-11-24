@@ -1,15 +1,11 @@
 package net.plshark.users.service
 
-import net.plshark.users.repo.UserRolesRepository
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UsernameNotFoundException
-
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
+import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
-import net.plshark.users.service.UserDetailsServiceImpl.UserInfo
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -46,9 +42,8 @@ class UserDetailsServiceImplSpec extends Specification {
                 details.password == "pass" &&
                 details.authorities.size() == 2 &&
                 details.authorities.contains(new SimpleGrantedAuthority("ROLE_normal-user")) &&
-                details.authorities.contains(new SimpleGrantedAuthority("ROLE_admin")) &&
-                details instanceof UserInfo &&
-                ((UserInfo) details).userId == 25})
+                details.authorities.contains(new SimpleGrantedAuthority("ROLE_admin"))
+            })
             .verifyComplete()
     }
 
@@ -67,28 +62,6 @@ class UserDetailsServiceImplSpec extends Specification {
         expect:
         StepVerifier.create(service.findByUsername("user"))
             .expectNextMatches({ details -> details.authorities.size() == 0})
-            .verifyComplete()
-    }
-
-    def "user ID returned from authentication when authentication is instance of UserInfo"() {
-        UserDetails details = UserInfo.forUser(new User(25, "user", "pass"), Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin")))
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(details,
-            details.getPassword(), details.getAuthorities())
-
-        expect:
-        StepVerifier.create(service.getUserIdForAuthentication(token))
-            .expectNext(25L)
-            .verifyComplete()
-    }
-
-    def "user ID is looked up when using authentication from external source"() {
-        usersRepo.getForUsername("user") >> Mono.just(new User(25, "user", "pass"))
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("user", "pass",
-            Collections.emptyList())
-
-        expect:
-        StepVerifier.create(service.getUserIdForAuthentication(token))
-            .expectNext(25L)
             .verifyComplete()
     }
 }
