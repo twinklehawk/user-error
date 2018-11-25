@@ -11,6 +11,10 @@ dependencyManagement {
     }
 }
 
+spotbugsTest {
+    excludeFilter = file("$rootProject.projectDir/spotbugs-exclude.xml")
+}
+
 dependencies {
     compile 'org.springframework:spring-jdbc'
     compile 'org.springframework.security:spring-security-core'
