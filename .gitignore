@@ -10,3 +10,4 @@
 */.groovy/
 .idea/
 *.iml
+*/.attach_pid*
