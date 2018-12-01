@@ -1,5 +1,6 @@
 package net.plshark.users.webservice;
 
+import net.plshark.auth.webservice.AuthConfig;
 import net.plshark.users.repo.jdbc.UsersRepoJdbcConfig;
 import net.plshark.users.service.UsersServiceConfig;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +13,8 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import({
         UsersServiceConfig.class,
-        UsersRepoJdbcConfig.class
+        UsersRepoJdbcConfig.class,
+        AuthConfig.class
 })
 public class Application {
 

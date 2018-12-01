@@ -5,7 +5,7 @@ import javax.inject.Inject
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
-@SpringBootTest(classes = [ Application.class, TestConfig.class ])
+@SpringBootTest(classes = [ Application.class, TestConfig.class ], properties = [ 'auth.algorithm=none', 'auth.issuer=test' ])
 class ApplicationIntSpec extends Specification {
 
     @Inject

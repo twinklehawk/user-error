@@ -11,6 +11,7 @@ spotbugsTest {
 }
 
 dependencies {
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     compile project(':users-api')
     compile project(':users-service')
     compile project(':auth-utils')
