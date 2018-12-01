@@ -2,7 +2,7 @@ plugins {
 	id 'java'
     id 'groovy'
     id 'io.spring.dependency-management' version '1.0.5.RELEASE'
-    id 'com.github.spotbugs' version '1.6.0'
+    id 'com.github.spotbugs' version '1.6.5'
 }
 
 dependencyManagement {
@@ -15,6 +15,9 @@ dependencies {
     compile project(':users-api')
     compile 'org.springframework:spring-webflux'
     compile 'com.github.ben-manes.caffeine:caffeine:2.6.2'
+    compile 'com.auth0:java-jwt:3.4.0'
+    compile 'org.springframework.security:spring-security-web'
+    compile 'org.springframework.security:spring-security-config'
     testCompile 'io.projectreactor:reactor-test'
     testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     testCompile "org.spockframework:spock-core:${spockVersion}"
@@ -22,5 +25,6 @@ dependencies {
     testRuntime "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
     testRuntime "org.objenesis:objenesis:${objenesisVersion}"
     testCompile 'org.springframework:spring-context'
+    testCompile 'org.springframework:spring-test'
     testRuntime 'ch.qos.logback:logback-classic'
 }

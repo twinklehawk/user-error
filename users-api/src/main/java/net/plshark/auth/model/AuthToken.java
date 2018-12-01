@@ -71,6 +71,32 @@ public class AuthToken {
         return scope;
     }
 
+    @Override
+    public String toString() {
+        return "AuthToken{" +
+                ", tokenType='" + tokenType + '\'' +
+                ", expiresIn=" + expiresIn +
+                ", scope='" + scope + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthToken authToken = (AuthToken) o;
+        return expiresIn == authToken.expiresIn &&
+                Objects.equals(accessToken, authToken.accessToken) &&
+                Objects.equals(tokenType, authToken.tokenType) &&
+                Objects.equals(refreshToken, authToken.refreshToken) &&
+                Objects.equals(scope, authToken.scope);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accessToken, tokenType, expiresIn, refreshToken, scope);
+    }
+
     /**
      * Builder for creating an AuthToken
      */
