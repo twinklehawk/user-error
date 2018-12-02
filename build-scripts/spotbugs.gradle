@@ -1,0 +1,3 @@
+spotbugsTest {
+    excludeFilter = file("$rootProject.projectDir/spotbugs-exclude.xml")
+}

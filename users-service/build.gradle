@@ -5,31 +5,24 @@ plugins {
     id 'com.github.spotbugs' version '1.6.5'
 }
 
-dependencyManagement {
-    imports {
-         mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.1.RELEASE'
-    }
-}
-
-spotbugsTest {
-    excludeFilter = file("$rootProject.projectDir/spotbugs-exclude.xml")
-}
+apply from: '../build-scripts/deps.gradle'
+apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
     compile 'org.springframework:spring-jdbc'
     compile 'org.springframework.security:spring-security-core'
-    compile 'javax.inject:javax.inject:1'
+    compile 'javax.inject:javax.inject:'
     compile project(':users-api')
     compile 'org.postgresql:postgresql'
-    compile 'com.auth0:java-jwt:3.4.0'
+    compile 'com.auth0:java-jwt'
     compile 'javax.validation:validation-api'
-    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
-    testRuntime "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
-    testRuntime "org.objenesis:objenesis:${objenesisVersion}"
+    testCompile "org.codehaus.groovy:groovy-all"
+    testCompile "org.spockframework:spock-core"
+    testCompile "org.hamcrest:hamcrest-core"
+    testRuntime "net.bytebuddy:byte-buddy"
+    testRuntime "org.objenesis:objenesis"
     testCompile 'io.projectreactor:reactor-test'
-    testCompile 'com.opentable.components:otj-pg-embedded:0.12.1'
+    testCompile 'com.opentable.components:otj-pg-embedded'
     testCompile 'org.flywaydb:flyway-core'
     testRuntime 'ch.qos.logback:logback-classic'
 }

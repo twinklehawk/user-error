@@ -5,6 +5,8 @@ plugins {
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
+apply from: '../build-scripts/deps.gradle'
+
 dependencyManagement {
     imports {
          mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.1.RELEASE'
@@ -18,11 +20,11 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'io.projectreactor:reactor-core'
-    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
-    testRuntime "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
-    testRuntime "org.objenesis:objenesis:${objenesisVersion}"
+    testCompile "org.codehaus.groovy:groovy-all"
+    testCompile "org.spockframework:spock-core"
+    testCompile "org.hamcrest:hamcrest-core"
+    testRuntime "net.bytebuddy:byte-buddy"
+    testRuntime "org.objenesis:objenesis"
     testCompile 'com.fasterxml.jackson.core:jackson-databind'
     testRuntime 'ch.qos.logback:logback-classic'
 }

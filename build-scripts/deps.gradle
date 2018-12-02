@@ -1,0 +1,15 @@
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.1.RELEASE'
+    }
+    dependencies {
+        dependency 'org.codehaus.groovy:groovy-all:2.4.15'
+        dependency 'org.spockframework:spock-core:1.2-groovy-2.4'
+        dependency 'org.spockframework:spock-spring:1.2-groovy-2.4'
+        dependency 'org.objenesis:objenesis:2.6'
+        dependency 'com.opentable.components:otj-pg-embedded:0.12.1'
+        dependency 'com.github.ben-manes.caffeine:caffeine:2.6.2'
+        dependency 'com.auth0:java-jwt:3.4.0'
+        dependency 'javax.inject:javax.inject:1'
+    }
+}
