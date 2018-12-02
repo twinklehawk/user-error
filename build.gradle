@@ -9,7 +9,7 @@ allprojects {
         groovyVersion = '2.4.15'
         spockVersion = '1.2-groovy-2.4'
         hamcrestVersion = '1.3'
-        bytebuddyVersion = '1.8.21'
+        bytebuddyVersion = '1.9.5'
         objenesisVersion = '2.6'
     }
 }
