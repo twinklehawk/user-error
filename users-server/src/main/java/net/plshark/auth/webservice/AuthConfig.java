@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.validation.Valid;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import net.plshark.auth.AuthProperties;
 import net.plshark.auth.service.AlgorithmFactory;
@@ -33,8 +34,13 @@ public class AuthConfig {
     }
 
     @Bean
-    public TokenVerifier tokenVerifier(Algorithm algorithm, AuthProperties props) {
-        return new DefaultTokenVerifier(JWT.require(algorithm).withIssuer(props.getIssuer()).build());
+    public TokenVerifier tokenVerifier(JWTVerifier jwtVerifier) {
+        return new DefaultTokenVerifier(jwtVerifier);
+    }
+
+    @Bean
+    public JWTVerifier jwtVerifier(Algorithm algorithm, AuthProperties props) {
+        return JWT.require(algorithm).withIssuer(props.getIssuer()).build();
     }
 
     @Bean

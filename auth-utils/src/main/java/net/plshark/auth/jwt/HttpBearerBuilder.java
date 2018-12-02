@@ -1,9 +1,9 @@
 package net.plshark.auth.jwt;
 
 import java.util.Collections;
+import java.util.Objects;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.web.server.DelegatingServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
@@ -17,7 +17,7 @@ import org.springframework.web.server.WebFilter;
  */
 public class HttpBearerBuilder {
 
-    private ReactiveAuthenticationManager authenticationManager;
+    private JwtReactiveAuthenticationManager authenticationManager;
     private ServerAuthenticationEntryPoint entryPoint = new HttpBearerServerAuthenticationEntryPoint();
 
     /**
@@ -25,7 +25,15 @@ public class HttpBearerBuilder {
      * @param jwtVerifier the verifier to use to validate and decode JWTs
      */
     public HttpBearerBuilder(JWTVerifier jwtVerifier) {
-        this.authenticationManager = new JwtReactiveAuthenticationManager(jwtVerifier);
+        this(new JwtReactiveAuthenticationManager(jwtVerifier));
+    }
+
+    /**
+     * Create a new instance
+     * @param authenticationManager the authentication manager
+     */
+    public HttpBearerBuilder(JwtReactiveAuthenticationManager authenticationManager) {
+        this.authenticationManager = Objects.requireNonNull(authenticationManager);
     }
 
     /**
@@ -43,6 +51,7 @@ public class HttpBearerBuilder {
     /**
      * @return the bearer entry point
      */
+    // TODO remove?
     public DelegatingServerAuthenticationEntryPoint.DelegateEntry buildEntryPoint() {
         MediaTypeServerWebExchangeMatcher restMatcher = new MediaTypeServerWebExchangeMatcher(
                 MediaType.APPLICATION_ATOM_XML,

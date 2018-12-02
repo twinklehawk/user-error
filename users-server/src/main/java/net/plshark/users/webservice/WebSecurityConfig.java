@@ -1,7 +1,8 @@
 package net.plshark.users.webservice;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.JWTVerifier;
+import net.plshark.auth.jwt.HttpBearerBuilder;
+import net.plshark.auth.jwt.JwtReactiveAuthenticationManager;
 import net.plshark.auth.throttle.LoginAttemptService;
 import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
 import net.plshark.auth.throttle.impl.JwtUsernameExtractor;
@@ -13,6 +14,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
 /**
  * Notes web security configuration
@@ -20,10 +22,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
 
-    private final Algorithm algorithm;
+    private final JWTVerifier jwtVerifier;
 
-    public WebSecurityConfig(Algorithm algorithm) {
-        this.algorithm = algorithm;
+    public WebSecurityConfig(JWTVerifier jwtVerifier) {
+        this.jwtVerifier = jwtVerifier;
     }
 
     /**
@@ -33,6 +35,8 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
+        HttpBearerBuilder builder = new HttpBearerBuilder(authenticationManager());
+
         return http
             .authorizeExchange()
                 // auth controller handles its own authentication
@@ -42,9 +46,13 @@ public class WebSecurityConfig {
                     .hasRole("notes-admin")
                 .anyExchange()
                     .hasRole("notes-user")
-            // TODO use jwt authentication
-            .and().httpBasic()
-            .and().addFilterAt(loginAttemptThrottlingFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
+            .and()
+                .authenticationManager(authenticationManager())
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .csrf().disable()
+                .logout().disable()
+                .addFilterAt(builder.buildFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
+                .addFilterAt(loginAttemptThrottlingFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
         .build();
     }
 
@@ -56,8 +64,13 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public JwtReactiveAuthenticationManager authenticationManager() {
+        return new JwtReactiveAuthenticationManager(jwtVerifier);
+    }
+
     private LoginAttemptThrottlingFilter loginAttemptThrottlingFilter() {
-        return new LoginAttemptThrottlingFilter(loginAttemptService(), new JwtUsernameExtractor(JWT.require(algorithm).build()));
+        return new LoginAttemptThrottlingFilter(loginAttemptService(), new JwtUsernameExtractor(jwtVerifier));
     }
 
     private LoginAttemptService loginAttemptService() {
