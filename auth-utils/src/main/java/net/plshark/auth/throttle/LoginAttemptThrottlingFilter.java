@@ -70,6 +70,7 @@ public class LoginAttemptThrottlingFilter implements WebFilter {
      */
     private String getClientIp(ServerHttpRequest request) {
         return Optional.ofNullable(request.getHeaders().getFirst("X-Forwarded-For"))
+            // get the first entry if it was forwarded multiple times
             .map(header -> header.split(",")[0])
             .orElse(Optional.ofNullable(request.getRemoteAddress())
                 .map(InetSocketAddress::getHostString)
