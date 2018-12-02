@@ -34,7 +34,7 @@ public class HttpBearerBuilder {
     public WebFilter buildFilter() {
         AuthenticationWebFilter authenticationFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationFilter.setAuthenticationFailureHandler(new ServerAuthenticationEntryPointFailureHandler(entryPoint));
-        authenticationFilter.setAuthenticationConverter(new ServerHttpJwtAuthenticationConverter());
+        authenticationFilter.setServerAuthenticationConverter(new ServerHttpJwtAuthenticationConverter());
         authenticationFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
 
         return authenticationFilter;

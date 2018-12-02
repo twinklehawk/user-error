@@ -15,7 +15,7 @@ class ServerHttpJwtAuthenticationConverterSpec extends Specification {
                 MockServerHttpRequest.get("http://test/url").header('Authorization', 'Bearer test-token'))
 
         expect:
-        StepVerifier.create(converter.apply(exchange))
+        StepVerifier.create(converter.convert(exchange))
                 .expectNext(JwtAuthenticationToken.builder().withToken('test-token').build())
                 .verifyComplete()
     }
@@ -24,7 +24,7 @@ class ServerHttpJwtAuthenticationConverterSpec extends Specification {
         def exchange = MockServerWebExchange.from(MockServerHttpRequest.get("http://test/url"))
 
         expect:
-        StepVerifier.create(converter.apply(exchange))
+        StepVerifier.create(converter.convert(exchange))
                 .verifyComplete()
     }
 
@@ -34,7 +34,7 @@ class ServerHttpJwtAuthenticationConverterSpec extends Specification {
                 MockServerHttpRequest.get("http://test/url").header('Authorization', 'test-token'))
 
         expect:
-        StepVerifier.create(converter.apply(exchange))
+        StepVerifier.create(converter.convert(exchange))
                 .verifyComplete()
     }
 }
