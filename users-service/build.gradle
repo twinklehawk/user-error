@@ -11,7 +11,7 @@ apply from: '../build-scripts/spotbugs.gradle'
 dependencies {
     compile 'org.springframework:spring-jdbc'
     compile 'org.springframework.security:spring-security-core'
-    compile 'javax.inject:javax.inject:'
+    compile 'javax.inject:javax.inject'
     compile project(':users-api')
     compile 'org.postgresql:postgresql'
     compile 'com.auth0:java-jwt'
