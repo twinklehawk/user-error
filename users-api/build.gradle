@@ -9,7 +9,7 @@ apply from: '../build-scripts/deps.gradle'
 
 dependencyManagement {
     imports {
-         mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.1.RELEASE'
+         mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.1.RELEASE'
     }
 }
 
