@@ -43,6 +43,7 @@ public class WebSecurityConfig {
                 .pathMatchers("/auth/**")
                     .permitAll()
                 .pathMatchers("/users/**", "/roles/**")
+                // TODO update role names
                     .hasRole("notes-admin")
                 .anyExchange()
                     .hasRole("notes-user")
