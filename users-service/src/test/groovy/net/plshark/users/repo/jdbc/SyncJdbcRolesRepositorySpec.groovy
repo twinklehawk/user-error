@@ -100,8 +100,8 @@ class SyncJdbcRolesRepositorySpec extends Specification {
         then:
         roles.size() == 4
         // these are inserted by the migration scripts
-        roles.get(0).name == 'notes-user'
-        roles.get(1).name == 'notes-admin'
+        roles.get(0).name == 'users-user'
+        roles.get(1).name == 'users-admin'
         roles.get(2).name == 'name'
         roles.get(3).name == 'name2'
     }
@@ -116,8 +116,8 @@ class SyncJdbcRolesRepositorySpec extends Specification {
 
         then:
         roles.size() == 2
-        roles.get(0).name == 'notes-user'
-        roles.get(1).name == 'notes-admin'
+        roles.get(0).name == 'users-user'
+        roles.get(1).name == 'users-admin'
     }
 
     def 'getRoles should start at the correct offset'() {
