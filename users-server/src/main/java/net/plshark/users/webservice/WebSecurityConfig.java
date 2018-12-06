@@ -43,10 +43,9 @@ public class WebSecurityConfig {
                 .pathMatchers("/auth/**")
                     .permitAll()
                 .pathMatchers("/users/**", "/roles/**")
-                // TODO update role names
-                    .hasRole("notes-admin")
+                    .hasRole("users-admin")
                 .anyExchange()
-                    .hasRole("notes-user")
+                    .hasRole("users-user")
             .and()
                 .authenticationManager(authenticationManager())
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
