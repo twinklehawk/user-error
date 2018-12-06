@@ -1,6 +1,7 @@
 package net.plshark.users.repo;
 
 import net.plshark.users.model.Role;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -21,6 +22,14 @@ public interface RolesRepository {
      * @return the matching role
      */
     Mono<Role> getForName(String name);
+
+    /**
+     * Get all roles up to the maximum result count and starting at an offset
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at, 0 to start at the beginning
+     * @return the roles
+     */
+    Flux<Role> getRoles(int maxResults, long offset);
 
     /**
      * Insert a new role

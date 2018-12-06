@@ -49,7 +49,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Flux<User> getAll(int maxResults, long offset) {
+    public Flux<User> getUsers(int maxResults, long offset) {
         return userRepo.getAll(maxResults, offset);
     }
 
@@ -124,5 +124,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public Mono<Role> getRoleByName(String name) {
         return roleRepo.getForName(name);
+    }
+
+    @Override
+    public Flux<Role> getRoles(int maxResults, long offset) {
+        return roleRepo.getRoles(maxResults, offset);
     }
 }

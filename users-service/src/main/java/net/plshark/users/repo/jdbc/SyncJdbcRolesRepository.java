@@ -91,4 +91,20 @@ public class SyncJdbcRolesRepository {
         List<Role> results = jdbc.query(SELECT_BY_NAME, stmt -> stmt.setString(1, name), roleRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
+
+    /**
+     * Get all roles up to the maximum result count and starting at an offset
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at, 0 to start at the beginning
+     * @return the roles
+     */
+    public List<Role> getRoles(int maxResults, long offset) {
+        if (maxResults < 1)
+            throw new IllegalArgumentException("Max results must be greater than 0");
+        if (offset < 0)
+            throw new IllegalArgumentException("Offset cannot be negative");
+
+        String sql = "SELECT * FROM roles ORDER BY id ASC OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
+        return jdbc.query(sql, roleRowMapper);
+    }
 }

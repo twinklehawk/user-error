@@ -20,12 +20,12 @@ public interface UserManagementService {
     Mono<User> getUserByUsername(String username);
 
     /**
-     * Get all users up to the maximum result count
+     * Get all users up to the maximum result count and starting at an offset
      * @param maxResults the maximum number of results to return
-     * @param offset the offset to start the list at
+     * @param offset the offset to start the list at, 0 to start at the beginning
      * @return the users
      */
-    Flux<User> getAll(int maxResults, long offset);
+    Flux<User> getUsers(int maxResults, long offset);
 
     /**
      * Save a new user
@@ -63,6 +63,14 @@ public interface UserManagementService {
      * @return the matching role
      */
     Mono<Role> getRoleByName(String name);
+
+    /**
+     * Get all roles up to the maximum result count and starting at an offset
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at, 0 to start at the beginning
+     * @return the roles
+     */
+    Flux<Role> getRoles(int maxResults, long offset);
 
     /**
      * Save a new role

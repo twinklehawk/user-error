@@ -37,15 +37,15 @@ public class UsersController {
     }
 
     /**
-     * Get all users up to the maximum result count
+     * Get all users up to the maximum result count and starting at an offset
      * @param maxResults the maximum number of results to return
      * @param offset the offset to start the list at
      * @return the users
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<UserInfo> getAll(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
-                                 @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
-        return userMgmtService.getAll(maxResults, offset)
+    public Flux<UserInfo> getUsers(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
+                                   @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
+        return userMgmtService.getUsers(maxResults, offset)
                 .map(UserInfo::fromUser);
     }
 

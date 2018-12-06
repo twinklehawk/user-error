@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import net.plshark.utils.ReactiveUtils;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.RolesRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -47,5 +48,10 @@ public class JdbcRolesRepository implements RolesRepository {
     @Override
     public Mono<Role> getForName(String name) {
         return ReactiveUtils.wrapWithMono(() -> syncRepo.getForName(name).orElse(null));
+    }
+
+    @Override
+    public Flux<Role> getRoles(int maxResults, long offset) {
+        return ReactiveUtils.wrapWithFlux(() -> syncRepo.getRoles(maxResults, offset));
     }
 }

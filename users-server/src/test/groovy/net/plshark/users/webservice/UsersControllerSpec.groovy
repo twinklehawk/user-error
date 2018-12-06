@@ -72,13 +72,13 @@ class UsersControllerSpec extends Specification {
         probe.assertWasNotCancelled()
     }
 
-    def 'getAll passes the max results and offset through'() {
+    def 'getUsers passes the max results and offset through'() {
         def user1 = new User(1L, 'user', 'pass')
         def user2 = new User(2L, 'user2', 'pass2')
-        service.getAll(3, 2) >> Flux.just(user1, user2)
+        service.getUsers(3, 2) >> Flux.just(user1, user2)
 
         expect:
-        StepVerifier.create(controller.getAll(3, 2))
+        StepVerifier.create(controller.getUsers(3, 2))
                 .expectNext(new UserInfo(1, 'user'), new UserInfo(2, 'user2'))
                 .verifyComplete()
     }

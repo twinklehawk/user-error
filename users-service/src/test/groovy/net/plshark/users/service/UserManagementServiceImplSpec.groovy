@@ -177,14 +177,25 @@ class UserManagementServiceImplSpec extends Specification {
             .verifyComplete()
     }
 
-    def 'getAll should return all results'() {
+    def 'getUsers should return all results'() {
         def user1 = new User(1L, 'user', 'pass')
         def user2 = new User(2L, 'user2', 'pass')
         userRepo.getAll(5, 0) >> Flux.just(user1, user2)
 
         expect:
-        StepVerifier.create(service.getAll(5, 0))
+        StepVerifier.create(service.getUsers(5, 0))
                 .expectNext(user1, user2)
+                .verifyComplete()
+    }
+
+    def 'getRoles should return all results'() {
+        def role1 = new Role(1L, 'role1')
+        def role2 = new Role(2L, 'role2')
+        roleRepo.getRoles(5, 0) >> Flux.just(role1, role2)
+
+        expect:
+        StepVerifier.create(service.getRoles(5, 0))
+                .expectNext(role1, role2)
                 .verifyComplete()
     }
 }

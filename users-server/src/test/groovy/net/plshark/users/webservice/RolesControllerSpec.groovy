@@ -2,6 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.users.model.Role
 import net.plshark.users.service.UserManagementService
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -31,5 +32,26 @@ class RolesControllerSpec extends Specification {
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
+    }
+
+    def 'getRoles passes the max results and offset through'() {
+        def role1 = new Role('role1')
+        def role2 = new Role('role2')
+        service.getRoles(3, 2) >> Flux.just(role1, role2)
+
+        expect:
+        StepVerifier.create(controller.getRoles(3, 2))
+                .expectNext(role1, role2)
+                .verifyComplete()
+    }
+
+    def 'getByName passes the role name through'() {
+        def role1 = new Role('role')
+        service.getRoleByName('role') >> Mono.just(role1)
+
+        expect:
+        StepVerifier.create(controller.getByName('role'))
+                .expectNext(role1)
+                .verifyComplete()
     }
 }

@@ -89,4 +89,48 @@ class SyncJdbcRolesRepositorySpec extends Specification {
         then:
         notThrown(Exception)
     }
+
+    def 'getRoles should return all results when there are less than max results'() {
+        repo.insert(new Role("name"))
+        repo.insert(new Role("name2"))
+
+        when:
+        List<Role> roles = repo.getRoles(5, 0)
+
+        then:
+        roles.size() == 4
+        // these are inserted by the migration scripts
+        roles.get(0).name == 'notes-user'
+        roles.get(1).name == 'notes-admin'
+        roles.get(2).name == 'name'
+        roles.get(3).name == 'name2'
+    }
+
+    def 'getRoles should return up to max results when there are more results'() {
+        repo.insert(new Role("name"))
+        repo.insert(new Role("name2"))
+        repo.insert(new Role("name3"))
+
+        when:
+        List<Role> roles = repo.getRoles(2, 0)
+
+        then:
+        roles.size() == 2
+        roles.get(0).name == 'notes-user'
+        roles.get(1).name == 'notes-admin'
+    }
+
+    def 'getRoles should start at the correct offset'() {
+        repo.insert(new Role("name"))
+        repo.insert(new Role("name2"))
+        repo.insert(new Role("name3"))
+
+        when:
+        List<Role> roles = repo.getRoles(2, 2)
+
+        then:
+        roles.size() == 2
+        roles.get(0).name == 'name'
+        roles.get(1).name == 'name2'
+    }
 }
