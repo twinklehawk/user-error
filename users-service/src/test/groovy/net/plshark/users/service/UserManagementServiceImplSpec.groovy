@@ -9,6 +9,7 @@ import net.plshark.ObjectNotFoundException
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.repo.UsersRepository
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -22,35 +23,19 @@ class UserManagementServiceImplSpec extends Specification {
     PasswordEncoder encoder = Mock()
     UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, encoder)
 
-    def "cannot save user with ID set"() {
-        when:
-        service.saveUser(new User(12, "name", "pass"))
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
 
         when:
-        service.saveUser(new User("user", "pass"))
+        service.insertUser(new User("user", "pass"))
 
         then:
         1 * userRepo.insert(new User("user", "pass-encoded"))
     }
 
-    def "cannot save role with ID set"() {
-        when:
-        service.saveRole(new Role(1, "name"))
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
     def "saving a role passes role through"() {
         when:
-        service.saveRole(new Role("name"))
+        service.insertRole(new Role("name"))
 
         then:
         1 * roleRepo.insert(new Role("name"))
@@ -195,7 +180,7 @@ class UserManagementServiceImplSpec extends Specification {
     def 'getAll should return all results'() {
         def user1 = new User(1L, 'user', 'pass')
         def user2 = new User(2L, 'user2', 'pass')
-        userRepo.getAll(5, 0) >> [user1, user2]
+        userRepo.getAll(5, 0) >> Flux.just(user1, user2)
 
         expect:
         StepVerifier.create(service.getAll(5, 0))

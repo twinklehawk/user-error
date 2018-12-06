@@ -1,8 +1,7 @@
 package net.plshark.users.webservice
 
-import net.plshark.BadRequestException
-import net.plshark.users.model.User
 import net.plshark.users.model.PasswordChangeRequest
+import net.plshark.users.model.User
 import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Flux
@@ -16,16 +15,8 @@ class UsersControllerSpec extends Specification {
     UserManagementService service = Mock()
     UsersController controller = new UsersController(service)
 
-    def "inserting a user with an ID throws BadRequestException"() {
-        when:
-        controller.insert(new User(1, "name", "pass"))
-
-        then:
-        thrown(BadRequestException)
-    }
-
     def "password is not returned when creating a user"() {
-        service.saveUser(_) >> Mono.just(new User(1, "user", "pass-encoded"))
+        service.insertUser(_) >> Mono.just(new User(1, "user", "pass-encoded"))
 
         expect:
         StepVerifier.create(controller.insert(new User("name", "pass")))
@@ -97,7 +88,7 @@ class UsersControllerSpec extends Specification {
         service.getUserByUsername('user') >> Mono.just(user1)
 
         expect:
-        StepVerifier.create(controller.getAll(3, 2))
+        StepVerifier.create(controller.getUser('user'))
                 .expectNext(new UserInfo(1, 'user'))
                 .verifyComplete()
     }

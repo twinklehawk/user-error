@@ -1,6 +1,5 @@
 package net.plshark.users.webservice
 
-import net.plshark.BadRequestException
 import net.plshark.users.model.Role
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Mono
@@ -13,14 +12,8 @@ class RolesControllerSpec extends Specification {
     UserManagementService service = Mock()
     RolesController controller = new RolesController(service)
 
-    def "cannot insert a role with ID already set"() {
-        expect:
-        StepVerifier.create(controller.insert(new Role(1, "name")))
-            .verifyError(BadRequestException)
-    }
-
     def "insert passes role through to service"() {
-        service.saveRole({ Role role -> role.id == null && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
+        service.insertRole({ Role role -> role.id == null && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
 
         expect:
         StepVerifier.create(controller.insert(new Role("admin")))

@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 public interface UserManagementService {
 
     // TODO should these return UserInfo instead of User?
+    // TODO update methods
     /**
      * Retrieve a user by username
      * @param username the username
@@ -31,7 +32,7 @@ public interface UserManagementService {
      * @param user the user
      * @return the saved user
      */
-    Mono<User> saveUser(User user);
+    Mono<User> insertUser(User user);
 
     /**
      * Delete a user by ID
@@ -68,7 +69,7 @@ public interface UserManagementService {
      * @param role the role
      * @return the saved role
      */
-    Mono<Role> saveRole(Role role);
+    Mono<Role> insertRole(Role role);
 
     /**
      * Delete a role

@@ -1,7 +1,6 @@
 package net.plshark.users.webservice;
 
 import java.util.Objects;
-
 import javax.validation.constraints.Min;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import net.plshark.BadRequestException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -68,14 +65,10 @@ public class UsersController {
      * Insert a new user
      * @param user the user to insert
      * @return the inserted user
-     * @throws BadRequestException if attempting to insert a user with an ID already set
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<UserInfo> insert(@RequestBody User user) throws BadRequestException {
-        if (user.getId() != null)
-            throw new BadRequestException("Cannot insert user with ID already set");
-
-        return userMgmtService.saveUser(user)
+    public Mono<UserInfo> insert(@RequestBody User user) {
+        return userMgmtService.insertUser(user)
             .map(UserInfo::fromUser);
     }
 

@@ -54,10 +54,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<User> saveUser(User user) {
-        if (user.getId() != null)
-            throw new IllegalArgumentException("Updating a user is not supported");
-
+    public Mono<User> insertUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepo.insert(user);
@@ -75,10 +72,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Role> saveRole(Role role) {
-        if (role.getId() != null)
-            throw new IllegalArgumentException("Updating a role is not supported");
-
+    public Mono<Role> insertRole(Role role) {
         return roleRepo.insert(role);
     }
 

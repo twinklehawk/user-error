@@ -38,10 +38,10 @@ class WebSecurityConfigIntSpec extends Specification {
         Role userRole = userMgmt.getRoleByName("notes-user").toFuture().get()
         Role adminRole = userMgmt.getRoleByName("notes-admin").toFuture().get()
 
-        notesUser = userMgmt.saveUser(new User("test-user", "pass")).toFuture().get()
+        notesUser = userMgmt.insertUser(new User("test-user", "pass")).toFuture().get()
         userMgmt.grantRoleToUser(notesUser, userRole).toFuture().get()
 
-        adminUser = userMgmt.saveUser(new User("admin-user", "pass")).toFuture().get()
+        adminUser = userMgmt.insertUser(new User("admin-user", "pass")).toFuture().get()
         userMgmt.grantRoleToUser(adminUser, adminRole).toFuture().get()
     }
 
