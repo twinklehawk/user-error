@@ -2,12 +2,29 @@ package net.plshark.users.service;
 
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
  * Service for modifying users and roles
  */
 public interface UserManagementService {
+
+    // TODO should these return UserInfo instead of User?
+    /**
+     * Retrieve a user by username
+     * @param username the username
+     * @return the matching user if found
+     */
+    Mono<User> getUserByUsername(String username);
+
+    /**
+     * Get all users up to the maximum result count
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at
+     * @return the users
+     */
+    Flux<User> getAll(int maxResults, long offset);
 
     /**
      * Save a new user

@@ -1,6 +1,7 @@
 package net.plshark.users.repo;
 
 import net.plshark.users.model.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -21,6 +22,14 @@ public interface UsersRepository {
      * @return the matching user
      */
     Mono<User> getForUsername(String username);
+
+    /**
+     * Get all users up to the maximum result count
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at
+     * @return the users
+     */
+    Flux<User> getAll(int maxResults, long offset);
 
     /**
      * Insert a new user

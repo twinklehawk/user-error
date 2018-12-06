@@ -13,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import net.plshark.ObjectNotFoundException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -40,6 +41,16 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.roleRepo = Objects.requireNonNull(roleRepository, "roleRepository cannot be null");
         this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder cannot be null");
+    }
+
+    @Override
+    public Mono<User> getUserByUsername(String username) {
+        return userRepo.getForUsername(username);
+    }
+
+    @Override
+    public Flux<User> getAll(int maxResults, long offset) {
+        return userRepo.getAll(maxResults, offset);
     }
 
     @Override

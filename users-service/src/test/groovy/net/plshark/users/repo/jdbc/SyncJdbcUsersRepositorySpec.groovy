@@ -118,4 +118,47 @@ class SyncJdbcUsersRepositorySpec extends Specification {
         then:
         thrown(EmptyResultDataAccessException)
     }
+
+    def 'getAll should return all results when there are less than max results'() {
+        repo.insert(new User("name", "pass"))
+        repo.insert(new User("name2", "pass"))
+
+        when:
+        List<User> users = repo.getAll(5, 0)
+
+        then:
+        users.size() == 3
+        // admin is inserted by the migration scripts
+        users.get(0).username == 'admin'
+        users.get(1).username == 'name'
+        users.get(2).username == 'name2'
+    }
+
+    def 'getAll should return up to max results when there are more results'() {
+        repo.insert(new User("name", "pass"))
+        repo.insert(new User("name2", "pass"))
+        repo.insert(new User("name3", "pass"))
+
+        when:
+        List<User> users = repo.getAll(2, 0)
+
+        then:
+        users.size() == 2
+        users.get(0).username == 'admin'
+        users.get(1).username == 'name'
+    }
+
+    def 'getAll should start at the correct offset'() {
+        repo.insert(new User("name", "pass"))
+        repo.insert(new User("name2", "pass"))
+        repo.insert(new User("name3", "pass"))
+
+        when:
+        List<User> users = repo.getAll(2, 2)
+
+        then:
+        users.size() == 2
+        users.get(0).username == 'name2'
+        users.get(1).username == 'name3'
+    }
 }

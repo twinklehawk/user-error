@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import net.plshark.utils.ReactiveUtils;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UsersRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -29,6 +30,11 @@ public class JdbcUsersRepository implements UsersRepository {
     @Override
     public Mono<User> getForUsername(String username) {
         return ReactiveUtils.wrapWithMono(() -> syncRepo.getForUsername(username).orElse(null));
+    }
+
+    @Override
+    public Flux<User> getAll(int maxResults, long offset) {
+        return ReactiveUtils.wrapWithFlux(() -> syncRepo.getAll(maxResults, offset));
     }
 
     @Override

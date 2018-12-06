@@ -2,19 +2,24 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Min;
+import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
 import net.plshark.users.model.User;
 import net.plshark.users.model.UserInfo;
 import net.plshark.users.service.UserManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.plshark.BadRequestException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -35,12 +40,36 @@ public class UsersController {
     }
 
     /**
+     * Get all users up to the maximum result count
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at
+     * @return the users
+     */
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<UserInfo> getAll(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
+                                 @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
+        return userMgmtService.getAll(maxResults, offset)
+                .map(UserInfo::fromUser);
+    }
+
+    /**
+     * Retrieve a user by username
+     * @param username the username
+     * @return the matching user
+     */
+    @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<UserInfo> getUser(@PathVariable("username") String username) {
+        return userMgmtService.getUserByUsername(username)
+                .map(UserInfo::fromUser)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
+    }
+
+    /**
      * Insert a new user
      * @param user the user to insert
      * @return the inserted user
      * @throws BadRequestException if attempting to insert a user with an ID already set
      */
-    // TODO return UserInfo
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserInfo> insert(@RequestBody User user) throws BadRequestException {
         if (user.getId() != null)

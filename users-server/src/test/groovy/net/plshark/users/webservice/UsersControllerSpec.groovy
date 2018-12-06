@@ -5,6 +5,7 @@ import net.plshark.users.model.User
 import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -78,5 +79,26 @@ class UsersControllerSpec extends Specification {
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
+    }
+
+    def 'getAll passes the max results and offset through'() {
+        def user1 = new User(1L, 'user', 'pass')
+        def user2 = new User(2L, 'user2', 'pass2')
+        service.getAll(3, 2) >> Flux.just(user1, user2)
+
+        expect:
+        StepVerifier.create(controller.getAll(3, 2))
+                .expectNext(new UserInfo(1, 'user'), new UserInfo(2, 'user2'))
+                .verifyComplete()
+    }
+
+    def 'getUser passes the username through'() {
+        def user1 = new User(1L, 'user', 'pass')
+        service.getUserByUsername('user') >> Mono.just(user1)
+
+        expect:
+        StepVerifier.create(controller.getAll(3, 2))
+                .expectNext(new UserInfo(1, 'user'))
+                .verifyComplete()
     }
 }

@@ -191,4 +191,15 @@ class UserManagementServiceImplSpec extends Specification {
         StepVerifier.create(service.getRoleByName("name"))
             .verifyComplete()
     }
+
+    def 'getAll should return all results'() {
+        def user1 = new User(1L, 'user', 'pass')
+        def user2 = new User(2L, 'user2', 'pass')
+        userRepo.getAll(5, 0) >> [user1, user2]
+
+        expect:
+        StepVerifier.create(service.getAll(5, 0))
+                .expectNext(user1, user2)
+                .verifyComplete()
+    }
 }

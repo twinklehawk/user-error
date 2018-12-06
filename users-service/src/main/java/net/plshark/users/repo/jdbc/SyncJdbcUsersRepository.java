@@ -109,4 +109,20 @@ public class SyncJdbcUsersRepository {
         else if (updates != 1)
             throw new IllegalStateException("Invalid number of rows affected: " + updates);
     }
+
+    /**
+     * Get all users up to the maximum result count
+     * @param maxResults the maximum number of results to return
+     * @param offset the offset to start the list at
+     * @return the users
+     */
+    public List<User> getAll(int maxResults, long offset) {
+        if (maxResults < 1)
+            throw new IllegalArgumentException("Max results must be greater than 0");
+        if (offset < 0)
+            throw new IllegalArgumentException("Offset cannot be negative");
+
+        String sql = "SELECT * FROM users ORDER BY id ASC OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
+        return jdbc.query(sql, userRowMapper);
+    }
 }
