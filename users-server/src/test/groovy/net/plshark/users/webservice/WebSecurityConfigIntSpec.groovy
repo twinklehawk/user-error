@@ -27,7 +27,7 @@ class WebSecurityConfigIntSpec extends Specification {
     UserManagementService userMgmt
     @Inject
     ObjectMapper mapper
-    User notesUser
+    User normalUser
     User adminUser
     WebTestClient client
 
@@ -35,19 +35,19 @@ class WebSecurityConfigIntSpec extends Specification {
         client = WebTestClient.bindToApplicationContext(context)
             .build()
 
-        Role userRole = userMgmt.getRoleByName("notes-user").toFuture().get()
-        Role adminRole = userMgmt.getRoleByName("notes-admin").toFuture().get()
+        Role userRole = userMgmt.getRoleByName("user").toFuture().get()
+        Role adminRole = userMgmt.getRoleByName("admin").toFuture().get()
 
-        notesUser = userMgmt.insertUser(new User("test-user", "pass")).toFuture().get()
-        userMgmt.grantRoleToUser(notesUser, userRole).toFuture().get()
+        normalUser = userMgmt.insertUser(new User("test-user", "pass")).toFuture().get()
+        userMgmt.grantRoleToUser(normalUser, userRole).toFuture().get()
 
         adminUser = userMgmt.insertUser(new User("admin-user", "pass")).toFuture().get()
         userMgmt.grantRoleToUser(adminUser, adminRole).toFuture().get()
     }
 
     def cleanup() {
-        if (notesUser != null)
-            userMgmt.deleteUser(notesUser).toFuture().get()
+        if (normalUser != null)
+            userMgmt.deleteUser(normalUser).toFuture().get()
         if (adminUser != null)
             userMgmt.deleteUser(adminUser).toFuture().get()
     }
@@ -90,7 +90,7 @@ class WebSecurityConfigIntSpec extends Specification {
             .exchange().expectStatus().isNotFound()
     }
 
-    def "normal methods require notes-user role"() {
+    def "normal methods require users-user role"() {
         expect:
         client.mutateWith(SecurityMockServerConfigurers.csrf())
             .get().uri("/notes/1")
@@ -102,7 +102,7 @@ class WebSecurityConfigIntSpec extends Specification {
             .exchange().expectStatus().isNotFound()
     }
 
-    def "admin methods require notes-admin role"() {
+    def "admin methods require users-admin role"() {
         expect:
         client.mutateWith(SecurityMockServerConfigurers.csrf())
             .delete().uri("/users/100")
