@@ -84,14 +84,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public Mono<Void> grantRoleToUser(long userId, long roleId) {
-        // TODO this kinda sucks
-        return userRepo.getForId(userId)
-            .switchIfEmpty(Mono.error(new ObjectNotFoundException("User not found")))
-            .then(roleRepo.getForId(roleId))
-            .switchIfEmpty(Mono.error(new ObjectNotFoundException("Role not found")))
-            // if something else is deleting users/roles at the same time as this runs, the row can be inserted
-            // with no matching user or role, but it doesn't really matter
-            .flatMap(role -> userRolesRepo.insertUserRole(userId, roleId));
+        return userRolesRepo.insertUserRole(userId, roleId);
     }
 
     @Override
@@ -101,12 +94,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public Mono<Void> removeRoleFromUser(long userId, long roleId) {
-        // TODO this kinda sucks too
-        return userRepo.getForId(userId)
-            .switchIfEmpty(Mono.error(new ObjectNotFoundException("User not found")))
-            // if something else is deleting users at the same time as this runs, the row can be inserted
-            // with no matching user, but it doesn't really matter
-            .flatMap(user -> userRolesRepo.deleteUserRole(userId, roleId));
+        return userRolesRepo.deleteUserRole(userId, roleId);
     }
 
     @Override

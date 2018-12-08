@@ -121,24 +121,6 @@ class UserManagementServiceImplSpec extends Specification {
         probe.assertWasNotCancelled()
     }
 
-    def "granting a role to a user that does not exist should throw an ObjectNotFoundException"() {
-        userRepo.getForId(100) >> Mono.empty()
-        roleRepo.getForId(200) >> Mono.just(new Role("role"))
-
-        expect:
-        StepVerifier.create(service.grantRoleToUser(100, 200))
-            .verifyError(ObjectNotFoundException.class)
-    }
-
-    def "granting a role that does not exist should throw an ObjectNotFoundException"() {
-        userRepo.getForId(100) >> Mono.just(new User("name", "pass"))
-        roleRepo.getForId(200) >> Mono.empty()
-
-        expect:
-        StepVerifier.create(service.grantRoleToUser(100, 200))
-            .verifyError(ObjectNotFoundException.class)
-    }
-
     def "removing a role from a user should remove the role from the user's roles"() {
         userRepo.getForId(100) >> Mono.just(new User("name", "pass"))
         PublisherProbe probe = PublisherProbe.empty()
@@ -150,14 +132,6 @@ class UserManagementServiceImplSpec extends Specification {
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
-    }
-
-    def "removing a role from a user that does not exist should throw an ObjectNotFoundException"() {
-        userRepo.getForId(100) >> Mono.empty()
-
-        expect:
-        StepVerifier.create(service.removeRoleFromUser(100, 200))
-            .verifyError(ObjectNotFoundException.class)
     }
 
     def "retrieving a role by name passes the name through"() {
