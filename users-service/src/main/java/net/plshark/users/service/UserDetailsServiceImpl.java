@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
     @Override
     public Mono<UserDetails> findByUsername(String username) {
         return userRepo.getForUsername(username)
-            .switchIfEmpty(Mono.error(new UsernameNotFoundException("No matching user for " + username)))
+            .switchIfEmpty(Mono.defer(() -> Mono.error(new UsernameNotFoundException("No matching user for " + username))))
             .flatMap(user -> userRolesRepo.getRolesForUser(user.getId())
                 .collectList()
                 .map(roles -> buildUserDetails(user, roles)));
