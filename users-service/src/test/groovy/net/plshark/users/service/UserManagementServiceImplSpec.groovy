@@ -1,5 +1,6 @@
 package net.plshark.users.service
 
+import net.plshark.users.model.UserInfo
 import net.plshark.users.repo.RolesRepository
 import net.plshark.users.repo.UserRolesRepository
 import org.springframework.dao.EmptyResultDataAccessException
@@ -25,12 +26,12 @@ class UserManagementServiceImplSpec extends Specification {
 
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
+        userRepo.insert(new User("user", "pass-encoded")) >> Mono.just(new User(1L, 'user', 'pass-encoded'))
 
-        when:
-        service.insertUser(new User("user", "pass"))
-
-        then:
-        1 * userRepo.insert(new User("user", "pass-encoded"))
+        expect:
+        StepVerifier.create(service.insertUser(new User("user", "pass")))
+                .expectNext(new UserInfo(1L, 'user'))
+                .verifyComplete()
     }
 
     def "saving a role passes role through"() {
@@ -158,7 +159,7 @@ class UserManagementServiceImplSpec extends Specification {
 
         expect:
         StepVerifier.create(service.getUsers(5, 0))
-                .expectNext(user1, user2)
+                .expectNext(new UserInfo(1L, 'user'), new UserInfo(2L, 'user2'))
                 .verifyComplete()
     }
 

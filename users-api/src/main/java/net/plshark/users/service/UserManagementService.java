@@ -2,6 +2,7 @@ package net.plshark.users.service;
 
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
+import net.plshark.users.model.UserInfo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -10,14 +11,13 @@ import reactor.core.publisher.Mono;
  */
 public interface UserManagementService {
 
-    // TODO should these return UserInfo instead of User?
     // TODO update methods
     /**
      * Retrieve a user by username
      * @param username the username
      * @return the matching user if found
      */
-    Mono<User> getUserByUsername(String username);
+    Mono<UserInfo> getUserByUsername(String username);
 
     /**
      * Get all users up to the maximum result count and starting at an offset
@@ -25,14 +25,14 @@ public interface UserManagementService {
      * @param offset the offset to start the list at, 0 to start at the beginning
      * @return the users
      */
-    Flux<User> getUsers(int maxResults, long offset);
+    Flux<UserInfo> getUsers(int maxResults, long offset);
 
     /**
      * Save a new user
      * @param user the user
      * @return the saved user
      */
-    Mono<User> insertUser(User user);
+    Mono<UserInfo> insertUser(User user);
 
     /**
      * Delete a user by ID
@@ -46,7 +46,7 @@ public interface UserManagementService {
      * @param user the user
      * @return an empty result
      */
-    Mono<Void> deleteUser(User user);
+    Mono<Void> deleteUser(UserInfo user);
 
     /**
      * Update a user's password

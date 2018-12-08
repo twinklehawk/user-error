@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
+import net.plshark.users.model.UserInfo;
 import net.plshark.users.repo.RolesRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
@@ -44,20 +45,19 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<User> getUserByUsername(String username) {
-        return userRepo.getForUsername(username);
+    public Mono<UserInfo> getUserByUsername(String username) {
+        return userRepo.getForUsername(username).map(UserInfo::fromUser);
     }
 
     @Override
-    public Flux<User> getUsers(int maxResults, long offset) {
-        return userRepo.getAll(maxResults, offset);
+    public Flux<UserInfo> getUsers(int maxResults, long offset) {
+        return userRepo.getAll(maxResults, offset).map(UserInfo::fromUser);
     }
 
     @Override
-    public Mono<User> insertUser(User user) {
+    public Mono<UserInfo> insertUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepo.insert(user);
+        return userRepo.insert(user).map(UserInfo::fromUser);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Void> deleteUser(User user) {
+    public Mono<Void> deleteUser(UserInfo user) {
         return deleteUser(user.getId());
     }
 

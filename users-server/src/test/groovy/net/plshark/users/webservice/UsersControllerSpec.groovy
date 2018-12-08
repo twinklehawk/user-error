@@ -1,7 +1,6 @@
 package net.plshark.users.webservice
 
 import net.plshark.users.model.PasswordChangeRequest
-import net.plshark.users.model.User
 import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Flux
@@ -14,15 +13,6 @@ class UsersControllerSpec extends Specification {
 
     UserManagementService service = Mock()
     UsersController controller = new UsersController(service)
-
-    def "password is not returned when creating a user"() {
-        service.insertUser(_) >> Mono.just(new User(1, "user", "pass-encoded"))
-
-        expect:
-        StepVerifier.create(controller.insert(new User("name", "pass")))
-            .expectNextMatches({ UserInfo user -> user.id == 1 && user.username == 'user' })
-            .verifyComplete()
-    }
 
     def "delete passes the user ID through to be deleted"() {
         PublisherProbe probe = PublisherProbe.empty()
@@ -73,23 +63,23 @@ class UsersControllerSpec extends Specification {
     }
 
     def 'getUsers passes the max results and offset through'() {
-        def user1 = new User(1L, 'user', 'pass')
-        def user2 = new User(2L, 'user2', 'pass2')
+        def user1 = new UserInfo(1L, 'user')
+        def user2 = new UserInfo(2L, 'user2')
         service.getUsers(3, 2) >> Flux.just(user1, user2)
 
         expect:
         StepVerifier.create(controller.getUsers(3, 2))
-                .expectNext(new UserInfo(1, 'user'), new UserInfo(2, 'user2'))
+                .expectNext(user1, user2)
                 .verifyComplete()
     }
 
     def 'getUser passes the username through'() {
-        def user1 = new User(1L, 'user', 'pass')
+        def user1 = new UserInfo(1L, 'user')
         service.getUserByUsername('user') >> Mono.just(user1)
 
         expect:
         StepVerifier.create(controller.getUser('user'))
-                .expectNext(new UserInfo(1, 'user'))
+                .expectNext(user1)
                 .verifyComplete()
     }
 }

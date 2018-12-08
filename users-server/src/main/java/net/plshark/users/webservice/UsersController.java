@@ -45,8 +45,7 @@ public class UsersController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<UserInfo> getUsers(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
                                    @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
-        return userMgmtService.getUsers(maxResults, offset)
-                .map(UserInfo::fromUser);
+        return userMgmtService.getUsers(maxResults, offset);
     }
 
     /**
@@ -57,7 +56,6 @@ public class UsersController {
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserInfo> getUser(@PathVariable("username") String username) {
         return userMgmtService.getUserByUsername(username)
-                .map(UserInfo::fromUser)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
     }
 
@@ -68,8 +66,7 @@ public class UsersController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserInfo> insert(@RequestBody User user) {
-        return userMgmtService.insertUser(user)
-            .map(UserInfo::fromUser);
+        return userMgmtService.insertUser(user);
     }
 
     /**
