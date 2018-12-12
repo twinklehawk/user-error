@@ -10,8 +10,6 @@ apply from: '../build-scripts/deps.gradle'
 dependencies {
     compile 'org.slf4j:slf4j-api'
     compile 'com.fasterxml.jackson.core:jackson-annotations'
-    // TODO maybe remove
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'io.projectreactor:reactor-core'
     testCompile "org.codehaus.groovy:groovy-all"
