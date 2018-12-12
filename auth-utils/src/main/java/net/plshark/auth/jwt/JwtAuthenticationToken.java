@@ -99,7 +99,7 @@ public class JwtAuthenticationToken implements Authentication {
         private String username;
         private String token;
         private boolean authenticated;
-        private Collection<GrantedAuthority> authorities = new ArrayList<>();
+        private final Collection<GrantedAuthority> authorities = new ArrayList<>();
 
         private Builder() {
 

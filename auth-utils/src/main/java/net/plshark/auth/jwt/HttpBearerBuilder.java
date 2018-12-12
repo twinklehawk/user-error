@@ -17,8 +17,8 @@ import org.springframework.web.server.WebFilter;
  */
 public class HttpBearerBuilder {
 
-    private JwtReactiveAuthenticationManager authenticationManager;
-    private ServerAuthenticationEntryPoint entryPoint = new HttpBearerServerAuthenticationEntryPoint();
+    private final JwtReactiveAuthenticationManager authenticationManager;
+    private final ServerAuthenticationEntryPoint entryPoint = new HttpBearerServerAuthenticationEntryPoint();
 
     /**
      * Create a new instance
