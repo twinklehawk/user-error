@@ -1,8 +1,8 @@
 package net.plshark.users.repo.jdbc
 
-import com.opentable.db.postgres.embedded.FlywayPreparer
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
+import net.plshark.testutils.PlsharkFlywayPreparer
 import net.plshark.users.model.Role
 import org.junit.Rule
 import org.springframework.jdbc.core.JdbcTemplate
@@ -11,7 +11,7 @@ import spock.lang.Specification
 class SyncJdbcRolesRepositorySpec extends Specification {
 
     @Rule
-    PreparedDbRule dbRule = EmbeddedPostgresRules.preparedDatabase(FlywayPreparer.forClasspathLocation('db/migration/postgres'))
+    PreparedDbRule dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
 
     SyncJdbcRolesRepository repo
 
