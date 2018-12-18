@@ -1,10 +1,11 @@
+SET search_path TO ${schema};
+
 CREATE TABLE users (
 	id BIGSERIAL PRIMARY KEY,
 	username VARCHAR(128) UNIQUE NOT NULL,
 	password VARCHAR(512) NOT NULL
 );
 CREATE INDEX users_username_idx ON users (username);
-
 
 CREATE TABLE roles (
 	id BIGSERIAL PRIMARY KEY,

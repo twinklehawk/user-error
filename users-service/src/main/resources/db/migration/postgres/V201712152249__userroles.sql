@@ -1,3 +1,5 @@
+SET search_path TO ${schema};
+
 CREATE TABLE user_roles (
 	user_id BIGINT NOT NULL REFERENCES users,
 	role_id BIGINT NOT NULL REFERENCES roles
