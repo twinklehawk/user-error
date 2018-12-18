@@ -1,5 +1,8 @@
 SET search_path TO ${schema};
 
+CREATE USER ${username} PASSWORD '${password}';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${schema} TO ${username};
+
 CREATE TABLE users (
 	id BIGSERIAL PRIMARY KEY,
 	username VARCHAR(128) UNIQUE NOT NULL,
