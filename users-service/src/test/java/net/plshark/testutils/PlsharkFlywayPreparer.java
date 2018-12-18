@@ -22,6 +22,8 @@ public class PlsharkFlywayPreparer implements DatabasePreparer {
     public static PlsharkFlywayPreparer defaultPreparer() {
         Map<String, String> map = new HashMap<>();
         map.put("schema", "public");
+        map.put("username", "test");
+        map.put("password", "pass");
         return PlsharkFlywayPreparer.forLocations("db/migration/postgres")
                 .placeholders(map).build();
     }
