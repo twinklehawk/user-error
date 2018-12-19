@@ -3,10 +3,7 @@ package net.plshark.users.webservice;
 import com.auth0.jwt.JWTVerifier;
 import net.plshark.auth.jwt.HttpBearerBuilder;
 import net.plshark.auth.jwt.JwtReactiveAuthenticationManager;
-import net.plshark.auth.throttle.LoginAttemptService;
-import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
-import net.plshark.auth.throttle.impl.JwtUsernameExtractor;
-import net.plshark.auth.throttle.impl.LoginAttemptServiceImpl;
+import net.plshark.auth.throttle.IpThrottlingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -52,7 +49,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .logout().disable()
                 .addFilterAt(builder.buildFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
-                .addFilterAt(loginAttemptThrottlingFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
+                .addFilterAt(ipThrottlingFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
         .build();
     }
 
@@ -69,11 +66,7 @@ public class WebSecurityConfig {
         return new JwtReactiveAuthenticationManager(jwtVerifier);
     }
 
-    private LoginAttemptThrottlingFilter loginAttemptThrottlingFilter() {
-        return new LoginAttemptThrottlingFilter(loginAttemptService(), new JwtUsernameExtractor(jwtVerifier));
-    }
-
-    private LoginAttemptService loginAttemptService() {
-        return new LoginAttemptServiceImpl();
+    private IpThrottlingFilter ipThrottlingFilter() {
+        return new IpThrottlingFilter();
     }
 }
