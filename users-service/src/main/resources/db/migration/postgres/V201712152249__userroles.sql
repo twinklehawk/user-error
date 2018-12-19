@@ -1,8 +1,8 @@
 SET search_path TO ${schema};
 
 CREATE TABLE user_roles (
-	user_id BIGINT NOT NULL REFERENCES users,
-	role_id BIGINT NOT NULL REFERENCES roles
+  user_id BIGINT NOT NULL REFERENCES users,
+  role_id BIGINT NOT NULL REFERENCES roles
 );
 CREATE INDEX user_roles_user_id_idx ON user_roles (user_id);
 CREATE INDEX user_roles_role_id_idx ON user_roles (role_id);

@@ -4,15 +4,15 @@ CREATE USER ${username} PASSWORD '${password}';
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${schema} TO ${username};
 
 CREATE TABLE users (
-	id BIGSERIAL PRIMARY KEY,
-	username VARCHAR(128) UNIQUE NOT NULL,
-	password VARCHAR(512) NOT NULL
+  id BIGSERIAL PRIMARY KEY,
+  username VARCHAR(128) UNIQUE NOT NULL,
+  password VARCHAR(512) NOT NULL
 );
 CREATE INDEX users_username_idx ON users (username);
 
 CREATE TABLE roles (
-	id BIGSERIAL PRIMARY KEY,
-	name VARCHAR(64) UNIQUE NOT NULL
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(64) UNIQUE NOT NULL
 );
 CREATE INDEX roles_name_idx ON roles (name);
 
