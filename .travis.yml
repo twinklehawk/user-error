@@ -6,6 +6,12 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: ./gradlew bintrayUpload
+  on:
+    branch: deploy
 env:
   global:
   - secure: In5DrRyLCmbGM30K43T4v6ZJ/OUATknxy6B3aGxV3jUJZ34emTYlAQlQti2slIQGzisOTsTXSAlclavJm/UrmuiTpJJfeePiCFBaoFtVWu0NVGbzvT74yd+1YzpQGojwrxDx6e8zFIvJclV36dXv3C+qOo1rP+qVEFyv1cmFmg9/RtQ5SrFeZ8A7CI5Ma7MvjyXF/VAekoogiV3MJreJzupWMjXUroMqT2AJzfmN5QsGhsI0NIsrj8Vh2gCYKjyY3cvaVHae1MW5xrj9EeGOtLlHuMDpTWEpMjDggMZwxven/V83tM0cheAR4y252TMWUDLXgC9qbthNDleIa7B/VipsVx7mplyTuRp5RJNpjyuq5eu/d0/maMkOiEGh0nfVWHwiDZADNfQDzdgt4pqUH/yuiLovVJ9BPpNsvWktSKjVfTh3+8OJmhuDLIMAnh1+HvThBGf33YV6KODzoaGvCMet4AjPgU0xTncfpICpj7fK72+BU5BRrr4PMrig0E96FM1onvWNeY/0jgQTABGWfsQBX9VPN5y4X4EtiM7jBt1TxOSjJiRvQ6Jy3QvlpVVgFPUDaQbnwtEwGiGH7U5sra0A/qMGcDl1uQ+rvNP0Damr+6oyanBCfPNZTNGmXKQBI1D2sx13zFbgMAlzRVeUfMu316PwV2/k6U2YyQbDOAY=
