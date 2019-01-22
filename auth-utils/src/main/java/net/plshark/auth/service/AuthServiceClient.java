@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.auth0.jwt.JWTVerifier;
 import net.plshark.auth.model.AccountCredentials;
 import net.plshark.auth.model.AuthToken;
+import net.plshark.auth.model.AuthenticatedUser;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -53,7 +54,7 @@ public class AuthServiceClient implements AuthService {
     }
 
     @Override
-    public Mono<Void> validateToken(String accessToken) {
+    public Mono<AuthenticatedUser> validateToken(String accessToken) {
         return Mono.defer(() -> {
             verifier.verify(accessToken);
             return Mono.empty();

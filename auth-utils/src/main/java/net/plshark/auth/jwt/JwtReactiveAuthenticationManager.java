@@ -1,11 +1,6 @@
 package net.plshark.auth.jwt;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import net.plshark.auth.model.AuthenticatedUser;
 import net.plshark.auth.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -18,14 +13,14 @@ import reactor.core.scheduler.Schedulers;
  */
 public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
 
-    private final JWTVerifier verifier;
+    private final AuthService authService;
 
     /**
      * Create a new instance
-     * @param verifier the verifier to use to validate and parse JWTs
+     * @param authService the service to use to authenticate
      */
-    public JwtReactiveAuthenticationManager(JWTVerifier verifier) {
-        this.verifier = verifier;
+    public JwtReactiveAuthenticationManager(AuthService authService) {
+        this.authService = authService;
     }
 
     @Override
@@ -35,11 +30,11 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
                 .map(auth -> (JwtAuthenticationToken) auth)
                 .map(JwtAuthenticationToken::getCredentials)
                 .publishOn(Schedulers.parallel())
-                .map(this::verifyToken)
+                .flatMap(this::verifyToken)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid credentials"))))
-                .map(token -> JwtAuthenticationToken.builder()
-                        .withUsername(token.getSubject())
-                        .withAuthorities(parseAuthorities(token))
+                .map(user -> JwtAuthenticationToken.builder()
+                        .withUsername(user.getUsername())
+                        .withAuthorities(user.getAuthorities())
                         .withAuthenticated(true)
                         .build());
     }
@@ -47,24 +42,9 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
     /**
      * Verify and decode a JWT
      * @param token the JWT
-     * @return the decoded JWT
-     * @throws BadCredentialsException if the token is invalid
+     * @return user info from the JWT or BadCredentialsException if the token is invalid
      */
-    private DecodedJWT verifyToken(String token) {
-        try {
-            return verifier.verify(token);
-        } catch (JWTVerificationException e) {
-            throw new BadCredentialsException("Invalid token", e);
-        }
-    }
-
-    /**
-     * Parse a list of authorities from a decoded JWT
-     * @param jwt the decoded JWT
-     * @return the list of authorities from the token
-     */
-    private List<String> parseAuthorities(DecodedJWT jwt) {
-        return Optional.ofNullable(jwt.getClaim(AuthService.AUTHORITIES_CLAIM).asList(String.class))
-                .orElse(Collections.emptyList());
+    private Mono<AuthenticatedUser> verifyToken(String token) {
+        return authService.validateToken(token);
     }
 }

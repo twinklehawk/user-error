@@ -1,24 +1,21 @@
 package net.plshark.auth.jwt
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
-import com.auth0.jwt.algorithms.Algorithm
+import net.plshark.auth.model.AuthenticatedUser
 import net.plshark.auth.service.AuthService
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import spock.lang.Specification
 
 class JwtReactiveAuthenticationManagerSpec extends Specification {
 
-    Algorithm algorithm = Algorithm.HMAC256('test-secret')
-    JWTVerifier verifier = JWT.require(algorithm).build()
-    JwtReactiveAuthenticationManager manager = new JwtReactiveAuthenticationManager(verifier)
+    AuthService authService = Mock()
+    JwtReactiveAuthenticationManager manager = new JwtReactiveAuthenticationManager(authService)
 
     def 'should parse the username and authorities from the token and set the authorized flag'() {
-        def str = JWT.create().withSubject('test-user').withArrayClaim(AuthService.AUTHORITIES_CLAIM,
-                ['a', 'b'] as String[]).sign(algorithm)
-        def token = JwtAuthenticationToken.builder().withToken(str).build()
+        def token = JwtAuthenticationToken.builder().withToken('test-token').build()
+        authService.validateToken('test-token') >> Mono.just(new AuthenticatedUser('test-user', 'a', 'b'))
 
         expect:
         StepVerifier.create(manager.authenticate(token))
@@ -29,20 +26,11 @@ class JwtReactiveAuthenticationManagerSpec extends Specification {
 
     def 'an invalid token should throw a BadCredentialsException'() {
         def token = JwtAuthenticationToken.builder().withToken('bad-token').build()
+        authService.validateToken('bad-token') >> Mono.error({ new BadCredentialsException('bad') })
 
         expect:
         StepVerifier.create(manager.authenticate(token))
                 .verifyError(BadCredentialsException.class)
-    }
-
-    def 'an empty authorities claim should create a token with an empty authorities list'() {
-        def str = JWT.create().withSubject('test-user').sign(algorithm)
-        def token = JwtAuthenticationToken.builder().withToken(str).build()
-
-        expect:
-        StepVerifier.create(manager.authenticate(token))
-                .expectNext(JwtAuthenticationToken.builder().withUsername('test-user').withAuthenticated(true).build())
-                .verifyComplete()
     }
 
     def 'a non-jwt authorization should throw a BadCredentialsException'() {

@@ -2,7 +2,7 @@ package net.plshark.auth.jwt;
 
 import java.util.Collections;
 import java.util.Objects;
-import com.auth0.jwt.JWTVerifier;
+import net.plshark.auth.service.AuthService;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.server.DelegatingServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
@@ -22,10 +22,10 @@ public class HttpBearerBuilder {
 
     /**
      * Create a new instance
-     * @param jwtVerifier the verifier to use to validate and decode JWTs
+     * @param authService the authentication service
      */
-    public HttpBearerBuilder(JWTVerifier jwtVerifier) {
-        this(new JwtReactiveAuthenticationManager(jwtVerifier));
+    public HttpBearerBuilder(AuthService authService) {
+        this(new JwtReactiveAuthenticationManager(authService));
     }
 
     /**

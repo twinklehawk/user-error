@@ -1,10 +1,14 @@
 package net.plshark.auth.service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Payload;
+import net.plshark.auth.model.AuthenticatedUser;
 import org.springframework.security.authentication.BadCredentialsException;
 import reactor.core.publisher.Mono;
 
@@ -24,9 +28,9 @@ public class DefaultTokenVerifier implements TokenVerifier{
     }
 
     @Override
-    public Mono<String> verifyToken(String token) {
+    public Mono<AuthenticatedUser> verifyToken(String token) {
         return decodeToken(token)
-                .map(Payload::getSubject);
+                .map(jwt -> new AuthenticatedUser(jwt.getSubject(), parseAuthorities(jwt)));
     }
 
     @Override
@@ -50,5 +54,15 @@ public class DefaultTokenVerifier implements TokenVerifier{
                 throw new BadCredentialsException("Invalid credentials", e);
             }
         });
+    }
+
+    /**
+     * Parse a list of authorities from a decoded JWT
+     * @param jwt the decoded JWT
+     * @return the list of authorities from the token
+     */
+    private List<String> parseAuthorities(DecodedJWT jwt) {
+        return Optional.ofNullable(jwt.getClaim(AuthService.AUTHORITIES_CLAIM).asList(String.class))
+                .orElse(Collections.emptyList());
     }
 }

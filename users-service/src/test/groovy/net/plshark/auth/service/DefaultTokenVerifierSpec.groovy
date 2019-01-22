@@ -2,6 +2,7 @@ package net.plshark.auth.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import net.plshark.auth.model.AuthenticatedUser
 import org.springframework.security.authentication.BadCredentialsException
 import reactor.test.StepVerifier
 import spock.lang.Specification
@@ -12,13 +13,24 @@ class DefaultTokenVerifierSpec extends Specification {
     def jwtVerifier = JWT.require(algorithm).build()
     def verifier = new DefaultTokenVerifier(jwtVerifier)
 
-    def 'valid access tokens should return the username'() {
+    def 'valid access tokens should return the username and authorities'() {
+        when:
+        def token = JWT.create().withSubject('test-user')
+                .withArrayClaim(AuthService.AUTHORITIES_CLAIM, ['user'] as String[]).sign(algorithm)
+
+        then:
+        StepVerifier.create(verifier.verifyToken(token))
+                .expectNext(new AuthenticatedUser('test-user', Collections.singleton('user')))
+                .verifyComplete()
+    }
+
+    def 'no authorities claim should build an empty authorities list'() {
         when:
         def token = JWT.create().withSubject('test-user').sign(algorithm)
 
         then:
         StepVerifier.create(verifier.verifyToken(token))
-                .expectNext('test-user')
+                .expectNext(new AuthenticatedUser('test-user', Collections.emptySet()))
                 .verifyComplete()
     }
 

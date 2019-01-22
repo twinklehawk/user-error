@@ -1,5 +1,6 @@
 package net.plshark.auth.service;
 
+import net.plshark.auth.model.AuthenticatedUser;
 import reactor.core.publisher.Mono;
 
 /**
@@ -10,10 +11,10 @@ public interface TokenVerifier {
     /**
      * Verify an access token
      * @param token the token
-     * @return the username of the corresponding user if successful or a BadCredentialsException if the token is invalid
-     * or expired
+     * @return the username and authorities of the corresponding user if successful or a BadCredentialsException if the
+     * token is invalid or expired
      */
-    Mono<String> verifyToken(String token);
+    Mono<AuthenticatedUser> verifyToken(String token);
 
     /**
      * Verify a refresh token

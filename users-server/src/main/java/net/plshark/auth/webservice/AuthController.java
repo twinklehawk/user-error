@@ -3,6 +3,7 @@ package net.plshark.auth.webservice;
 import java.util.Objects;
 import net.plshark.auth.model.AccountCredentials;
 import net.plshark.auth.model.AuthToken;
+import net.plshark.auth.model.AuthenticatedUser;
 import net.plshark.auth.service.AuthService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,5 +30,10 @@ public class AuthController {
     @PostMapping(value = "/refresh", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<AuthToken> refresh(@RequestBody String refreshToken) {
         return authService.refresh(refreshToken);
+    }
+
+    @PostMapping(value = "/validate", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<AuthenticatedUser> validateToken(@RequestBody String accessToken) {
+        return authService.validateToken(accessToken);
     }
 }

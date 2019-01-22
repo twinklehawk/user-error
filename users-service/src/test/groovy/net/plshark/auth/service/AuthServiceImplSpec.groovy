@@ -2,6 +2,7 @@ package net.plshark.auth.service
 
 import net.plshark.auth.model.AccountCredentials
 import net.plshark.auth.model.AuthToken
+import net.plshark.auth.model.AuthenticatedUser
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.User
@@ -77,10 +78,12 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'validate should complete successfully for a valid token'() {
-        tokenVerifier.verifyToken('access-token') >> Mono.just('test-user')
+        def user = new AuthenticatedUser('test-user', Collections.emptySet())
+        tokenVerifier.verifyToken('access-token') >> Mono.just(user)
 
         expect:
         StepVerifier.create(service.validateToken('access-token'))
+                .expectNext(user)
                 .verifyComplete()
     }
 

@@ -2,6 +2,7 @@ package net.plshark.auth.service;
 
 import net.plshark.auth.model.AccountCredentials;
 import net.plshark.auth.model.AuthToken;
+import net.plshark.auth.model.AuthenticatedUser;
 import reactor.core.publisher.Mono;
 
 /**
@@ -29,7 +30,7 @@ public interface AuthService {
     /**
      * Validate an access token
      * @param accessToken the access token
-     * @return empty if the token is valid or a BadCredentialsException if not
+     * @return the username and authorities if the token is valid or a BadCredentialsException if not
      */
-    Mono<Void> validateToken(String accessToken);
+    Mono<AuthenticatedUser> validateToken(String accessToken);
 }

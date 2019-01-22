@@ -3,6 +3,7 @@ package net.plshark.auth.service;
 import java.util.Objects;
 import net.plshark.auth.model.AccountCredentials;
 import net.plshark.auth.model.AuthToken;
+import net.plshark.auth.model.AuthenticatedUser;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -61,11 +62,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Mono<Void> validateToken(String accessToken) {
+    public Mono<AuthenticatedUser> validateToken(String accessToken) {
         return Mono.just(accessToken)
                 .publishOn(Schedulers.parallel())
-                .flatMap(tokenVerifier::verifyToken)
-                .then();
+                .flatMap(tokenVerifier::verifyToken);
     }
 
     // TODO make expiration configurable
