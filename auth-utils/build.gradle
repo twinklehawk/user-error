@@ -9,6 +9,7 @@ plugins {
 
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/bintray.gradle'
+apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
     compile project(':users-api')
