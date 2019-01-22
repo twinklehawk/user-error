@@ -13,7 +13,7 @@ bintray {
         vcsUrl = 'https://github.com/twinklehawk/bad-users.git'
         githubRepo = 'twinklehawk/bad-users'
         version {
-            name = '0.0.1'
+            name = '0.0.2'
         }
     }
 }
