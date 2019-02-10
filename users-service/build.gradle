@@ -8,6 +8,9 @@ plugins {
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/spotbugs.gradle'
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 dependencies {
     compile 'org.springframework:spring-jdbc'
     compile 'org.springframework.security:spring-security-core'

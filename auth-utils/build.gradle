@@ -11,6 +11,9 @@ apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/bintray.gradle'
 apply from: '../build-scripts/spotbugs.gradle'
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 dependencies {
     compile project(':users-api')
     compile 'org.springframework:spring-webflux'
