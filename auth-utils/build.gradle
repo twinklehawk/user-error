@@ -3,6 +3,7 @@ plugins {
     id 'groovy'
 }
 
+apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/bintray.gradle'
 apply from: '../build-scripts/spotbugs.gradle'
