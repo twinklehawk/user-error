@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:11
 
 ENV BAD_USERS_VERSION 0.0.2
 
