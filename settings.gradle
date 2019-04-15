@@ -4,6 +4,3 @@ include 'users-api'
 include 'users-server'
 include 'users-service'
 include 'auth-utils'
-
-// remove in gradle 5
-enableFeaturePreview('STABLE_PUBLISHING')
