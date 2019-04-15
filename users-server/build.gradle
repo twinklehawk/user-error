@@ -1,14 +1,11 @@
 plugins {
-	id 'java'
+    id 'java'
     id 'groovy'
     id 'org.springframework.boot' version '2.1.4.RELEASE'
 }
 
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/spotbugs.gradle'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
 
 dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
