@@ -1,3 +1,5 @@
+apply plugin: 'com.github.spotbugs'
+
 spotbugsTest {
     excludeFilter = file("$rootProject.projectDir/spotbugs-exclude.xml")
 }
