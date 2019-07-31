@@ -1,5 +1,7 @@
 package net.plshark.users.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import reactor.util.annotation.Nullable;
 
@@ -13,7 +15,9 @@ public abstract class Role {
         return create(null, name, application);
     }
 
-    public static Role create(@Nullable Long id, String name, String application) {
+    @JsonCreator
+    public static Role create(@Nullable @JsonProperty("id") Long id, @JsonProperty("name") String name,
+                              @JsonProperty("application") String application) {
         return new AutoValue_Role(id, name, application);
     }
 
