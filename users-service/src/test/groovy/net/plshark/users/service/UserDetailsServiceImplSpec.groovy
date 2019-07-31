@@ -32,7 +32,7 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "a user and its roles are mapped to the correct UserDetails"() {
-        usersRepo.getForUsername("user") >> Mono.just(new User(25, "user", "pass"))
+        usersRepo.getForUsername("user") >> Mono.just(User.create(25, "user", "pass"))
         userRolesRepo.getRolesForUser(25) >> Flux.just(
                 Role.create(3, "normal-user", "app"),
                 Role.create(5, "admin", "app"))
@@ -58,7 +58,7 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "empty roles returns no granted authorities"() {
-        usersRepo.getForUsername("user") >> Mono.just(new User(25, "user", "pass"))
+        usersRepo.getForUsername("user") >> Mono.just(User.create(25, "user", "pass"))
         userRolesRepo.getRolesForUser(25) >> Flux.empty()
 
         expect:

@@ -30,8 +30,8 @@ class SyncJdbcUserRolesRepositorySpec extends Specification {
 
         testRole1 = rolesRepo.insert(Role.create("testRole1", "app"))
         testRole2 = rolesRepo.insert(Role.create("testRole2", "app"))
-        user1 = usersRepo.insert(new User('test-user', 'test-pass'))
-        user2 = usersRepo.insert(new User('test-user2', 'test-pass'))
+        user1 = usersRepo.insert(User.create('test-user', 'test-pass'))
+        user2 = usersRepo.insert(User.create('test-user2', 'test-pass'))
     }
 
     def "can add a role to a user"() {

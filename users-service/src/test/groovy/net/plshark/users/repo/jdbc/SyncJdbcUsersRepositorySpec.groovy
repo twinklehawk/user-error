@@ -22,7 +22,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
 
     def "inserting a user returns the inserted user with the ID set"() {
         when:
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         then:
         inserted.id != null
@@ -34,7 +34,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def "can retrieve a previously inserted user by ID"() {
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         when:
         User user = repo.getForId(inserted.id).get()
@@ -47,7 +47,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def "can retrieve  previously inserted user by username"() {
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         when:
         User user = repo.getForUsername("name").get()
@@ -60,7 +60,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def "can delete a previously inserted user by ID"() {
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         when:
         repo.delete(inserted.id)
@@ -79,7 +79,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def "update password should change the password if the current password is correct"() {
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         when:
         repo.updatePassword(inserted.id, "pass", "new-pass")
@@ -93,7 +93,7 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def "update password should throw an EmptyResultDataAccessException if the current password is wrong"() {
-        User inserted = repo.insert(new User("name", "pass"))
+        User inserted = repo.insert(User.create("name", "pass"))
 
         when:
         repo.updatePassword(inserted.id, "wrong-pass", "new-pass")
@@ -120,8 +120,8 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should return all results when there are less than max results'() {
-        repo.insert(new User("name", "pass"))
-        repo.insert(new User("name2", "pass"))
+        repo.insert(User.create("name", "pass"))
+        repo.insert(User.create("name2", "pass"))
 
         when:
         List<User> users = repo.getAll(5, 0)
@@ -135,9 +135,9 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should return up to max results when there are more results'() {
-        repo.insert(new User("name", "pass"))
-        repo.insert(new User("name2", "pass"))
-        repo.insert(new User("name3", "pass"))
+        repo.insert(User.create("name", "pass"))
+        repo.insert(User.create("name2", "pass"))
+        repo.insert(User.create("name3", "pass"))
 
         when:
         List<User> users = repo.getAll(2, 0)
@@ -149,9 +149,9 @@ class SyncJdbcUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should start at the correct offset'() {
-        repo.insert(new User("name", "pass"))
-        repo.insert(new User("name2", "pass"))
-        repo.insert(new User("name3", "pass"))
+        repo.insert(User.create("name", "pass"))
+        repo.insert(User.create("name2", "pass"))
+        repo.insert(User.create("name3", "pass"))
 
         when:
         List<User> users = repo.getAll(2, 2)

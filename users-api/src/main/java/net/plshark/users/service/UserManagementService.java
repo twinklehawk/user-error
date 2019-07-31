@@ -100,7 +100,7 @@ public interface UserManagementService {
      * @param role the role to grant
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
-    Mono<Void> grantRoleToUser(User user, Role role);
+    Mono<Void> grantRoleToUser(UserInfo user, Role role);
 
     /**
      * Remove a role from a user

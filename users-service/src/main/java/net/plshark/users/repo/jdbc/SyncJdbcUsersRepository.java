@@ -71,7 +71,7 @@ public class SyncJdbcUsersRepository {
         Long id = Optional.ofNullable(holder.getKey())
                 .map(Number::longValue)
                 .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
-        return new User(id, user.getUsername(), user.getPassword());
+        return User.create(id, user.getUsername(), user.getPassword());
     }
 
     /**

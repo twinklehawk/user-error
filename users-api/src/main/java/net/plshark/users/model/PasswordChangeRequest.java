@@ -1,17 +1,14 @@
 package net.plshark.users.model;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.auto.value.AutoValue;
 
 /**
  * Request for changing a user's password
  */
-public class PasswordChangeRequest {
-
-    private final String currentPassword;
-    private final String newPassword;
+@AutoValue
+public abstract class PasswordChangeRequest {
 
     /**
      * Create a new instance
@@ -19,42 +16,18 @@ public class PasswordChangeRequest {
      * @param newPassword the requested new password
      */
     @JsonCreator
-    public PasswordChangeRequest(@JsonProperty("currentPassword") String currentPassword,
-                                 @JsonProperty("newPassword") String newPassword) {
-        this.currentPassword = Objects.requireNonNull(currentPassword);
-        this.newPassword = Objects.requireNonNull(newPassword);
+    public static PasswordChangeRequest create(@JsonProperty("currentPassword") String currentPassword,
+                                               @JsonProperty("newPassword") String newPassword) {
+        return new AutoValue_PasswordChangeRequest(currentPassword, newPassword);
     }
 
     /**
      * @return the current password
      */
-    public String getCurrentPassword() {
-        return currentPassword;
-    }
+    public abstract String getCurrentPassword();
 
     /**
      * @return the requested new password
      */
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    @Override
-    public String toString() {
-        return "PasswordChangeRequest{}";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PasswordChangeRequest that = (PasswordChangeRequest) o;
-        return Objects.equals(currentPassword, that.currentPassword) &&
-                Objects.equals(newPassword, that.newPassword);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(currentPassword, newPassword);
-    }
+    public abstract String getNewPassword();
 }

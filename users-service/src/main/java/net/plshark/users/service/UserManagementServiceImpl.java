@@ -56,8 +56,8 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public Mono<UserInfo> insertUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.insert(user).map(UserInfo::fromUser);
+        return userRepo.insert(User.create(user.getUsername(), passwordEncoder.encode(user.getPassword())))
+                .map(UserInfo::fromUser);
     }
 
     @Override
@@ -88,8 +88,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Void> grantRoleToUser(User user, Role role) {
-        Objects.requireNonNull(user.getId(), "User ID must be set");
+    public Mono<Void> grantRoleToUser(UserInfo user, Role role) {
         Objects.requireNonNull(role.getId(), "Role ID must be set");
         return grantRoleToUser(user.getId(), role.getId());
     }

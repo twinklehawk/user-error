@@ -31,7 +31,7 @@ class UsersControllerSpec extends Specification {
         service.updateUserPassword(100, "current", "new") >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.changePassword(100, new PasswordChangeRequest("current", "new")))
+        StepVerifier.create(controller.changePassword(100, PasswordChangeRequest.create("current", "new")))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -63,8 +63,8 @@ class UsersControllerSpec extends Specification {
     }
 
     def 'getUsers passes the max results and offset through'() {
-        def user1 = new UserInfo(1L, 'user')
-        def user2 = new UserInfo(2L, 'user2')
+        def user1 = UserInfo.create(1L, 'user')
+        def user2 = UserInfo.create(2L, 'user2')
         service.getUsers(3, 2) >> Flux.just(user1, user2)
 
         expect:
@@ -74,7 +74,7 @@ class UsersControllerSpec extends Specification {
     }
 
     def 'getUser passes the username through'() {
-        def user1 = new UserInfo(1L, 'user')
+        def user1 = UserInfo.create(1L, 'user')
         service.getUserByUsername('user') >> Mono.just(user1)
 
         expect:

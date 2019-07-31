@@ -2,6 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
+import net.plshark.users.model.UserInfo
 import net.plshark.users.service.UserManagementService
 
 import java.nio.charset.StandardCharsets
@@ -27,8 +28,8 @@ class WebSecurityConfigIntSpec extends Specification {
     UserManagementService userMgmt
     @Inject
     ObjectMapper mapper
-    User normalUser
-    User adminUser
+    UserInfo normalUser
+    UserInfo adminUser
     WebTestClient client
 
     def setup() {
@@ -38,10 +39,10 @@ class WebSecurityConfigIntSpec extends Specification {
         Role userRole = userMgmt.getRoleByName("user").toFuture().get()
         Role adminRole = userMgmt.getRoleByName("admin").toFuture().get()
 
-        normalUser = userMgmt.insertUser(new User("test-user", "pass")).toFuture().get()
+        normalUser = userMgmt.insertUser(User.create("test-user", "pass")).block()
         userMgmt.grantRoleToUser(normalUser, userRole).toFuture().get()
 
-        adminUser = userMgmt.insertUser(new User("admin-user", "pass")).toFuture().get()
+        adminUser = userMgmt.insertUser(User.create("admin-user", "pass")).block()
         userMgmt.grantRoleToUser(adminUser, adminRole).toFuture().get()
     }
 
