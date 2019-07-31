@@ -89,6 +89,8 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public Mono<Void> grantRoleToUser(User user, Role role) {
+        Objects.requireNonNull(user.getId(), "User ID must be set");
+        Objects.requireNonNull(role.getId(), "Role ID must be set");
         return grantRoleToUser(user.getId(), role.getId());
     }
 

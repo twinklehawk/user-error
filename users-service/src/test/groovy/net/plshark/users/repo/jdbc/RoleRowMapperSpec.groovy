@@ -14,6 +14,7 @@ class RoleRowMapperSpec extends Specification {
         ResultSet rs = Mock()
         rs.getLong("id") >> 5L
         rs.getString("name") >> "admin"
+        rs.getString("application") >> "app"
 
         when:
         Role role = mapper.mapRow(rs, 1)
@@ -21,5 +22,6 @@ class RoleRowMapperSpec extends Specification {
         then:
         role.id == 5
         role.name == "admin"
+        role.application == "app"
     }
 }

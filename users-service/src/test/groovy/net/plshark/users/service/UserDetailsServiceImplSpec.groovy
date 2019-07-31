@@ -33,7 +33,9 @@ class UserDetailsServiceImplSpec extends Specification {
 
     def "a user and its roles are mapped to the correct UserDetails"() {
         usersRepo.getForUsername("user") >> Mono.just(new User(25, "user", "pass"))
-        userRolesRepo.getRolesForUser(25) >> Flux.just(new Role(3, "normal-user"), new Role(5, "admin"))
+        userRolesRepo.getRolesForUser(25) >> Flux.just(
+                Role.create(3, "normal-user", "app"),
+                Role.create(5, "admin", "app"))
 
         expect:
         StepVerifier.create(service.findByUsername("user"))

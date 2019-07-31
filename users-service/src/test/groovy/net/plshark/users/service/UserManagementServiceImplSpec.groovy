@@ -36,10 +36,10 @@ class UserManagementServiceImplSpec extends Specification {
 
     def "saving a role passes role through"() {
         when:
-        service.insertRole(new Role("name"))
+        service.insertRole(Role.create("name", "application"))
 
         then:
-        1 * roleRepo.insert(new Role("name"))
+        1 * roleRepo.insert(Role.create("name", "application"))
     }
 
     def "cannot update a user to have null password"() {
@@ -110,7 +110,7 @@ class UserManagementServiceImplSpec extends Specification {
 
     def "granting a role to a user should add the role to the user's role"() {
         userRepo.getForId(12) >> Mono.just(new User("name", "pass"))
-        roleRepo.getForId(34) >> Mono.just(new Role("role"))
+        roleRepo.getForId(34) >> Mono.just(Role.create("role", "application"))
         PublisherProbe probe = PublisherProbe.empty()
         userRolesRepo.insertUserRole(12, 34) >> probe.mono()
 
@@ -136,11 +136,11 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def "retrieving a role by name passes the name through"() {
-        roleRepo.getForName("name") >> Mono.just(new Role(1, "name"))
+        roleRepo.getForName("name") >> Mono.just(Role.create(1, "name", "application"))
 
         expect:
         StepVerifier.create(service.getRoleByName("name"))
-            .expectNext(new Role(1, "name"))
+            .expectNext(Role.create(1, "name", "application"))
             .verifyComplete()
     }
 
@@ -164,8 +164,8 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def 'getRoles should return all results'() {
-        def role1 = new Role(1L, 'role1')
-        def role2 = new Role(2L, 'role2')
+        def role1 = Role.create(1L, 'role1', 'test-app')
+        def role2 = Role.create(2L, 'role2', 'test-app')
         roleRepo.getRoles(5, 0) >> Flux.just(role1, role2)
 
         expect:

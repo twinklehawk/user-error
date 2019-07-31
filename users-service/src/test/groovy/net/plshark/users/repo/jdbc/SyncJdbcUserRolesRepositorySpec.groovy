@@ -28,8 +28,8 @@ class SyncJdbcUserRolesRepositorySpec extends Specification {
         rolesRepo = new SyncJdbcRolesRepository(template)
         usersRepo = new SyncJdbcUsersRepository(template)
 
-        testRole1 = rolesRepo.insert(new Role("testRole1"))
-        testRole2 = rolesRepo.insert(new Role("testRole2"))
+        testRole1 = rolesRepo.insert(Role.create("testRole1", "app"))
+        testRole2 = rolesRepo.insert(Role.create("testRole2", "app"))
         user1 = usersRepo.insert(new User('test-user', 'test-pass'))
         user2 = usersRepo.insert(new User('test-user2', 'test-pass'))
     }

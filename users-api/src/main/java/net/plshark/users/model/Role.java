@@ -1,70 +1,35 @@
 package net.plshark.users.model;
 
-import java.util.Objects;
+import com.google.auto.value.AutoValue;
+import reactor.util.annotation.Nullable;
 
 /**
  * Data for a role
  */
-public class Role {
+@AutoValue
+public abstract class Role {
 
-    private final Long id;
-    private String name;
-
-    /**
-     * Create a new instance
-     * @param name the role name
-     */
-    public Role(String name) {
-        this(null, name);
+    public static Role create(String name, String application) {
+        return create(null, name, application);
     }
 
-    /**
-     * Create a new instance
-     * @param id the role ID, can be null
-     * @param name the role name
-     */
-    public Role(Long id, String name) {
-        this.id = id;
-        this.name = Objects.requireNonNull(name, "name cannot be null");
+    public static Role create(@Nullable Long id, String name, String application) {
+        return new AutoValue_Role(id, name, application);
     }
 
     /**
      * @return the ID, can be null if not saved yet
      */
-    public Long getId() {
-        return id;
-    }
+    @Nullable
+    public abstract Long getId();
 
     /**
      * @return the role name
      */
-    public String getName() {
-        return name;
-    }
+    public abstract String getName();
 
     /**
-     * @param name the role name
+     * @return the application this role belongs to
      */
-    public void setName(String name) {
-        this.name = Objects.requireNonNull(name, "name cannot be null");
-    }
-
-    @Override
-    public String toString() {
-        return "Role [id=" + id + ", name=" + name + "]";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(id, role.id) &&
-                Objects.equals(name, role.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
+    public abstract String getApplication();
 }

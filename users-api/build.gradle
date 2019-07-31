@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'groovy'
 }
 
@@ -8,10 +8,14 @@ apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/bintray.gradle'
 
 dependencies {
-    compile 'org.slf4j:slf4j-api'
-    compile 'com.fasterxml.jackson.core:jackson-databind'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    compile 'io.projectreactor:reactor-core'
+    // TODO make implementation
+    api 'org.slf4j:slf4j-api'
+    api 'io.projectreactor:reactor-core'
+    api 'com.google.auto.value:auto-value-annotations:1.6.2'
+    api 'com.fasterxml.jackson.core:jackson-annotations'
+    annotationProcessor 'com.google.auto.value:auto-value:1.6.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     testCompile "org.codehaus.groovy:groovy-all"
     testCompile "org.spockframework:spock-core"
     testCompile "org.hamcrest:hamcrest-core"

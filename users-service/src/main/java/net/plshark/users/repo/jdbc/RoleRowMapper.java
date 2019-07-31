@@ -13,6 +13,6 @@ class RoleRowMapper implements RowMapper<Role> {
 
     @Override
     public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Role(rs.getLong("id"), rs.getString("name"));
+        return Role.create(rs.getLong("id"), rs.getString("name"), rs.getString("application"));
     }
 }

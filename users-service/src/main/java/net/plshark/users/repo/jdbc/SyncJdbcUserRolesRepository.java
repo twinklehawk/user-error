@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 @Singleton
 public class SyncJdbcUserRolesRepository {
 
-    private static final String SELECT_ROLES_FOR_USER = "SELECT id, name FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
+    private static final String SELECT_ROLES_FOR_USER = "SELECT id, name, application FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
     private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (?, ?)";
     private static final String DELETE_USER_ROLE = "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?";
     private static final String DELETE_USER_ROLES_BY_USER = "DELETE FROM user_roles WHERE user_id = ?";

@@ -21,11 +21,12 @@ class SyncJdbcRolesRepositorySpec extends Specification {
 
     def "inserting a role returns the inserted role with the ID set"() {
         when:
-        Role inserted = repo.insert(new Role("test-role"))
+        Role inserted = repo.insert(Role.create("test-role", "app"))
 
         then:
         inserted.id != null
         inserted.name == "test-role"
+        inserted.application == "app"
 
         cleanup:
         if (inserted != null)
@@ -33,7 +34,7 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def "can retrieve a previously inserted role by ID"() {
-        Role inserted = repo.insert(new Role("test-role"))
+        Role inserted = repo.insert(Role.create("test-role", "app"))
 
         when:
         Role role = repo.getForId(inserted.id).get()
@@ -51,7 +52,7 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def "can retrieve a previously inserted role by name"() {
-        Role inserted = repo.insert(new Role("test-role"))
+        Role inserted = repo.insert(Role.create("test-role", "test-app"))
 
         when:
         Role role = repo.getForName("test-role").get()
@@ -63,7 +64,7 @@ class SyncJdbcRolesRepositorySpec extends Specification {
         repo.delete(inserted.id)
     }
 
-    def "retrieving a role by name when no role matches throws EmptyResultDataAccessException"() {
+    def "retrieving a role by name when no role matches return an empty optional"() {
         when:
         Optional<Role> role = repo.getForName("test-role")
 
@@ -72,7 +73,7 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def "can delete a previously inserted role by ID"() {
-        Role inserted = repo.insert(new Role("test-role"))
+        Role inserted = repo.insert(Role.create("test-role", "application"))
 
         when:
         repo.delete(inserted.id)
@@ -91,8 +92,8 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def 'getRoles should return all results when there are less than max results'() {
-        repo.insert(new Role("name"))
-        repo.insert(new Role("name2"))
+        repo.insert(Role.create("name", "app"))
+        repo.insert(Role.create("name2", "app"))
 
         when:
         List<Role> roles = repo.getRoles(5, 0)
@@ -107,9 +108,9 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def 'getRoles should return up to max results when there are more results'() {
-        repo.insert(new Role("name"))
-        repo.insert(new Role("name2"))
-        repo.insert(new Role("name3"))
+        repo.insert(Role.create("name", "app"))
+        repo.insert(Role.create("name2", "app"))
+        repo.insert(Role.create("name3", "app"))
 
         when:
         List<Role> roles = repo.getRoles(2, 0)
@@ -121,9 +122,9 @@ class SyncJdbcRolesRepositorySpec extends Specification {
     }
 
     def 'getRoles should start at the correct offset'() {
-        repo.insert(new Role("name"))
-        repo.insert(new Role("name2"))
-        repo.insert(new Role("name3"))
+        repo.insert(Role.create("name", "app"))
+        repo.insert(Role.create("name2", "app"))
+        repo.insert(Role.create("name3", "app"))
 
         when:
         List<Role> roles = repo.getRoles(2, 2)

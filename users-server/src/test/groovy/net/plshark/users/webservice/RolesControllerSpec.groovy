@@ -14,11 +14,12 @@ class RolesControllerSpec extends Specification {
     RolesController controller = new RolesController(service)
 
     def "insert passes role through to service"() {
-        service.insertRole({ Role role -> role.id == null && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
+        service.insertRole({ Role role -> role.id == null && role.name == "admin" }) >>
+                Mono.just(Role.create(100, "admin", "app"))
 
         expect:
-        StepVerifier.create(controller.insert(new Role("admin")))
-            .expectNext(new Role(100, "admin"))
+        StepVerifier.create(controller.insert(Role.create("admin", "app")))
+            .expectNext(Role.create(100, "admin", "app"))
             .verifyComplete()
     }
 
@@ -35,8 +36,8 @@ class RolesControllerSpec extends Specification {
     }
 
     def 'getRoles passes the max results and offset through'() {
-        def role1 = new Role('role1')
-        def role2 = new Role('role2')
+        def role1 = Role.create('role1', 'app')
+        def role2 = Role.create('role2', 'app')
         service.getRoles(3, 2) >> Flux.just(role1, role2)
 
         expect:
@@ -46,7 +47,7 @@ class RolesControllerSpec extends Specification {
     }
 
     def 'getByName passes the role name through'() {
-        def role1 = new Role('role')
+        def role1 = Role.create('role', 'app')
         service.getRoleByName('role') >> Mono.just(role1)
 
         expect:
