@@ -5,7 +5,7 @@ plugins {
 
 apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
-apply from: '../build-scripts/spotbugs.gradle'
+//apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
     compile 'org.springframework:spring-jdbc'
