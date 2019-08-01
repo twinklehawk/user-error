@@ -18,7 +18,7 @@ dependencies {
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.hamcrest:hamcrest-core"
-    testRuntime "net.bytebuddy:byte-buddy"
-    testRuntime "org.objenesis:objenesis"
-    testRuntime 'ch.qos.logback:logback-classic'
+    testRuntimeOnly "net.bytebuddy:byte-buddy"
+    testRuntimeOnly "org.objenesis:objenesis"
+    testRuntimeOnly 'ch.qos.logback:logback-classic'
 }

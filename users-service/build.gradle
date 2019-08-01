@@ -21,7 +21,7 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'com.opentable.components:otj-pg-embedded'
     testImplementation 'org.flywaydb:flyway-core'
-    testRuntime "net.bytebuddy:byte-buddy"
-    testRuntime "org.objenesis:objenesis"
-    testRuntime 'ch.qos.logback:logback-classic'
+    testRuntimeOnly "net.bytebuddy:byte-buddy"
+    testRuntimeOnly "org.objenesis:objenesis"
+    testRuntimeOnly 'ch.qos.logback:logback-classic'
 }

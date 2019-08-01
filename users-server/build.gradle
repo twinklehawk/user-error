@@ -10,21 +10,21 @@ apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    compile project(':users-api')
-    compile project(':users-service')
-    compile project(':auth-utils')
-    compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.springframework.boot:spring-boot-starter-jdbc'
-    compile 'org.springframework.boot:spring-boot-starter-security'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.springframework.security:spring-security-test'
-    testCompile 'io.projectreactor:reactor-test'
-    testCompile "org.codehaus.groovy:groovy-all"
-    testCompile "org.spockframework:spock-core"
-    testCompile "org.hamcrest:hamcrest-core"
-    testRuntime "net.bytebuddy:byte-buddy"
-    testRuntime "org.objenesis:objenesis"
-    testCompile "org.spockframework:spock-spring"
-    testCompile 'com.opentable.components:otj-pg-embedded'
-    runtime 'org.flywaydb:flyway-core'
+    implementation project(':users-api')
+    implementation project(':users-service')
+    implementation project(':auth-utils')
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    runtimeOnly 'org.flywaydb:flyway-core'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation "org.codehaus.groovy:groovy-all"
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.hamcrest:hamcrest-core"
+    testImplementation "org.spockframework:spock-spring"
+    testImplementation 'com.opentable.components:otj-pg-embedded'
+    testRuntimeOnly "net.bytebuddy:byte-buddy"
+    testRuntimeOnly "org.objenesis:objenesis"
 }
