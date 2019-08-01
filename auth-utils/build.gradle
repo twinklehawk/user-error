@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'groovy'
 }
 
@@ -9,19 +9,19 @@ apply from: '../build-scripts/bintray.gradle'
 apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
-    compile project(':users-api')
-    compile 'org.springframework:spring-webflux'
-    compile 'com.github.ben-manes.caffeine:caffeine'
-    compile 'com.auth0:java-jwt'
-    compile 'org.springframework.security:spring-security-web'
-    compile 'org.springframework.security:spring-security-config'
-    testCompile 'io.projectreactor:reactor-test'
-    testCompile "org.codehaus.groovy:groovy-all"
-    testCompile "org.spockframework:spock-core"
-    testCompile "org.hamcrest:hamcrest-core"
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    api project(':users-api')
+    api 'org.springframework:spring-webflux'
+    api 'com.auth0:java-jwt'
+    api 'org.springframework.security:spring-security-web'
+    api 'org.springframework.security:spring-security-config'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation "org.codehaus.groovy:groovy-all"
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.hamcrest:hamcrest-core"
+    testImplementation 'org.springframework:spring-context'
+    testImplementation 'org.springframework:spring-test'
     testRuntime "net.bytebuddy:byte-buddy"
     testRuntime "org.objenesis:objenesis"
-    testCompile 'org.springframework:spring-context'
-    testCompile 'org.springframework:spring-test'
     testRuntime 'ch.qos.logback:logback-classic'
 }

@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'groovy'
 }
 
@@ -8,19 +8,19 @@ apply from: '../build-scripts/deps.gradle'
 //apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
-    compile 'org.springframework:spring-jdbc'
-    compile 'org.springframework.security:spring-security-core'
-    compile 'javax.inject:javax.inject'
-    compile project(':users-api')
-    compile 'org.postgresql:postgresql'
-    compile 'com.auth0:java-jwt'
-    compile 'javax.validation:validation-api'
-    testCompile "org.codehaus.groovy:groovy-all"
-    testCompile "org.spockframework:spock-core"
-    testCompile "org.hamcrest:hamcrest-core"
-    testCompile 'io.projectreactor:reactor-test'
-    testCompile 'com.opentable.components:otj-pg-embedded'
-    testCompile 'org.flywaydb:flyway-core'
+    api 'org.springframework:spring-jdbc'
+    api 'org.springframework.security:spring-security-core'
+    api 'javax.inject:javax.inject'
+    api project(':users-api')
+    api 'org.postgresql:postgresql'
+    api 'com.auth0:java-jwt'
+    api 'javax.validation:validation-api'
+    testImplementation "org.codehaus.groovy:groovy-all"
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.hamcrest:hamcrest-core"
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'com.opentable.components:otj-pg-embedded'
+    testImplementation 'org.flywaydb:flyway-core'
     testRuntime "net.bytebuddy:byte-buddy"
     testRuntime "org.objenesis:objenesis"
     testRuntime 'ch.qos.logback:logback-classic'
