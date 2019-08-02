@@ -1,8 +1,17 @@
 apply plugin: 'io.spring.dependency-management'
 
+repositories {
+    maven {
+        url 'https://repo.spring.io/libs-milestone'
+    }
+}
+
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE'
+        mavenBom('org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE') {
+            bomProperty 'spring.version', '5.2.0.M2'
+        }
+        mavenBom 'io.r2dbc:r2dbc-bom:Arabba-M8'
     }
     dependencies {
         dependency 'org.codehaus.groovy:groovy-all:2.5.7'

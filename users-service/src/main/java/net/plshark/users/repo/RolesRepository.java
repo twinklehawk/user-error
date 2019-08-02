@@ -21,6 +21,7 @@ public interface RolesRepository {
      * @param name the role name
      * @return the matching role
      */
+    // TODO fix to allow multiple rows with the same name, name + application should be unique
     Mono<Role> getForName(String name);
 
     /**
