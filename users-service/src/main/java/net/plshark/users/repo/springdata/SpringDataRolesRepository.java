@@ -10,6 +10,9 @@ import org.springframework.data.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Role repository that uses spring data and r2dbc
+ */
 public class SpringDataRolesRepository implements RolesRepository {
 
     private final DatabaseClient client;
