@@ -8,12 +8,14 @@ import net.plshark.users.model.User;
 import net.plshark.users.repo.UsersRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
  * User repository that uses spring data and r2dbc
  */
+@Repository
 public class SpringDataUsersRepository implements UsersRepository {
 
     private final DatabaseClient client;

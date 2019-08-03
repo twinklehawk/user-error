@@ -6,12 +6,14 @@ import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.UserRolesRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
  * User roles repository that uses spring data and r2dbc
  */
+@Repository
 public class SpringDataUserRolesRepository implements UserRolesRepository {
 
     private final DatabaseClient client;
