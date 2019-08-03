@@ -3,24 +3,19 @@ package net.plshark.users.repo.jdbc;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.users.model.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-
-import net.plshark.jdbc.SafePreparedStatementCreator;
+import org.springframework.stereotype.Repository;
 
 /**
  * User repository that uses JDBC
  */
-@Named
-@Singleton
+@Repository
 public class SyncJdbcUsersRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";

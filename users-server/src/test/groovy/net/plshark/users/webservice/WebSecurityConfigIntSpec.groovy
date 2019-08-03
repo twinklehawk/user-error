@@ -7,8 +7,7 @@ import net.plshark.users.service.UserManagementService
 
 import java.nio.charset.StandardCharsets
 
-import javax.inject.Inject
-
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
@@ -22,11 +21,11 @@ import spock.lang.Specification
 @Ignore("Need to make not notes-specific")
 class WebSecurityConfigIntSpec extends Specification {
 
-    @Inject
+    @Autowired
     ApplicationContext context
-    @Inject
+    @Autowired
     UserManagementService userMgmt
-    @Inject
+    @Autowired
     ObjectMapper mapper
     UserInfo normalUser
     UserInfo adminUser

@@ -10,7 +10,6 @@ apply from: '../build-scripts/deps.gradle'
 dependencies {
     api 'org.springframework:spring-jdbc'
     api 'org.springframework.security:spring-security-core'
-    api 'javax.inject:javax.inject'
     api project(':users-api')
     api 'org.postgresql:postgresql'
     api 'com.auth0:java-jwt'

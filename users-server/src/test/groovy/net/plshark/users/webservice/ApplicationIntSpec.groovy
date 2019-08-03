@@ -1,7 +1,6 @@
 package net.plshark.users.webservice
 
-import javax.inject.Inject
-
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
@@ -11,7 +10,7 @@ import spock.lang.Specification
                 'spring.flyway.schemas=users' ])
 class ApplicationIntSpec extends Specification {
 
-    @Inject
+    @Autowired
     Application application
 
     def "context can be built"() {

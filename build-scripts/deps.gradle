@@ -21,7 +21,6 @@ dependencyManagement {
         dependency 'com.opentable.components:otj-pg-embedded:0.13.1'
         dependency 'com.github.ben-manes.caffeine:caffeine:2.7.0'
         dependency 'com.auth0:java-jwt:3.8.1'
-        dependency 'javax.inject:javax.inject:1'
         dependency 'com.google.auto.value:auto-value-annotations:1.6.2'
         dependency 'com.google.auto.value:auto-value:1.6.2'
     }

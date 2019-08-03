@@ -1,9 +1,7 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
 import net.plshark.users.model.UserInfo;
@@ -12,16 +10,14 @@ import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import net.plshark.ObjectNotFoundException;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
  * UserManagementService implementation
  */
-@Named
-@Singleton
+@Component
 public class UserManagementServiceImpl implements UserManagementService {
 
     private final UsersRepository userRepo;

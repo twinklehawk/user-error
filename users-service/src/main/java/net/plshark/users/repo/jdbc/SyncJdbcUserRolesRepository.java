@@ -2,19 +2,15 @@ package net.plshark.users.repo.jdbc;
 
 import java.util.List;
 import java.util.Objects;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import net.plshark.users.model.Role;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.stereotype.Repository;
 
 /**
  * User roles repository that uses JDBC
  */
-@Named
-@Singleton
+@Repository
 public class SyncJdbcUserRolesRepository {
 
     private static final String SELECT_ROLES_FOR_USER = "SELECT id, name, application FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";

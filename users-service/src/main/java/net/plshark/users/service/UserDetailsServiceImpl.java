@@ -3,8 +3,6 @@ package net.plshark.users.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserRolesRepository;
@@ -14,13 +12,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the UserDetailsService
  */
-@Named
-@Singleton
+@Component
 public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
 
     private final UsersRepository userRepo;
