@@ -37,6 +37,11 @@ class SpringDataUserRolesRepositorySpec extends Specification {
         repo = new SpringDataUserRolesRepository(client)
         usersRepo = new SpringDataUsersRepository(client)
         rolesRepo = new SpringDataRolesRepository(client)
+
+        testRole1 = rolesRepo.insert(Role.create("testRole1", "app")).block()
+        testRole2 = rolesRepo.insert(Role.create("testRole2", "app")).block()
+        user1 = usersRepo.insert(User.create('test-user', 'test-pass')).block()
+        user2 = usersRepo.insert(User.create('test-user2', 'test-pass')).block()
     }
 
     def "can add a role to a user"() {
