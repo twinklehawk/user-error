@@ -17,13 +17,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     runtimeOnly 'org.flywaydb:flyway-core'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.hamcrest:hamcrest-core"
-    testImplementation "org.spockframework:spock-spring"
     testImplementation 'com.opentable.components:otj-pg-embedded'
     testRuntimeOnly "net.bytebuddy:byte-buddy"
     testRuntimeOnly "org.objenesis:objenesis"
