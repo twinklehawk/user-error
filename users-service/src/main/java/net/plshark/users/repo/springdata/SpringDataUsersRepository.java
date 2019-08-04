@@ -30,7 +30,7 @@ public class SpringDataUsersRepository implements UsersRepository {
         return client.execute()
                 .sql("SELECT * FROM users WHERE username = :username")
                 .bind("username", username)
-                .map(this::mapRow)
+                .map(SpringDataUsersRepository::mapRow)
                 .one();
     }
 
@@ -64,7 +64,7 @@ public class SpringDataUsersRepository implements UsersRepository {
         return client.execute()
                 .sql("SELECT * FROM users WHERE id = :id")
                 .bind("id", id)
-                .map(this::mapRow)
+                .map(SpringDataUsersRepository::mapRow)
                 .one();
     }
 
@@ -90,11 +90,11 @@ public class SpringDataUsersRepository implements UsersRepository {
         String sql = "SELECT * FROM users ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
         return client.execute()
                 .sql(sql)
-                .map(this::mapRow)
+                .map(SpringDataUsersRepository::mapRow)
                 .all();
     }
 
-    private User mapRow(Row row, RowMetadata rowMetadata) {
+    static User mapRow(Row row, RowMetadata rowMetadata) {
         return User.create(row.get("id", Long.class), row.get("username", String.class), row.get("password", String.class));
     }
 }

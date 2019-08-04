@@ -28,7 +28,7 @@ public class SpringDataRolesRepository implements RolesRepository {
         return client.execute()
                 .sql("SELECT * FROM roles WHERE id = :id")
                 .bind("id", id)
-                .map(this::mapRow)
+                .map(SpringDataRolesRepository::mapRow)
                 .one();
     }
 
@@ -37,7 +37,7 @@ public class SpringDataRolesRepository implements RolesRepository {
         return client.execute()
                 .sql("SELECT * FROM roles WHERE name = :name")
                 .bind("name", name)
-                .map(this::mapRow)
+                .map(SpringDataRolesRepository::mapRow)
                 .one();
     }
 
@@ -51,7 +51,7 @@ public class SpringDataRolesRepository implements RolesRepository {
         String sql = "SELECT * FROM roles ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
         return client.execute()
                 .sql(sql)
-                .map(this::mapRow)
+                .map(SpringDataRolesRepository::mapRow)
                 .all();
     }
 
@@ -80,7 +80,7 @@ public class SpringDataRolesRepository implements RolesRepository {
                 .then();
     }
 
-    private Role mapRow(Row row, RowMetadata rowMetadata) {
+    static Role mapRow(Row row, RowMetadata rowMetadata) {
         return Role.create(row.get("id", Long.class), row.get("name", String.class),
                 row.get("application", String.class));
     }

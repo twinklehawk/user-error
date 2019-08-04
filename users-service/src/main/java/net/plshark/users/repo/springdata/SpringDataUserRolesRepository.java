@@ -1,8 +1,6 @@
 package net.plshark.users.repo.springdata;
 
 import java.util.Objects;
-import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.UserRolesRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
@@ -27,7 +25,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
         return client.execute()
                 .sql("SELECT id, name, application FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = :id")
                 .bind("id", userId)
-                .map(this::mapRow)
+                .map(SpringDataRolesRepository::mapRow)
                 .all();
     }
 
@@ -63,11 +61,5 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
                 .sql("DELETE FROM user_roles WHERE role_id = :roleId")
                 .bind("roleId", roleId)
                 .then();
-    }
-
-    // TODO put this in a common location
-    private Role mapRow(Row row, RowMetadata rowMetadata) {
-        return Role.create(row.get("id", Long.class), row.get("name", String.class),
-                row.get("application", String.class));
     }
 }
