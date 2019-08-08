@@ -48,10 +48,10 @@ class RolesControllerSpec extends Specification {
 
     def 'getByName passes the role name through'() {
         def role1 = Role.create('role', 'app')
-        service.getRoleByName('role') >> Mono.just(role1)
+        service.getRoleByName('role', 'app') >> Mono.just(role1)
 
         expect:
-        StepVerifier.create(controller.getByName('role'))
+        StepVerifier.create(controller.getByName('role', 'app'))
                 .expectNext(role1)
                 .verifyComplete()
     }

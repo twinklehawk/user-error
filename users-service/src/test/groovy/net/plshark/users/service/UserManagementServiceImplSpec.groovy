@@ -136,19 +136,19 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def "retrieving a role by name passes the name through"() {
-        roleRepo.getForName("name") >> Mono.just(Role.create(1, "name", "application"))
+        roleRepo.getForName("name", 'application') >> Mono.just(Role.create(1, "name", "application"))
 
         expect:
-        StepVerifier.create(service.getRoleByName("name"))
+        StepVerifier.create(service.getRoleByName("name", 'application'))
             .expectNext(Role.create(1, "name", "application"))
             .verifyComplete()
     }
 
-    def "an empty optional is returned when no role matches the name"() {
-        roleRepo.getForName("name") >> Mono.empty()
+    def "an empty mono is returned when no role matches the name"() {
+        roleRepo.getForName("name", 'app') >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.getRoleByName("name"))
+        StepVerifier.create(service.getRoleByName("name", 'app'))
             .verifyComplete()
     }
 

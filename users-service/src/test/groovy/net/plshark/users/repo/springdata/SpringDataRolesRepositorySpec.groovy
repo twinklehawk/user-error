@@ -62,7 +62,7 @@ class SpringDataRolesRepositorySpec extends Specification {
         Role inserted = repo.insert(Role.create("test-role", "test-app")).block()
 
         when:
-        Role role = repo.getForName("test-role").block()
+        Role role = repo.getForName("test-role", "test-app").block()
 
         then:
         role == inserted
@@ -70,7 +70,7 @@ class SpringDataRolesRepositorySpec extends Specification {
 
     def "retrieving a role by name when no role matches return an empty optional"() {
         expect:
-        StepVerifier.create(repo.getForName("test-role"))
+        StepVerifier.create(repo.getForName("test-role", "test-app"))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()

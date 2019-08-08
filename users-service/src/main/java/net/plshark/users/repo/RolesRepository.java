@@ -19,10 +19,10 @@ public interface RolesRepository {
     /**
      * Get a role by name
      * @param name the role name
+     * @param application the application the role belongs to
      * @return the matching role
      */
-    // TODO fix to allow multiple rows with the same name, name + application should be unique
-    Mono<Role> getForName(String name);
+    Mono<Role> getForName(String name, String application);
 
     /**
      * Get all roles up to the maximum result count and starting at an offset

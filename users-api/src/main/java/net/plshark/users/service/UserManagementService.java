@@ -60,9 +60,10 @@ public interface UserManagementService {
     /**
      * Retrieve a role by name
      * @param name the role name
+     * @param application the application the role belongs to
      * @return the matching role
      */
-    Mono<Role> getRoleByName(String name);
+    Mono<Role> getRoleByName(String name, String application);
 
     /**
      * Get all roles up to the maximum result count and starting at an offset

@@ -33,10 +33,11 @@ public class SpringDataRolesRepository implements RolesRepository {
     }
 
     @Override
-    public Mono<Role> getForName(String name) {
+    public Mono<Role> getForName(String name, String application) {
         return client.execute()
-                .sql("SELECT * FROM roles WHERE name = :name")
+                .sql("SELECT * FROM roles WHERE name = :name AND application = :application")
                 .bind("name", name)
+                .bind("application", application)
                 .map(SpringDataRolesRepository::mapRow)
                 .one();
     }

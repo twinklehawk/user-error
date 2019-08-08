@@ -107,8 +107,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Role> getRoleByName(String name) {
-        return roleRepo.getForName(name);
+    public Mono<Role> getRoleByName(String name, String application) {
+        return roleRepo.getForName(name, application);
     }
 
     @Override
