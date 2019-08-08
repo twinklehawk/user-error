@@ -72,8 +72,8 @@ public class RolesController {
      * @param name the name of the role
      * @return the matching role if found
      */
-    @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Role> getByName(String name) {
-        return userMgmtService.getRoleByName(name);
+    @GetMapping(path = "/{application}/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<Role> getByName(@PathVariable("name") String name, @PathVariable("application") String application) {
+        return userMgmtService.getRoleByName(name, application);
     }
 }
