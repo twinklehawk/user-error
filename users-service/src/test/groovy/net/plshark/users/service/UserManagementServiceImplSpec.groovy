@@ -1,15 +1,13 @@
 package net.plshark.users.service
 
+import net.plshark.ObjectNotFoundException
+import net.plshark.users.model.User
 import net.plshark.users.model.UserInfo
-import net.plshark.users.repo.RolesRepository
+import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
+import net.plshark.users.repo.UsersRepository
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
-
-import net.plshark.ObjectNotFoundException
-import net.plshark.users.model.Role
-import net.plshark.users.model.User
-import net.plshark.users.repo.UsersRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -19,10 +17,10 @@ import spock.lang.Specification
 class UserManagementServiceImplSpec extends Specification {
 
     UsersRepository userRepo = Mock()
-    RolesRepository roleRepo = Mock()
     UserRolesRepository userRolesRepo = Mock()
+    UserGroupsRepository userGroupsRepo = Mock()
     PasswordEncoder encoder = Mock()
-    UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, encoder)
+    UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, userRolesRepo, userGroupsRepo, encoder)
 
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
@@ -32,14 +30,6 @@ class UserManagementServiceImplSpec extends Specification {
         StepVerifier.create(service.insertUser(User.create("user", "pass")))
                 .expectNext(UserInfo.create(1L, 'user'))
                 .verifyComplete()
-    }
-
-    def "saving a role passes role through"() {
-        when:
-        service.insertRole(Role.create("name", "application"))
-
-        then:
-        1 * roleRepo.insert(Role.create("name", "application"))
     }
 
     def "cannot update a user to have null password"() {
@@ -74,7 +64,7 @@ class UserManagementServiceImplSpec extends Specification {
             .verifyError(ObjectNotFoundException.class)
     }
 
-    def "all roles for a user are removed when the user is deleted"() {
+    def "all roles and groups for a user are removed when the user is deleted"() {
         PublisherProbe rolesProbe = PublisherProbe.empty()
         userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
         PublisherProbe userProbe = PublisherProbe.empty()
@@ -91,26 +81,7 @@ class UserManagementServiceImplSpec extends Specification {
         userProbe.assertWasNotCancelled()
     }
 
-    def "role is removed from all users when the role is deleted"() {
-        PublisherProbe userRolesProbe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRolesForRole(200) >> userRolesProbe.mono()
-        PublisherProbe userProbe = PublisherProbe.empty()
-        roleRepo.delete(200) >> userProbe.mono()
-
-        expect:
-        StepVerifier.create(service.deleteRole(200))
-            .verifyComplete()
-        userRolesProbe.assertWasSubscribed()
-        userRolesProbe.assertWasRequested()
-        userRolesProbe.assertWasNotCancelled()
-        userProbe.assertWasSubscribed()
-        userProbe.assertWasRequested()
-        userProbe.assertWasNotCancelled()
-    }
-
-    def "granting a role to a user should add the role to the user's role"() {
-        userRepo.getForId(12) >> Mono.just(User.create("name", "pass"))
-        roleRepo.getForId(34) >> Mono.just(Role.create("role", "application"))
+    def "granting a role to a user should add the role to the user's roles"() {
         PublisherProbe probe = PublisherProbe.empty()
         userRolesRepo.insertUserRole(12, 34) >> probe.mono()
 
@@ -135,23 +106,6 @@ class UserManagementServiceImplSpec extends Specification {
         probe.assertWasNotCancelled()
     }
 
-    def "retrieving a role by name passes the name through"() {
-        roleRepo.getForName("name", 'application') >> Mono.just(Role.create(1, "name", "application"))
-
-        expect:
-        StepVerifier.create(service.getRoleByName("name", 'application'))
-            .expectNext(Role.create(1, "name", "application"))
-            .verifyComplete()
-    }
-
-    def "an empty mono is returned when no role matches the name"() {
-        roleRepo.getForName("name", 'app') >> Mono.empty()
-
-        expect:
-        StepVerifier.create(service.getRoleByName("name", 'app'))
-            .verifyComplete()
-    }
-
     def 'getUsers should return all results'() {
         def user1 = User.create(1L, 'user', 'pass')
         def user2 = User.create(2L, 'user2', 'pass')
@@ -163,14 +117,11 @@ class UserManagementServiceImplSpec extends Specification {
                 .verifyComplete()
     }
 
-    def 'getRoles should return all results'() {
-        def role1 = Role.create(1L, 'role1', 'test-app')
-        def role2 = Role.create(2L, 'role2', 'test-app')
-        roleRepo.getRoles(5, 0) >> Flux.just(role1, role2)
+    def 'should be able to add a user to a group'() {
+        expect: false
+    }
 
-        expect:
-        StepVerifier.create(service.getRoles(5, 0))
-                .expectNext(role1, role2)
-                .verifyComplete()
+    def 'should be able to remove a user from a group'() {
+        expect: false
     }
 }

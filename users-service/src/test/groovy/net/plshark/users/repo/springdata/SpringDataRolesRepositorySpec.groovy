@@ -2,12 +2,9 @@ package net.plshark.users.repo.springdata
 
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
-import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
-import io.r2dbc.postgresql.PostgresqlConnectionFactory
 import net.plshark.testutils.PlsharkFlywayPreparer
 import net.plshark.users.model.Role
 import org.junit.Rule
-import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 import spock.lang.Specification
 
@@ -19,15 +16,7 @@ class SpringDataRolesRepositorySpec extends Specification {
     SpringDataRolesRepository repo
 
     def setup() {
-        repo = new SpringDataRolesRepository(DatabaseClient.create(
-                new PostgresqlConnectionFactory(
-                        PostgresqlConnectionConfiguration.builder()
-                                .database(dbRule.connectionInfo.dbName)
-                                .host('localhost')
-                                .port(dbRule.connectionInfo.port)
-                                .username(dbRule.connectionInfo.user)
-                                .password('')
-                                .build())))
+        repo = new SpringDataRolesRepository(DatabaseClientHelper.buildTestClient(dbRule))
     }
 
     def "inserting a role returns the inserted role with the ID set"() {
@@ -50,7 +39,7 @@ class SpringDataRolesRepositorySpec extends Specification {
         role == inserted
     }
 
-    def "retrieving a role by ID when no role matches returns an empty optional"() {
+    def "retrieving a role by ID when no role matches returns empty"() {
         expect:
         StepVerifier.create(repo.getForId(1000))
                 .expectNextCount(0)
@@ -68,7 +57,7 @@ class SpringDataRolesRepositorySpec extends Specification {
         role == inserted
     }
 
-    def "retrieving a role by name when no role matches return an empty optional"() {
+    def "retrieving a role by name when no role matches returns empty"() {
         expect:
         StepVerifier.create(repo.getForName("test-role", "test-app"))
                 .expectNextCount(0)

@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
  */
 public interface UserManagementService {
 
-    // TODO update methods
     /**
      * Retrieve a user by username
      * @param username the username
@@ -58,36 +57,6 @@ public interface UserManagementService {
     Mono<Void> updateUserPassword(long userId, String currentPassword, String newPassword);
 
     /**
-     * Retrieve a role by name
-     * @param name the role name
-     * @param application the application the role belongs to
-     * @return the matching role
-     */
-    Mono<Role> getRoleByName(String name, String application);
-
-    /**
-     * Get all roles up to the maximum result count and starting at an offset
-     * @param maxResults the maximum number of results to return
-     * @param offset the offset to start the list at, 0 to start at the beginning
-     * @return the roles
-     */
-    Flux<Role> getRoles(int maxResults, long offset);
-
-    /**
-     * Save a new role
-     * @param role the role
-     * @return the saved role
-     */
-    Mono<Role> insertRole(Role role);
-
-    /**
-     * Delete a role
-     * @param roleId the role ID
-     * @return an empty result
-     */
-    Mono<Void> deleteRole(long roleId);
-
-    /**
      * Grant a role to a user
      * @param userId the ID of the user to grant the role to
      * @param roleId the ID of the role to grant
@@ -110,4 +79,20 @@ public interface UserManagementService {
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
     Mono<Void> removeRoleFromUser(long userId, long roleId);
+
+    /**
+     * Add a user to a group
+     * @param userId the user ID
+     * @param groupId the group ID
+     * @return when complete
+     */
+    Mono<Void> addUserToGroup(long userId, long groupId);
+
+    /**
+     * Remove a user from a group
+     * @param userId the user ID
+     * @param groupId the group ID
+     * @return when complete
+     */
+    Mono<Void> removeUserFromGroup(long userId, long groupId);
 }

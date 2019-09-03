@@ -3,6 +3,9 @@ package net.plshark.users.model;
 import com.google.auto.value.AutoValue;
 import reactor.util.annotation.Nullable;
 
+/**
+ * Data for a group
+ */
 @AutoValue
 public abstract class Group {
 

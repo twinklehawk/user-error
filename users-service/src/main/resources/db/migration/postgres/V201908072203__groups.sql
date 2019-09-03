@@ -5,7 +5,7 @@ CREATE TABLE groups (
   name VARCHAR(64) NOT NULL
 );
 ALTER TABLE groups ADD CONSTRAINT groups_unique_name_con UNIQUE (name);
-CREATE INDEX groups_name_idx ON roles (groups);
+CREATE INDEX groups_name_idx ON groups (name);
 
 CREATE TABLE group_roles (
   group_id BIGINT NOT NULL REFERENCES groups,

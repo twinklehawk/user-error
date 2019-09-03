@@ -5,14 +5,15 @@ import java.util.Optional;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Group;
-import net.plshark.users.model.Role;
 import net.plshark.users.repo.GroupsRepository;
-import net.plshark.users.repo.RolesRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Groups repository using spring data
+ */
 @Repository
 public class SpringDataGroupsRepository implements GroupsRepository {
 
@@ -41,13 +42,13 @@ public class SpringDataGroupsRepository implements GroupsRepository {
     }
 
     @Override
-    public Flux<Group> getRoles(int maxResults, long offset) {
+    public Flux<Group> getGroups(int maxResults, long offset) {
         if (maxResults < 1)
             throw new IllegalArgumentException("Max results must be greater than 0");
         if (offset < 0)
             throw new IllegalArgumentException("Offset cannot be negative");
 
-        String sql = "SELECT * FROM roles ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
+        String sql = "SELECT * FROM groups ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
         return client.execute()
                 .sql(sql)
                 .map(SpringDataGroupsRepository::mapRow)
@@ -78,6 +79,12 @@ public class SpringDataGroupsRepository implements GroupsRepository {
                 .then();
     }
 
+    /**
+     * Map a database row to a {@link Group}
+     * @param row the database row
+     * @param rowMetadata the row metadata
+     * @return the mapped group
+     */
     static Group mapRow(Row row, RowMetadata rowMetadata) {
         return Group.create(row.get("id", Long.class), row.get("name", String.class));
     }
