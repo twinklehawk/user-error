@@ -26,7 +26,7 @@ class AuthServiceImplSpec extends Specification {
         tokenBuilder.buildRefreshToken('test-user', 1000L) >> 'refresh-token'
 
         expect:
-        StepVerifier.create(service.authenticate(new AccountCredentials('test-user', 'test-password')))
+        StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
                 .expectNext(new AuthToken('test-token', AuthToken.DEFAULT_TOKEN_TYPE, 1L, 'refresh-token', null))
                 .verifyComplete()
     }
@@ -35,7 +35,7 @@ class AuthServiceImplSpec extends Specification {
         userDetailsService.findByUsername('test-user') >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.authenticate(new AccountCredentials('test-user', 'test-password')))
+        StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
                 .verifyError(BadCredentialsException)
     }
 
@@ -44,7 +44,7 @@ class AuthServiceImplSpec extends Specification {
         passwordEncoder.matches('test-password', 'encoded-password') >> false
 
         expect:
-        StepVerifier.create(service.authenticate(new AccountCredentials('test-user', 'test-password')))
+        StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
                 .verifyError(BadCredentialsException)
     }
 
