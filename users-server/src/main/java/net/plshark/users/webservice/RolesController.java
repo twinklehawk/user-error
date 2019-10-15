@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import net.plshark.users.model.Role;
-import net.plshark.users.service.UserManagementService;
+import net.plshark.users.service.RoleManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +25,14 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/roles")
 public class RolesController {
 
-    private final UserManagementService userMgmtService;
+    private final RoleManagementService roleManagementService;
 
     /**
      * Create a new instance
-     * @param userMgmtService the service to use to create, delete, and modify roles
+     * @param roleManagementService the service to use to create, delete, and modify roles
      */
-    public RolesController(UserManagementService userMgmtService) {
-        this.userMgmtService = Objects.requireNonNull(userMgmtService, "userMgmtService cannot be null");
+    public RolesController(RoleManagementService roleManagementService) {
+        this.roleManagementService = Objects.requireNonNull(roleManagementService, "roleManagementService cannot be null");
     }
 
     /**
@@ -42,7 +42,7 @@ public class RolesController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Role> insert(@RequestBody Role role) {
-        return userMgmtService.insertRole(role);
+        return roleManagementService.insertRole(role);
     }
 
     /**
@@ -52,7 +52,7 @@ public class RolesController {
      */
     @DeleteMapping(path = "/{id}")
     public Mono<Void> delete(@PathVariable("id") long id) {
-        return userMgmtService.deleteRole(id);
+        return roleManagementService.deleteRole(id);
     }
 
     /**
@@ -64,7 +64,7 @@ public class RolesController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<Role> getRoles(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
                                @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
-        return userMgmtService.getRoles(maxResults, offset);
+        return roleManagementService.getRoles(maxResults, offset);
     }
 
     /**
@@ -74,6 +74,6 @@ public class RolesController {
      */
     @GetMapping(path = "/{application}/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Role> getByName(@PathVariable("name") String name, @PathVariable("application") String application) {
-        return userMgmtService.getRoleByName(name, application);
+        return roleManagementService.getRoleByName(name, application);
     }
 }
