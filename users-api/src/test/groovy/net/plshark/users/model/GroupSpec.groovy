@@ -19,6 +19,6 @@ class GroupSpec extends Specification {
 
         then:
         group.id == null
-        group.name = 'test'
+        group.name == 'test'
     }
 }
