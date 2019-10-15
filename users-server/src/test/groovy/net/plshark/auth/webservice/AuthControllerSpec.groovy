@@ -15,10 +15,10 @@ class AuthControllerSpec extends Specification {
 
     def 'authenticate should pass the credentials through to the service'() {
         def token = new AuthToken('access', 'type', 1, 'refresh', 'scope')
-        service.authenticate(new AccountCredentials('test-user', 'test-password')) >> Mono.just(token)
+        service.authenticate(AccountCredentials.create('test-user', 'test-password')) >> Mono.just(token)
 
         expect:
-        StepVerifier.create(controller.authenticate(new AccountCredentials('test-user', 'test-password')))
+        StepVerifier.create(controller.authenticate(AccountCredentials.create('test-user', 'test-password')))
                 .expectNext(token)
                 .verifyComplete()
     }
