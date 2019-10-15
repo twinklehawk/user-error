@@ -19,8 +19,7 @@ public abstract class UserInfo {
      * @return the UserInfo
      */
     public static UserInfo fromUser(User user) {
-        Objects.requireNonNull(user.getId());
-        return UserInfo.create(user.getId(), user.getUsername());
+        return UserInfo.create(Objects.requireNonNull(user.getId()), user.getUsername());
     }
 
     /**
