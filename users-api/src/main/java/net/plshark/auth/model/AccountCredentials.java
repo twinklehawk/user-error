@@ -12,8 +12,8 @@ import com.google.auto.value.AutoValue;
 public abstract class AccountCredentials {
 
     @JsonCreator
-    public AccountCredentials create(@JsonProperty(value = "username", required = true) String username,
-                                     @JsonProperty(value = "password", required = true) String password) {
+    public static AccountCredentials create(@JsonProperty(value = "username", required = true) String username,
+                                            @JsonProperty(value = "password", required = true) String password) {
         return new AutoValue_AccountCredentials(username, password);
     }
 
