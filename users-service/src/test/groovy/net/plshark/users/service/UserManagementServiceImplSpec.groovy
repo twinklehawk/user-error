@@ -69,16 +69,15 @@ class UserManagementServiceImplSpec extends Specification {
         userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
         PublisherProbe userProbe = PublisherProbe.empty()
         userRepo.delete(100) >> userProbe.mono()
+        PublisherProbe groupsProbe = PublisherProbe.empty()
+        userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
         StepVerifier.create(service.deleteUser(100))
             .verifyComplete()
         rolesProbe.assertWasSubscribed()
-        rolesProbe.assertWasRequested()
-        rolesProbe.assertWasNotCancelled()
         userProbe.assertWasSubscribed()
-        userProbe.assertWasRequested()
-        userProbe.assertWasNotCancelled()
+        groupsProbe.assertWasSubscribed()
     }
 
     def "granting a role to a user should add the role to the user's roles"() {
@@ -118,10 +117,18 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def 'should be able to add a user to a group'() {
-        expect: false
+        userGroupsRepo.insert(100, 200) >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.addUserToGroup(100, 200))
+                .verifyComplete()
     }
 
     def 'should be able to remove a user from a group'() {
-        expect: false
+        userGroupsRepo.delete(100, 200) >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.removeUserFromGroup(100, 200))
+                .verifyComplete()
     }
 }
