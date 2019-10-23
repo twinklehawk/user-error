@@ -64,7 +64,7 @@ class GroupManagementServiceImplSpec extends Specification {
 
     def 'should be able to add a role to a group'() {
         PublisherProbe probe = PublisherProbe.empty()
-        userGroupsRepo.insert(2, 1) >> probe.mono()
+        groupRolesRepo.insert(1, 2) >> probe.mono()
 
         expect:
         StepVerifier.create(service.addRoleToGroup(1, 2))
@@ -74,7 +74,7 @@ class GroupManagementServiceImplSpec extends Specification {
 
     def 'should be able to remove a role from a group'() {
         PublisherProbe probe = PublisherProbe.empty()
-        userGroupsRepo.delete(2, 1) >> probe.mono()
+        groupRolesRepo.delete(1, 2) >> probe.mono()
 
         expect:
         StepVerifier.create(service.removeRoleFromGroup(1, 2))
