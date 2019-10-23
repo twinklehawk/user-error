@@ -1,6 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.users.model.Role
+import net.plshark.users.service.RoleManagementService
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -10,7 +11,7 @@ import spock.lang.Specification
 
 class RolesControllerSpec extends Specification {
 
-    UserManagementService service = Mock()
+    RoleManagementService service = Mock()
     RolesController controller = new RolesController(service)
 
     def "insert passes role through to service"() {
