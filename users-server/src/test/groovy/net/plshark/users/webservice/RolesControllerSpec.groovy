@@ -2,7 +2,6 @@ package net.plshark.users.webservice
 
 import net.plshark.users.model.Role
 import net.plshark.users.service.RoleManagementService
-import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
