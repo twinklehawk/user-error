@@ -2,26 +2,24 @@ apply plugin: 'io.spring.dependency-management'
 
 repositories {
     maven {
-        url 'https://repo.spring.io/libs-milestone'
+        url 'https://repo.spring.io/libs-snapshot'
     }
 }
 
 dependencyManagement {
     imports {
-        mavenBom('org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE') {
-            bomProperty 'spring.version', '5.2.0.M2'
-        }
-        mavenBom 'io.r2dbc:r2dbc-bom:Arabba-M8'
+        mavenBom('org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE')
+        mavenBom 'io.r2dbc:r2dbc-bom:Arabba-RC2'
     }
     dependencies {
-        dependency 'org.codehaus.groovy:groovy-all:2.5.7'
+        dependency 'org.codehaus.groovy:groovy-all:2.5.8'
         dependency 'org.spockframework:spock-core:1.3-groovy-2.5'
         dependency 'org.spockframework:spock-spring:1.3-groovy-2.5'
         dependency 'org.objenesis:objenesis:3.0.1'
-        dependency 'com.opentable.components:otj-pg-embedded:0.13.1'
-        dependency 'com.github.ben-manes.caffeine:caffeine:2.7.0'
-        dependency 'com.auth0:java-jwt:3.8.1'
-        dependency 'com.google.auto.value:auto-value-annotations:1.6.2'
-        dependency 'com.google.auto.value:auto-value:1.6.2'
+        dependency 'com.opentable.components:otj-pg-embedded:0.13.3'
+        dependency 'com.github.ben-manes.caffeine:caffeine:2.8.0'
+        dependency 'com.auth0:java-jwt:3.8.3'
+        dependency 'com.google.auto.value:auto-value-annotations:1.7'
+        dependency 'com.google.auto.value:auto-value:1.7'
     }
 }
