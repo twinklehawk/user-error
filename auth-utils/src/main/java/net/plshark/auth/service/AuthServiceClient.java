@@ -32,7 +32,7 @@ public class AuthServiceClient implements AuthService {
         return webClient.post()
                 .uri(URI.create(baseUri + "/auth"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .syncBody(credentials)
+                .bodyValue(credentials)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(AuthToken.class);
@@ -43,7 +43,7 @@ public class AuthServiceClient implements AuthService {
         return webClient.post()
                 .uri(URI.create(baseUri + "/auth/refresh"))
                 .contentType(MediaType.TEXT_PLAIN)
-                .syncBody(refreshToken)
+                .bodyValue(refreshToken)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(AuthToken.class);
@@ -54,7 +54,7 @@ public class AuthServiceClient implements AuthService {
         return webClient.post()
                 .uri(URI.create(baseUri + "/auth/validate"))
                 .contentType(MediaType.TEXT_PLAIN)
-                .syncBody(accessToken)
+                .bodyValue(accessToken)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(AuthenticatedUser.class);
