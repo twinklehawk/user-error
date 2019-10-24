@@ -8,7 +8,6 @@ apply from: '../build-scripts/deps.gradle'
 //apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
-    api 'org.springframework:spring-jdbc'
     api 'org.springframework.security:spring-security-core'
     api project(':users-api')
     api 'org.postgresql:postgresql'
