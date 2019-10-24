@@ -22,8 +22,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
 
     @Override
     public Flux<Role> getRolesForUser(long userId) {
-        return client.execute()
-                .sql("SELECT id, name, application FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = :id")
+        return client.execute("SELECT id, name, application FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = :id")
                 .bind("id", userId)
                 .map(SpringDataRolesRepository::mapRow)
                 .all();
@@ -31,8 +30,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
 
     @Override
     public Mono<Void> insertUserRole(long userId, long roleId) {
-        return client.execute()
-                .sql("INSERT INTO user_roles (user_id, role_id) values (:userId, :roleId)")
+        return client.execute("INSERT INTO user_roles (user_id, role_id) values (:userId, :roleId)")
                 .bind("userId", userId)
                 .bind("roleId", roleId)
                 .then();
@@ -40,8 +38,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
 
     @Override
     public Mono<Void> deleteUserRole(long userId, long roleId) {
-        return client.execute()
-                .sql("DELETE FROM user_roles WHERE user_id = :userId AND role_id = :roleId")
+        return client.execute("DELETE FROM user_roles WHERE user_id = :userId AND role_id = :roleId")
                 .bind("userId", userId)
                 .bind("roleId", roleId)
                 .then();
@@ -49,16 +46,14 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
 
     @Override
     public Mono<Void> deleteUserRolesForUser(long userId) {
-        return client.execute()
-                .sql("DELETE FROM user_roles WHERE user_id = :userId")
+        return client.execute("DELETE FROM user_roles WHERE user_id = :userId")
                 .bind("userId", userId)
                 .then();
     }
 
     @Override
     public Mono<Void> deleteUserRolesForRole(long roleId) {
-        return client.execute()
-                .sql("DELETE FROM user_roles WHERE role_id = :roleId")
+        return client.execute("DELETE FROM user_roles WHERE role_id = :roleId")
                 .bind("roleId", roleId)
                 .then();
     }

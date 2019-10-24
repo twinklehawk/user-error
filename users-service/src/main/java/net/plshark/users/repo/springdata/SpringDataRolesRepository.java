@@ -25,8 +25,7 @@ public class SpringDataRolesRepository implements RolesRepository {
 
     @Override
     public Mono<Role> getForId(long id) {
-        return client.execute()
-                .sql("SELECT * FROM roles WHERE id = :id")
+        return client.execute("SELECT * FROM roles WHERE id = :id")
                 .bind("id", id)
                 .map(SpringDataRolesRepository::mapRow)
                 .one();
@@ -34,8 +33,7 @@ public class SpringDataRolesRepository implements RolesRepository {
 
     @Override
     public Mono<Role> getForName(String name, String application) {
-        return client.execute()
-                .sql("SELECT * FROM roles WHERE name = :name AND application = :application")
+        return client.execute("SELECT * FROM roles WHERE name = :name AND application = :application")
                 .bind("name", name)
                 .bind("application", application)
                 .map(SpringDataRolesRepository::mapRow)
@@ -50,8 +48,7 @@ public class SpringDataRolesRepository implements RolesRepository {
             throw new IllegalArgumentException("Offset cannot be negative");
 
         String sql = "SELECT * FROM roles ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
-        return client.execute()
-                .sql(sql)
+        return client.execute(sql)
                 .map(SpringDataRolesRepository::mapRow)
                 .all();
     }
@@ -61,8 +58,7 @@ public class SpringDataRolesRepository implements RolesRepository {
         if (role.getId() != null)
             throw new IllegalArgumentException("Cannot insert role with ID already set");
 
-        return client.execute()
-                .sql("INSERT INTO roles (name, application) VALUES (:name, :application) RETURNING id")
+        return client.execute("INSERT INTO roles (name, application) VALUES (:name, :application) RETURNING id")
                 .bind("name", role.getName())
                 .bind("application", role.getApplication())
                 .fetch().one()
@@ -75,8 +71,7 @@ public class SpringDataRolesRepository implements RolesRepository {
 
     @Override
     public Mono<Void> delete(long roleId) {
-        return client.execute()
-                .sql("DELETE FROM roles WHERE id = :id")
+        return client.execute("DELETE FROM roles WHERE id = :id")
                 .bind("id", roleId)
                 .then();
     }

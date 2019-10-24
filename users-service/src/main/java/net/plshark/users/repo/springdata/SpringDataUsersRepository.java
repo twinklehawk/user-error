@@ -27,8 +27,7 @@ public class SpringDataUsersRepository implements UsersRepository {
     @Override
     public Mono<User> getForUsername(String username) {
         Objects.requireNonNull(username, "username cannot be null");
-        return client.execute()
-                .sql("SELECT * FROM users WHERE username = :username")
+        return client.execute("SELECT * FROM users WHERE username = :username")
                 .bind("username", username)
                 .map(SpringDataUsersRepository::mapRow)
                 .one();
@@ -39,8 +38,7 @@ public class SpringDataUsersRepository implements UsersRepository {
         if (user.getId() != null)
             throw new IllegalArgumentException("Cannot insert user with ID already set");
 
-        return client.execute()
-                .sql("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
+        return client.execute("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
                 .bind("username", user.getUsername())
                 .bind("password", user.getPassword())
                 .fetch().one()
@@ -53,16 +51,14 @@ public class SpringDataUsersRepository implements UsersRepository {
 
     @Override
     public Mono<Void> delete(long userId) {
-        return client.execute()
-                .sql("DELETE FROM users WHERE id = :id")
+        return client.execute("DELETE FROM users WHERE id = :id")
                 .bind("id", userId)
                 .then();
     }
 
     @Override
     public Mono<User> getForId(long id) {
-        return client.execute()
-                .sql("SELECT * FROM users WHERE id = :id")
+        return client.execute("SELECT * FROM users WHERE id = :id")
                 .bind("id", id)
                 .map(SpringDataUsersRepository::mapRow)
                 .one();
@@ -70,8 +66,7 @@ public class SpringDataUsersRepository implements UsersRepository {
 
     @Override
     public Mono<Void> updatePassword(long id, String currentPassword, String newPassword) {
-        return client.execute()
-                .sql("UPDATE users SET password = :newPassword WHERE id = :id AND password = :oldPassword")
+        return client.execute("UPDATE users SET password = :newPassword WHERE id = :id AND password = :oldPassword")
                 .bind("newPassword", newPassword)
                 .bind("id", id)
                 .bind("oldPassword", currentPassword)
@@ -88,8 +83,7 @@ public class SpringDataUsersRepository implements UsersRepository {
             throw new IllegalArgumentException("Offset cannot be negative");
 
         String sql = "SELECT * FROM users ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
-        return client.execute()
-                .sql(sql)
+        return client.execute(sql)
                 .map(SpringDataUsersRepository::mapRow)
                 .all();
     }

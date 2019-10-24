@@ -22,8 +22,7 @@ public class SpringDataUserGroupsRepository implements UserGroupsRepository {
 
     @Override
     public Flux<Group> getGroupsForUser(long userId) {
-        return client.execute()
-                .sql("SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE ug.user_id = :id")
+        return client.execute("SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE ug.user_id = :id")
                 .bind("id", userId)
                 .map(SpringDataGroupsRepository::mapRow)
                 .all();
@@ -31,8 +30,7 @@ public class SpringDataUserGroupsRepository implements UserGroupsRepository {
 
     @Override
     public Mono<Void> insert(long userId, long groupId) {
-        return client.execute()
-                .sql("INSERT INTO user_groups (user_id, group_id) values (:userId, :groupId)")
+        return client.execute("INSERT INTO user_groups (user_id, group_id) values (:userId, :groupId)")
                 .bind("userId", userId)
                 .bind("groupId", groupId)
                 .then();
@@ -40,8 +38,7 @@ public class SpringDataUserGroupsRepository implements UserGroupsRepository {
 
     @Override
     public Mono<Void> delete(long userId, long groupId) {
-        return client.execute()
-                .sql("DELETE FROM user_groups WHERE user_id = :userId AND group_id = :groupId")
+        return client.execute("DELETE FROM user_groups WHERE user_id = :userId AND group_id = :groupId")
                 .bind("userId", userId)
                 .bind("groupId", groupId)
                 .then();
@@ -49,16 +46,14 @@ public class SpringDataUserGroupsRepository implements UserGroupsRepository {
 
     @Override
     public Mono<Void> deleteUserGroupsForUser(long userId) {
-        return client.execute()
-                .sql("DELETE FROM user_groups WHERE user_id = :userId")
+        return client.execute("DELETE FROM user_groups WHERE user_id = :userId")
                 .bind("userId", userId)
                 .then();
     }
 
     @Override
     public Mono<Void> deleteUserGroupsForGroup(long groupId) {
-        return client.execute()
-                .sql("DELETE FROM user_groups WHERE group_id = :groupId")
+        return client.execute("DELETE FROM user_groups WHERE group_id = :groupId")
                 .bind("groupId", groupId)
                 .then();
     }

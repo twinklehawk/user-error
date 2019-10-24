@@ -25,8 +25,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
 
     @Override
     public Mono<Group> getForId(long id) {
-        return client.execute()
-                .sql("SELECT * FROM groups WHERE id = :id")
+        return client.execute("SELECT * FROM groups WHERE id = :id")
                 .bind("id", id)
                 .map(SpringDataGroupsRepository::mapRow)
                 .one();
@@ -34,8 +33,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
 
     @Override
     public Mono<Group> getForName(String name) {
-        return client.execute()
-                .sql("SELECT * FROM groups WHERE name = :name")
+        return client.execute("SELECT * FROM groups WHERE name = :name")
                 .bind("name", name)
                 .map(SpringDataGroupsRepository::mapRow)
                 .one();
@@ -49,8 +47,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
             throw new IllegalArgumentException("Offset cannot be negative");
 
         String sql = "SELECT * FROM groups ORDER BY id OFFSET " + offset + " ROWS FETCH FIRST " + maxResults + " ROWS ONLY";
-        return client.execute()
-                .sql(sql)
+        return client.execute(sql)
                 .map(SpringDataGroupsRepository::mapRow)
                 .all();
     }
@@ -60,8 +57,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
         if (group.getId() != null)
             throw new IllegalArgumentException("Cannot insert group with ID already set");
 
-        return client.execute()
-                .sql("INSERT INTO groups (name) VALUES (:name) RETURNING id")
+        return client.execute("INSERT INTO groups (name) VALUES (:name) RETURNING id")
                 .bind("name", group.getName())
                 .fetch().one()
                 .flatMap(map -> Optional.ofNullable((Long) map.get("id"))
@@ -73,8 +69,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
 
     @Override
     public Mono<Void> delete(long groupId) {
-        return client.execute()
-                .sql("DELETE FROM groups WHERE id = :id")
+        return client.execute("DELETE FROM groups WHERE id = :id")
                 .bind("id", groupId)
                 .then();
     }

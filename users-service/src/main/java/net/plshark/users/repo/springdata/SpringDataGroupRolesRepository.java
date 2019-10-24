@@ -19,8 +19,7 @@ public class SpringDataGroupRolesRepository implements GroupRolesRepository {
 
     @Override
     public Flux<Role> getRolesForGroup(long groupId) {
-        return client.execute()
-                .sql("SELECT id, name, application FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE ur.group_id = :id")
+        return client.execute("SELECT id, name, application FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE ur.group_id = :id")
                 .bind("id", groupId)
                 .map(SpringDataRolesRepository::mapRow)
                 .all();
@@ -28,8 +27,7 @@ public class SpringDataGroupRolesRepository implements GroupRolesRepository {
 
     @Override
     public Mono<Void> insert(long groupId, long roleId) {
-        return client.execute()
-                .sql("INSERT INTO group_roles (group_id, role_id) values (:groupId, :roleId)")
+        return client.execute("INSERT INTO group_roles (group_id, role_id) values (:groupId, :roleId)")
                 .bind("groupId", groupId)
                 .bind("roleId", roleId)
                 .then();
@@ -37,8 +35,7 @@ public class SpringDataGroupRolesRepository implements GroupRolesRepository {
 
     @Override
     public Mono<Void> delete(long groupId, long roleId) {
-        return client.execute()
-                .sql("DELETE FROM group_roles WHERE group_id = :groupId AND role_id = :roleId")
+        return client.execute("DELETE FROM group_roles WHERE group_id = :groupId AND role_id = :roleId")
                 .bind("groupId", groupId)
                 .bind("roleId", roleId)
                 .then();
@@ -46,16 +43,14 @@ public class SpringDataGroupRolesRepository implements GroupRolesRepository {
 
     @Override
     public Mono<Void> deleteForGroup(long groupId) {
-        return client.execute()
-                .sql("DELETE FROM group_roles WHERE group_id = :groupId")
+        return client.execute("DELETE FROM group_roles WHERE group_id = :groupId")
                 .bind("groupId", groupId)
                 .then();
     }
 
     @Override
     public Mono<Void> deleteForRole(long roleId) {
-        return client.execute()
-                .sql("DELETE FROM group_roles WHERE role_id = :roleId")
+        return client.execute("DELETE FROM group_roles WHERE role_id = :roleId")
                 .bind("roleId", roleId)
                 .then();
     }
