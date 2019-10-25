@@ -15,6 +15,9 @@ dependencies {
     api 'com.auth0:java-jwt'
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework.security:spring-security-config'
+    api 'com.google.auto.value:auto-value-annotations'
+    api 'com.google.guava:guava:28.1-jre'
+    annotationProcessor 'com.google.auto.value:auto-value'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
