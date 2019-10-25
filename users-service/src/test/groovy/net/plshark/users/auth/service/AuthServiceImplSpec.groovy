@@ -27,7 +27,7 @@ class AuthServiceImplSpec extends Specification {
 
         expect:
         StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
-                .expectNext(new AuthToken('test-token', AuthToken.DEFAULT_TOKEN_TYPE, 1L, 'refresh-token', null))
+                .expectNext(AuthToken.builder().accessToken('test-token').expiresIn(1L).refreshToken('refresh-token').build())
                 .verifyComplete()
     }
 
@@ -56,7 +56,7 @@ class AuthServiceImplSpec extends Specification {
 
         expect:
         StepVerifier.create(service.refresh('refresh-token'))
-                .expectNext(new AuthToken('test-token', AuthToken.DEFAULT_TOKEN_TYPE, 1L, 'refresh-token', null))
+                .expectNext(AuthToken.builder().accessToken('test-token').expiresIn(1L).refreshToken('refresh-token').build())
                 .verifyComplete()
     }
 
@@ -78,7 +78,7 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'validate should complete successfully for a valid token'() {
-        def user = new AuthenticatedUser('test-user', Collections.emptySet())
+        def user = AuthenticatedUser.create('test-user', Collections.emptySet())
         tokenVerifier.verifyToken('access-token') >> Mono.just(user)
 
         expect:

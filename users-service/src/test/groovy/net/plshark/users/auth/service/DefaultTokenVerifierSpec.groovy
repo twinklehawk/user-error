@@ -20,7 +20,7 @@ class DefaultTokenVerifierSpec extends Specification {
 
         then:
         StepVerifier.create(verifier.verifyToken(token))
-                .expectNext(new AuthenticatedUser('test-user', Collections.singleton('user')))
+                .expectNext(AuthenticatedUser.create('test-user', Collections.singleton('user')))
                 .verifyComplete()
     }
 
@@ -30,7 +30,7 @@ class DefaultTokenVerifierSpec extends Specification {
 
         then:
         StepVerifier.create(verifier.verifyToken(token))
-                .expectNext(new AuthenticatedUser('test-user', Collections.emptySet()))
+                .expectNext(AuthenticatedUser.create('test-user', Collections.emptySet()))
                 .verifyComplete()
     }
 

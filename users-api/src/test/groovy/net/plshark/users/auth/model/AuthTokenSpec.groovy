@@ -6,7 +6,7 @@ class AuthTokenSpec extends Specification {
 
     def 'Builder creates the correct object and has a default token type'() {
         when:
-        AuthToken token = new AuthToken.Builder().accessToken('token').expiresIn(100)
+        AuthToken token = AuthToken.builder().accessToken('token').expiresIn(100)
                 .refreshToken('refresh').scope('scope').build()
 
         then:

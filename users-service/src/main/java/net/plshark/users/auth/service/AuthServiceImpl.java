@@ -75,6 +75,10 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = tokenBuilder.buildAccessToken(user.getUsername(), expirationMs,
                 user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
         String refreshToken = tokenBuilder.buildRefreshToken(user.getUsername(), expirationMs);
-        return new AuthToken(accessToken, AuthToken.DEFAULT_TOKEN_TYPE, expirationMs / 1000, refreshToken, null);
+        return AuthToken.builder()
+                .accessToken(accessToken)
+                .expiresIn(expirationMs / 1000)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

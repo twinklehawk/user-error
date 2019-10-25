@@ -30,7 +30,7 @@ public class DefaultTokenVerifier implements TokenVerifier{
     @Override
     public Mono<AuthenticatedUser> verifyToken(String token) {
         return decodeToken(token)
-                .map(jwt -> new AuthenticatedUser(jwt.getSubject(), parseAuthorities(jwt)));
+                .map(jwt -> AuthenticatedUser.create(jwt.getSubject(), parseAuthorities(jwt)));
     }
 
     @Override

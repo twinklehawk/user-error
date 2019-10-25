@@ -14,7 +14,8 @@ class AuthControllerSpec extends Specification {
     def controller = new AuthController(service)
 
     def 'authenticate should pass the credentials through to the service'() {
-        def token = new AuthToken('access', 'type', 1, 'refresh', 'scope')
+        def token = AuthToken.builder().accessToken('access').tokenType('type').expiresIn(1)
+                .refreshToken('refresh').scope('scope').build()
         service.authenticate(AccountCredentials.create('test-user', 'test-password')) >> Mono.just(token)
 
         expect:
@@ -24,7 +25,8 @@ class AuthControllerSpec extends Specification {
     }
 
     def 'refresh should pass the token through to the service'() {
-        def token = new AuthToken('access', 'type', 1, 'refresh', 'scope')
+        def token = AuthToken.builder().accessToken('access').tokenType('type').expiresIn(1)
+                .refreshToken('refresh').scope('scope').build()
         service.refresh('test-token') >> Mono.just(token)
 
         expect:
@@ -34,11 +36,11 @@ class AuthControllerSpec extends Specification {
     }
 
     def 'validateToken should pass the token through to the service'() {
-        service.validateToken('refresh') >> Mono.just(new AuthenticatedUser('user', Collections.emptySet()))
+        service.validateToken('refresh') >> Mono.just(AuthenticatedUser.create('user', Collections.emptySet()))
 
         expect:
         StepVerifier.create(controller.validateToken('refresh'))
-                .expectNext(new AuthenticatedUser('user', Collections.emptySet()))
+                .expectNext(AuthenticatedUser.create('user', Collections.emptySet()))
                 .verifyComplete()
     }
 }
