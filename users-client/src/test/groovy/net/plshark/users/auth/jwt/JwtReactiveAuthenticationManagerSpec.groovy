@@ -1,7 +1,7 @@
 package net.plshark.users.auth.jwt
 
-import net.plshark.auth.model.AuthenticatedUser
-import net.plshark.auth.service.AuthService
+import net.plshark.users.auth.model.AuthenticatedUser
+import net.plshark.users.auth.service.AuthService
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import reactor.core.publisher.Mono

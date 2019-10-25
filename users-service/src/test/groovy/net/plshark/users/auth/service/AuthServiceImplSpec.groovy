@@ -1,8 +1,8 @@
 package net.plshark.users.auth.service
 
-import net.plshark.auth.model.AccountCredentials
-import net.plshark.auth.model.AuthToken
-import net.plshark.auth.model.AuthenticatedUser
+import net.plshark.users.auth.model.AccountCredentials
+import net.plshark.users.auth.model.AuthToken
+import net.plshark.users.auth.model.AuthenticatedUser
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.User
