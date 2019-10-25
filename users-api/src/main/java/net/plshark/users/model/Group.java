@@ -1,5 +1,7 @@
 package net.plshark.users.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import reactor.util.annotation.Nullable;
 
@@ -13,7 +15,8 @@ public abstract class Group {
         return create(null, name);
     }
 
-    public static Group create(@Nullable Long id, String name) {
+    @JsonCreator
+    public static Group create(@Nullable @JsonProperty("id") Long id, @JsonProperty("name") String name) {
         return new AutoValue_Group(id, name);
     }
 

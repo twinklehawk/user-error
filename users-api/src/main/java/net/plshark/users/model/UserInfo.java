@@ -1,6 +1,8 @@
 package net.plshark.users.model;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 
 /**
@@ -9,7 +11,8 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class UserInfo {
 
-    public static UserInfo create(long id, String username) {
+    @JsonCreator
+    public static UserInfo create(@JsonProperty("id") long id, @JsonProperty("username") String username) {
         return new AutoValue_UserInfo(id, username);
     }
 
