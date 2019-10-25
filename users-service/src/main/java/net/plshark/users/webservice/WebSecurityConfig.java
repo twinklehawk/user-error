@@ -1,15 +1,13 @@
 package net.plshark.users.webservice;
 
-import net.plshark.auth.jwt.HttpBearerBuilder;
-import net.plshark.auth.jwt.JwtReactiveAuthenticationManager;
-import net.plshark.auth.service.AuthService;
-import net.plshark.auth.throttle.IpThrottlingFilter;
+import net.plshark.users.auth.jwt.HttpBearerBuilder;
+import net.plshark.users.auth.jwt.JwtReactiveAuthenticationManager;
+import net.plshark.users.auth.service.AuthService;
+import net.plshark.users.auth.throttle.IpThrottlingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 

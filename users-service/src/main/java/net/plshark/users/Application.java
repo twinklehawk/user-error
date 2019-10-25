@@ -1,6 +1,6 @@
 package net.plshark.users;
 
-import net.plshark.auth.webservice.AuthConfig;
+import net.plshark.users.auth.webservice.AuthConfig;
 import net.plshark.users.repo.springdata.UsersRepoSpringDataConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
