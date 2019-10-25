@@ -16,7 +16,6 @@ import net.plshark.users.auth.service.TokenBuilder;
 import net.plshark.users.auth.service.TokenVerifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Spring configuration for auth services
  */
 @Configuration
-@ComponentScan("net.plshark.users.auth.webservice")
 public class AuthConfig {
 
     @Bean
