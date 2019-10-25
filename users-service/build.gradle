@@ -1,6 +1,7 @@
 plugins {
-    id 'java-library'
+    id 'java'
     id 'groovy'
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
 }
 
 apply from: '../build-scripts/java.gradle'
@@ -8,21 +9,20 @@ apply from: '../build-scripts/deps.gradle'
 //apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
-    api 'org.springframework.security:spring-security-core'
-    api project(':users-api')
-    api 'org.postgresql:postgresql'
-    api 'com.auth0:java-jwt'
-    api 'javax.validation:validation-api'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation project(':users-api')
+    implementation project(':auth-utils')
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.data:spring-data-r2dbc:1.0.0.RC1'
+    implementation 'io.r2dbc:r2dbc-postgresql'
+    implementation 'com.auth0:java-jwt'
+    implementation 'org.flywaydb:flyway-core'
+    testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.hamcrest:hamcrest-core"
-    testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'com.opentable.components:otj-pg-embedded'
-    testImplementation 'org.flywaydb:flyway-core'
     testRuntimeOnly "net.bytebuddy:byte-buddy"
     testRuntimeOnly "org.objenesis:objenesis"
-    testRuntimeOnly 'ch.qos.logback:logback-classic'
-
-    api 'org.springframework.data:spring-data-r2dbc:1.0.0.RC1'
-    api 'io.r2dbc:r2dbc-postgresql'
 }
