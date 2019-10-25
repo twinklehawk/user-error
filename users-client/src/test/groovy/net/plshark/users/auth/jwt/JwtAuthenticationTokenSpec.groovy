@@ -8,10 +8,11 @@ class JwtAuthenticationTokenSpec extends Specification {
     def 'builder should create correct token'() {
         when:
         def token = JwtAuthenticationToken.builder()
-                .withUsername('username')
-                .withToken('test-token')
-                .withAuthenticated(true)
-                .withAuthorities(['auth1', 'auth2'])
+                .username('username')
+                .token('test-token')
+                .authenticated(true)
+                .authority('auth1')
+                .authority('auth2')
                 .build()
 
         then:

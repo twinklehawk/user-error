@@ -22,7 +22,7 @@ public class ServerHttpJwtAuthenticationConverter implements ServerAuthenticatio
         return Optional.ofNullable(request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authorization -> authorization.startsWith(BEARER))
                 .map(authorization -> authorization.substring(BEARER.length()))
-                .map(token -> Mono.just((Authentication) JwtAuthenticationToken.builder().withToken(token).build()))
+                .map(token -> Mono.just((Authentication) JwtAuthenticationToken.builder().token(token).build()))
                 .orElse(Mono.empty());
     }
 }

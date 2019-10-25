@@ -1,10 +1,12 @@
 package net.plshark.users.auth.jwt;
 
+import java.util.stream.Collectors;
 import net.plshark.users.auth.model.AuthenticatedUser;
 import net.plshark.users.auth.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -33,9 +35,11 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
                 .flatMap(this::verifyToken)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid credentials"))))
                 .map(user -> JwtAuthenticationToken.builder()
-                        .withUsername(user.getUsername())
-                        .withAuthorities(user.getAuthorities())
-                        .withAuthenticated(true)
+                        .username(user.getUsername())
+                        .authorities(user.getAuthorities().stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toSet()))
+                        .authenticated(true)
                         .build());
     }
 

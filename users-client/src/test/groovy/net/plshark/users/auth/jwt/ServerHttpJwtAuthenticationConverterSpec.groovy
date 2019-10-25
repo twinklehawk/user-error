@@ -16,7 +16,7 @@ class ServerHttpJwtAuthenticationConverterSpec extends Specification {
 
         expect:
         StepVerifier.create(converter.convert(exchange))
-                .expectNext(JwtAuthenticationToken.builder().withToken('test-token').build())
+                .expectNext(JwtAuthenticationToken.builder().token('test-token').build())
                 .verifyComplete()
     }
 
@@ -29,7 +29,6 @@ class ServerHttpJwtAuthenticationConverterSpec extends Specification {
     }
 
     def 'should return empty when the header value does not start with Bearer'() {
-        //noinspection GroovyAssignabilityCheck
         def exchange = MockServerWebExchange.from(
                 MockServerHttpRequest.get("http://test/url").header('Authorization', 'test-token'))
 

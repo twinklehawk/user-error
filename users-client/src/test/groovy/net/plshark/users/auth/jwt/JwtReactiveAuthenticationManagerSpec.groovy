@@ -14,18 +14,18 @@ class JwtReactiveAuthenticationManagerSpec extends Specification {
     JwtReactiveAuthenticationManager manager = new JwtReactiveAuthenticationManager(authService)
 
     def 'should parse the username and authorities from the token and set the authorized flag'() {
-        def token = JwtAuthenticationToken.builder().withToken('test-token').build()
+        def token = JwtAuthenticationToken.builder().token('test-token').build()
         authService.validateToken('test-token') >> Mono.just(new AuthenticatedUser('test-user', 'a', 'b'))
 
         expect:
         StepVerifier.create(manager.authenticate(token))
-                .expectNext(JwtAuthenticationToken.builder().withUsername('test-user').withAuthenticated(true)
-                        .withAuthority('a').withAuthority('b').build())
+                .expectNext(JwtAuthenticationToken.builder().username('test-user').authenticated(true)
+                        .authority('a').authority('b').build())
                 .verifyComplete()
     }
 
     def 'an invalid token should throw a BadCredentialsException'() {
-        def token = JwtAuthenticationToken.builder().withToken('bad-token').build()
+        def token = JwtAuthenticationToken.builder().token('bad-token').build()
         authService.validateToken('bad-token') >> Mono.error({ new BadCredentialsException('bad') })
 
         expect:
