@@ -2,6 +2,8 @@ package net.plshark.users.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 
@@ -9,6 +11,8 @@ import com.google.auto.value.AutoValue;
  * Information about a user safe to return to clients
  */
 @AutoValue
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class UserInfo {
 
     @JsonCreator
