@@ -1,9 +1,9 @@
 package net.plshark.users.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.auto.value.AutoValue;
 import reactor.util.annotation.Nullable;
 
@@ -11,30 +11,9 @@ import reactor.util.annotation.Nullable;
  * Data for a user
  */
 @AutoValue
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonDeserialize(builder = AutoValue_User.Builder.class)
 public abstract class User {
-
-    /**
-     * Create a new instance
-     * @param username the username
-     * @param password the password
-     */
-    public static User create(String username, String password) {
-        return create(null, username, password);
-    }
-
-    /**
-     * Create a new instance
-     * @param id the user ID, can be null if not saved yet
-     * @param username the username
-     * @param password the password
-     */
-    @JsonCreator
-    public static User create(@Nullable @JsonProperty("id") Long id, @JsonProperty("username") String username,
-                              @JsonProperty("password") String password) {
-        return new AutoValue_User(id, username, password);
-    }
 
     /**
      * @return the ID, null if the user has not been saved yet
@@ -48,7 +27,29 @@ public abstract class User {
     public abstract String getUsername();
 
     /**
-     * @return the password
+     * @return the password, must not be null when creating a user, will otherwise be null except unless specifically
+     * requested
      */
+    @Nullable
     public abstract String getPassword();
+
+    public abstract Builder toBuilder();
+
+    public static Builder builder() {
+        return new AutoValue_User.Builder();
+    }
+
+    @AutoValue.Builder
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public abstract static class Builder {
+
+        public abstract Builder id(Long id);
+
+        public abstract Builder username(String username);
+
+        public abstract Builder password(String password);
+
+        public abstract User build();
+    }
 }

@@ -33,36 +33,49 @@ class SpringDataUsersRepositorySpec extends Specification {
 
     def "inserting a user returns the inserted user with the ID set"() {
         when:
-        User inserted = repo.insert(User.create("name", "pass")).block()
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         then:
         inserted.id != null
         inserted.username == "name"
-        inserted.password == "pass"
+        inserted.password == null
     }
 
     def "can retrieve a previously inserted user by ID"() {
-        User inserted = repo.insert(User.create("name", "pass")).block()
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         when:
         User user = repo.getForId(inserted.id).block()
 
         then:
+        user.password == null
         user == inserted
     }
 
-    def "can retrieve  previously inserted user by username"() {
-        User inserted = repo.insert(User.create("name", "pass")).block()
+    def "can retrieve a previously inserted user by username"() {
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         when:
         User user = repo.getForUsername("name").block()
 
         then:
+        user.password == null
         user == inserted
     }
 
+    def 'the user password is returned when specifically fetching the password'() {
+        def inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
+
+        when:
+        def user = repo.getForUsernameWithPassword('name').block()
+
+        then:
+        user.password != null
+        user == inserted.toBuilder().password('pass').build()
+    }
+
     def "can delete a previously inserted user by ID"() {
-        User inserted = repo.insert(User.create("name", "pass")).block()
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         when:
         repo.delete(inserted.id).block()
@@ -81,24 +94,24 @@ class SpringDataUsersRepositorySpec extends Specification {
     }
 
     def "update password should change the password if the current password is correct"() {
-        User inserted = repo.insert(User.create("name", "pass")).block()
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         when:
         repo.updatePassword(inserted.id, "pass", "new-pass").block()
-        User user = repo.getForId(inserted.id).block()
+        User user = repo.getForUsernameWithPassword('name').block()
 
         then:
         user.password == "new-pass"
     }
 
     def "update password should throw an EmptyResultDataAccessException if the current password is wrong"() {
-        User inserted = repo.insert(User.create("name", "pass")).block()
+        User inserted = repo.insert(User.builder().username('name').password('pass').build()).block()
 
         when:
         StepVerifier.create(repo.updatePassword(inserted.id, "wrong-pass", "new-pass"))
                 .expectError(EmptyResultDataAccessException)
                 .verify()
-        User user = repo.getForId(inserted.id).block()
+        User user = repo.getForUsernameWithPassword('name').block()
 
         then:
         user.password == "pass"
@@ -112,8 +125,8 @@ class SpringDataUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should return all results when there are less than max results'() {
-        repo.insert(User.create("name", "pass")).block()
-        repo.insert(User.create("name2", "pass")).block()
+        repo.insert(User.builder().username('name').password('pass').build()).block()
+        repo.insert(User.builder().username('name2').password('pass').build()).block()
 
         when:
         List<User> users = repo.getAll(5, 0).collectList().block()
@@ -127,9 +140,9 @@ class SpringDataUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should return up to max results when there are more results'() {
-        repo.insert(User.create("name", "pass")).block()
-        repo.insert(User.create("name2", "pass")).block()
-        repo.insert(User.create("name3", "pass")).block()
+        repo.insert(User.builder().username('name').password('pass').build()).block()
+        repo.insert(User.builder().username('name2').password('pass').build()).block()
+        repo.insert(User.builder().username('name3').password('pass').build()).block()
 
         when:
         List<User> users = repo.getAll(2, 0).collectList().block()
@@ -141,9 +154,9 @@ class SpringDataUsersRepositorySpec extends Specification {
     }
 
     def 'getAll should start at the correct offset'() {
-        repo.insert(User.create("name", "pass")).block()
-        repo.insert(User.create("name2", "pass")).block()
-        repo.insert(User.create("name3", "pass")).block()
+        repo.insert(User.builder().username('name').password('pass').build()).block()
+        repo.insert(User.builder().username('name2').password('pass').build()).block()
+        repo.insert(User.builder().username('name3').password('pass').build()).block()
 
         when:
         List<User> users = repo.getAll(2, 2).collectList().block()

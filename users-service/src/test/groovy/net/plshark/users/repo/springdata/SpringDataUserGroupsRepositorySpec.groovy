@@ -26,7 +26,7 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
 
     def 'insert should save a group and user association and should be retrievable'() {
         def group = groupsRepo.insert(Group.create('test-group')).block()
-        def user = usersRepo.insert(User.create('test-user', 'pass')).block()
+        def user = usersRepo.insert(User.builder().username('test-user').password('pass').build()).block()
 
         when:
         repo.insert(user.id, group.id).block()
@@ -42,7 +42,7 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
 
     def 'delete should delete a group/user association'() {
         def group = groupsRepo.insert(Group.create('test-group')).block()
-        def user = usersRepo.insert(User.create('test-user', 'pass')).block()
+        def user = usersRepo.insert(User.builder().username('test-user').password('pass').build()).block()
         repo.insert(user.id, group.id).block()
 
         when:
@@ -63,9 +63,9 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     def 'deleting a group ID should delete all associations for that group'() {
         def group1 = groupsRepo.insert(Group.create('group1')).block()
         def group2 = groupsRepo.insert(Group.create('group2')).block()
-        def user1 = usersRepo.insert(User.create('user1', 'pass')).block()
-        def user2 = usersRepo.insert(User.create('user2', 'pass')).block()
-        def user3 = usersRepo.insert(User.create('user3', 'pass')).block()
+        def user1 = usersRepo.insert(User.builder().username('user1').password('pass').build()).block()
+        def user2 = usersRepo.insert(User.builder().username('user2').password('pass').build()).block()
+        def user3 = usersRepo.insert(User.builder().username('user3').password('pass').build()).block()
         repo.insert(user1.id, group1.id)
             .then(repo.insert(user2.id, group1.id))
             .then(repo.insert(user2.id, group2.id))
@@ -84,8 +84,8 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     def 'deleting a user ID should delete all associations for that user'() {
         def group1 = groupsRepo.insert(Group.create('group1')).block()
         def group2 = groupsRepo.insert(Group.create('group2')).block()
-        def user1 = usersRepo.insert(User.create('user1', 'pass')).block()
-        def user2 = usersRepo.insert(User.create('user2', 'pass')).block()
+        def user1 = usersRepo.insert(User.builder().username('user1').password('pass').build()).block()
+        def user2 = usersRepo.insert(User.builder().username('user2').password('pass').build()).block()
         repo.insert(user1.id, group1.id)
                 .then(repo.insert(user1.id, group2.id))
                 .then(repo.insert(user2.id, group1.id))

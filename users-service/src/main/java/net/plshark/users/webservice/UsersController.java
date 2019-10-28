@@ -5,7 +5,6 @@ import javax.validation.constraints.Min;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
 import net.plshark.users.model.User;
-import net.plshark.users.model.UserInfo;
 import net.plshark.users.service.UserManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +42,7 @@ public class UsersController {
      * @return the users
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<UserInfo> getUsers(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
+    public Flux<User> getUsers(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
                                    @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
         return userMgmtService.getUsers(maxResults, offset);
     }
@@ -54,7 +53,7 @@ public class UsersController {
      * @return the matching user
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<UserInfo> getUser(@PathVariable("username") String username) {
+    public Mono<User> getUser(@PathVariable("username") String username) {
         return userMgmtService.getUserByUsername(username)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
     }
@@ -65,7 +64,7 @@ public class UsersController {
      * @return the inserted user
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<UserInfo> insert(@RequestBody User user) {
+    public Mono<User> insert(@RequestBody User user) {
         return userMgmtService.insertUser(user);
     }
 

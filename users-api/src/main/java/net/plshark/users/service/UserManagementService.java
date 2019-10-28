@@ -2,7 +2,6 @@ package net.plshark.users.service;
 
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
-import net.plshark.users.model.UserInfo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +15,7 @@ public interface UserManagementService {
      * @param username the username
      * @return the matching user if found
      */
-    Mono<UserInfo> getUserByUsername(String username);
+    Mono<User> getUserByUsername(String username);
 
     /**
      * Get all users up to the maximum result count and starting at an offset
@@ -24,14 +23,14 @@ public interface UserManagementService {
      * @param offset the offset to start the list at, 0 to start at the beginning
      * @return the users
      */
-    Flux<UserInfo> getUsers(int maxResults, long offset);
+    Flux<User> getUsers(int maxResults, long offset);
 
     /**
      * Save a new user
      * @param user the user
      * @return the saved user
      */
-    Mono<UserInfo> insertUser(User user);
+    Mono<User> insertUser(User user);
 
     /**
      * Delete a user by ID
@@ -45,7 +44,7 @@ public interface UserManagementService {
      * @param user the user
      * @return an empty result
      */
-    Mono<Void> deleteUser(UserInfo user);
+    Mono<Void> deleteUser(User user);
 
     /**
      * Update a user's password
@@ -70,7 +69,7 @@ public interface UserManagementService {
      * @param role the role to grant
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
-    Mono<Void> grantRoleToUser(UserInfo user, Role role);
+    Mono<Void> grantRoleToUser(User user, Role role);
 
     /**
      * Remove a role from a user

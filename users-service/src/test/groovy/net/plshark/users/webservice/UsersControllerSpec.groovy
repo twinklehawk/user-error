@@ -1,7 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.users.model.PasswordChangeRequest
-import net.plshark.users.model.UserInfo
+import net.plshark.users.model.User
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -63,8 +63,8 @@ class UsersControllerSpec extends Specification {
     }
 
     def 'getUsers passes the max results and offset through'() {
-        def user1 = UserInfo.create(1L, 'user')
-        def user2 = UserInfo.create(2L, 'user2')
+        def user1 = User.builder().id(1L).username('user').build()
+        def user2 = User.builder().id(2L).username('user2').build()
         service.getUsers(3, 2) >> Flux.just(user1, user2)
 
         expect:
@@ -74,7 +74,7 @@ class UsersControllerSpec extends Specification {
     }
 
     def 'getUser passes the username through'() {
-        def user1 = UserInfo.create(1L, 'user')
+        def user1 = User.builder().id(1L).username('user').build()
         service.getUserByUsername('user') >> Mono.just(user1)
 
         expect:

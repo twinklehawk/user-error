@@ -32,7 +32,8 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "a user and its roles are mapped to the correct UserDetails"() {
-        usersRepo.getForUsername("user") >> Mono.just(User.create(25, "user", "pass"))
+        usersRepo.getForUsernameWithPassword("user") >> Mono.just(User.builder().id(25L)
+                .username('user').password('pass').build())
         userRolesRepo.getRolesForUser(25) >> Flux.just(
                 Role.create(3, "normal-user", "app"),
                 Role.create(5, "admin", "app"))
@@ -50,7 +51,7 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "UsernameNotFoundException thrown when no user is found for username"() {
-        usersRepo.getForUsername("user") >> Mono.empty()
+        usersRepo.getForUsernameWithPassword("user") >> Mono.empty()
 
         expect:
         StepVerifier.create(service.findByUsername("user"))
@@ -58,7 +59,8 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "empty roles returns no granted authorities"() {
-        usersRepo.getForUsername("user") >> Mono.just(User.create(25, "user", "pass"))
+        usersRepo.getForUsernameWithPassword("user") >> Mono.just(User.builder().id(25L)
+                .username('user').password('pass').build())
         userRolesRepo.getRolesForUser(25) >> Flux.empty()
 
         expect:

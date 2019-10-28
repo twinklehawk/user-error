@@ -1,10 +1,10 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
-import net.plshark.users.model.UserInfo;
 import net.plshark.users.repo.UserGroupsRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
@@ -40,19 +40,21 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<UserInfo> getUserByUsername(String username) {
-        return userRepo.getForUsername(username).map(UserInfo::fromUser);
+    public Mono<User> getUserByUsername(String username) {
+        return userRepo.getForUsername(username);
     }
 
     @Override
-    public Flux<UserInfo> getUsers(int maxResults, long offset) {
-        return userRepo.getAll(maxResults, offset).map(UserInfo::fromUser);
+    public Flux<User> getUsers(int maxResults, long offset) {
+        return userRepo.getAll(maxResults, offset);
     }
 
     @Override
-    public Mono<UserInfo> insertUser(User user) {
-        return userRepo.insert(User.create(user.getUsername(), passwordEncoder.encode(user.getPassword())))
-                .map(UserInfo::fromUser);
+    public Mono<User> insertUser(User user) {
+        return Mono.just(user)
+                .flatMap(u -> u.getPassword() != null ? Mono.just(u) : Mono.error(() -> new BadRequestException("password cannot be empty")))
+                .map(u -> u.toBuilder().password(passwordEncoder.encode(u.getPassword())).build())
+                .flatMap(userRepo::insert);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Void> deleteUser(UserInfo user) {
+    public Mono<Void> deleteUser(User user) {
         return deleteUser(user.getId());
     }
 
@@ -73,8 +75,9 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Void> grantRoleToUser(UserInfo user, Role role) {
-        Objects.requireNonNull(role.getId(), "Role ID must be set");
+    public Mono<Void> grantRoleToUser(User user, Role role) {
+        Objects.requireNonNull(user.getId(), "User ID cannot be null");
+        Objects.requireNonNull(role.getId(), "Role ID cannot be null");
         return grantRoleToUser(user.getId(), role.getId());
     }
 

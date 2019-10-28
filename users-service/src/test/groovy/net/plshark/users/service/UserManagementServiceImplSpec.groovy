@@ -2,7 +2,6 @@ package net.plshark.users.service
 
 import net.plshark.ObjectNotFoundException
 import net.plshark.users.model.User
-import net.plshark.users.model.UserInfo
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -24,11 +23,12 @@ class UserManagementServiceImplSpec extends Specification {
 
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
-        userRepo.insert(User.create("user", "pass-encoded")) >> Mono.just(User.create(1L, 'user', 'pass-encoded'))
+        userRepo.insert(User.builder().username('user').password('pass-encoded').build()) >>
+                Mono.just(User.builder().id(1L).username('user').build())
 
         expect:
-        StepVerifier.create(service.insertUser(User.create("user", "pass")))
-                .expectNext(UserInfo.create(1L, 'user'))
+        StepVerifier.create(service.insertUser(User.builder().username('user').password('pass').build()))
+                .expectNext(User.builder().id(1L).username('user').build())
                 .verifyComplete()
     }
 
@@ -93,7 +93,7 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def "removing a role from a user should remove the role from the user's roles"() {
-        userRepo.getForId(100) >> Mono.just(User.create("name", "pass"))
+        userRepo.getForId(100) >> Mono.just(User.builder().username('name').password('pass').build())
         PublisherProbe probe = PublisherProbe.empty()
         userRolesRepo.deleteUserRole(100, 200) >> probe.mono()
 
@@ -106,13 +106,13 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def 'getUsers should return all results'() {
-        def user1 = User.create(1L, 'user', 'pass')
-        def user2 = User.create(2L, 'user2', 'pass')
+        def user1 = User.builder().id(1L).username('user').build()
+        def user2 = User.builder().id(2L).username('user2').build()
         userRepo.getAll(5, 0) >> Flux.just(user1, user2)
 
         expect:
         StepVerifier.create(service.getUsers(5, 0))
-                .expectNext(UserInfo.create(1L, 'user'), UserInfo.create(2L, 'user2'))
+                .expectNext(user1, user2)
                 .verifyComplete()
     }
 

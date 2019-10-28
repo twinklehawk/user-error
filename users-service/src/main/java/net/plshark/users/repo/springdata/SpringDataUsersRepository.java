@@ -27,9 +27,18 @@ public class SpringDataUsersRepository implements UsersRepository {
     @Override
     public Mono<User> getForUsername(String username) {
         Objects.requireNonNull(username, "username cannot be null");
-        return client.execute("SELECT * FROM users WHERE username = :username")
+        return client.execute("SELECT id, username FROM users WHERE username = :username")
                 .bind("username", username)
                 .map(SpringDataUsersRepository::mapRow)
+                .one();
+    }
+
+    @Override
+    public Mono<User> getForUsernameWithPassword(String username) {
+        Objects.requireNonNull(username, "username cannot be null");
+        return client.execute("SELECT * FROM users WHERE username = :username")
+                .bind("username", username)
+                .map(SpringDataUsersRepository::mapRowWithPassword)
                 .one();
     }
 
@@ -37,6 +46,8 @@ public class SpringDataUsersRepository implements UsersRepository {
     public Mono<User> insert(User user) {
         if (user.getId() != null)
             throw new IllegalArgumentException("Cannot insert user with ID already set");
+        if (user.getPassword() == null)
+            throw new IllegalArgumentException("Cannot insert user with null password");
 
         return client.execute("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
                 .bind("username", user.getUsername())
@@ -46,7 +57,7 @@ public class SpringDataUsersRepository implements UsersRepository {
                         .map(Mono::just)
                         .orElse(Mono.empty()))
                 .switchIfEmpty(Mono.error(() -> new IllegalStateException("No ID returned from insert")))
-                .map(id -> User.create(id, user.getUsername(), user.getPassword()));
+                .map(id -> User.builder().id(id).username(user.getUsername()).build());
     }
 
     @Override
@@ -89,6 +100,17 @@ public class SpringDataUsersRepository implements UsersRepository {
     }
 
     static User mapRow(Row row, RowMetadata rowMetadata) {
-        return User.create(row.get("id", Long.class), row.get("username", String.class), row.get("password", String.class));
+        return User.builder()
+                .id(row.get("id", Long.class))
+                .username(row.get("username", String.class))
+                .build();
+    }
+
+    private static User mapRowWithPassword(Row row, RowMetadata rowMetadata) {
+        return User.builder()
+                .id(row.get("id", Long.class))
+                .username(row.get("username", String.class))
+                .password(row.get("password", String.class))
+                .build();
     }
 }

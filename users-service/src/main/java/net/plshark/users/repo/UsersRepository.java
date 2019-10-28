@@ -24,6 +24,13 @@ public interface UsersRepository {
     Mono<User> getForUsername(String username);
 
     /**
+     * Get a user by the username <p><b>This method returns the user's password</b></p>
+     * @param username the username
+     * @return the matching user
+     */
+    Mono<User> getForUsernameWithPassword(String username);
+
+    /**
      * Get all users up to the maximum result count
      * @param maxResults the maximum number of results to return
      * @param offset the offset to start the list at
