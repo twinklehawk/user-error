@@ -48,22 +48,6 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     /**
-     * Handle the request method not supported
-     * @param e the exception
-     * @param request the request that caused the exception
-     * @return the response to return to the client
-     */
-    /*
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException e,
-            ServerHttpRequest request) {
-        log.debug("Method not supported", e);
-        HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
-        return ResponseEntity.status(status).body(buildResponse(status, e, request.getRequestURI()));
-    }
-    */
-
-    /**
      * Handle a Throwable
      * @param t the throwable
      * @param request the request that caused the throwable
