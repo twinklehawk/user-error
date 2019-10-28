@@ -49,7 +49,7 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'refresh should build new access and refresh tokens with the correct expiration'() {
-        tokenVerifier.verifyRefreshToken('refresh-token') >> Mono.just('test-user')
+        tokenVerifier.verifyRefreshToken('refresh-token') >> 'test-user'
         userDetailsService.findByUsername('test-user') >> Mono.just(new User('test-user', 'encoded-password', Collections.emptyList()))
         tokenBuilder.buildAccessToken('test-user', 1000L, [] as String[]) >> 'test-token'
         tokenBuilder.buildRefreshToken('test-user', 1000L) >> 'refresh-token'
@@ -61,7 +61,7 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'refresh should return an exception if the token is invalid'() {
-        tokenVerifier.verifyRefreshToken('refresh-token') >> Mono.error(new BadCredentialsException('test exception'))
+        tokenVerifier.verifyRefreshToken('refresh-token') >> { throw new BadCredentialsException('test exception') }
 
         expect:
         StepVerifier.create(service.refresh('refresh-token'))
@@ -69,7 +69,7 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'refresh should return an exception if the corresponding user is not found'() {
-        tokenVerifier.verifyRefreshToken('refresh-token') >> Mono.just('test-user')
+        tokenVerifier.verifyRefreshToken('refresh-token') >> 'test-user'
         userDetailsService.findByUsername('test-user') >> Mono.empty()
 
         expect:
@@ -79,7 +79,7 @@ class AuthServiceImplSpec extends Specification {
 
     def 'validate should complete successfully for a valid token'() {
         def user = AuthenticatedUser.create('test-user', Collections.emptySet())
-        tokenVerifier.verifyToken('access-token') >> Mono.just(user)
+        tokenVerifier.verifyToken('access-token') >> user
 
         expect:
         StepVerifier.create(service.validateToken('access-token'))
@@ -88,7 +88,7 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'validate should return an exception for an invalid token'() {
-        tokenVerifier.verifyToken('access-token') >> Mono.error(new BadCredentialsException('test exception'))
+        tokenVerifier.verifyToken('access-token') >> { throw new BadCredentialsException('test exception') }
 
         expect:
         StepVerifier.create(service.validateToken('access-token'))

@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Mono<AuthToken> authenticate(AccountCredentials credentials) {
         String username = credentials.getUsername();
-        return this.userDetailsService.findByUsername(username)
+        return userDetailsService.findByUsername(username)
                 .publishOn(Schedulers.parallel())
                 .filter(user -> this.passwordEncoder.matches(credentials.getPassword(), user.getPassword()))
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid Credentials"))))
@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     public Mono<AuthToken> refresh(String refreshToken) {
         return Mono.just(refreshToken)
                 .publishOn(Schedulers.parallel())
-                .flatMap(tokenVerifier::verifyRefreshToken)
+                .map(tokenVerifier::verifyRefreshToken)
                 .flatMap(userDetailsService::findByUsername)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid Credentials"))))
                 // TODO run any checks to see if user is allowed to refresh
@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
     public Mono<AuthenticatedUser> validateToken(String accessToken) {
         return Mono.just(accessToken)
                 .publishOn(Schedulers.parallel())
-                .flatMap(tokenVerifier::verifyToken);
+                .map(tokenVerifier::verifyToken);
     }
 
     // TODO make expiration configurable

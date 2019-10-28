@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import net.plshark.users.auth.model.AuthenticatedUser
 import org.springframework.security.authentication.BadCredentialsException
-import reactor.test.StepVerifier
 import spock.lang.Specification
 
 class DefaultTokenVerifierSpec extends Specification {
@@ -19,9 +18,7 @@ class DefaultTokenVerifierSpec extends Specification {
                 .withArrayClaim(AuthService.AUTHORITIES_CLAIM, ['user'] as String[]).sign(algorithm)
 
         then:
-        StepVerifier.create(verifier.verifyToken(token))
-                .expectNext(AuthenticatedUser.create('test-user', Collections.singleton('user')))
-                .verifyComplete()
+        verifier.verifyToken(token) == AuthenticatedUser.create('test-user', Collections.singleton('user'))
     }
 
     def 'no authorities claim should build an empty authorities list'() {
@@ -29,15 +26,15 @@ class DefaultTokenVerifierSpec extends Specification {
         def token = JWT.create().withSubject('test-user').sign(algorithm)
 
         then:
-        StepVerifier.create(verifier.verifyToken(token))
-                .expectNext(AuthenticatedUser.create('test-user', Collections.emptySet()))
-                .verifyComplete()
+        verifier.verifyToken(token) == AuthenticatedUser.create('test-user', Collections.emptySet())
     }
 
     def 'invalid access tokens should throw a BadCredentialsException'() {
-        expect:
-        StepVerifier.create(verifier.verifyToken('bad-token'))
-                .verifyError(BadCredentialsException)
+        when:
+        verifier.verifyToken('bad-token')
+
+        then:
+        thrown(BadCredentialsException)
     }
 
     def 'valid refresh tokens should return the username'() {
@@ -45,23 +42,23 @@ class DefaultTokenVerifierSpec extends Specification {
         def token = JWT.create().withSubject('test-user').withClaim(AuthService.REFRESH_CLAIM, true).sign(algorithm)
 
         then:
-        StepVerifier.create(verifier.verifyRefreshToken(token))
-                .expectNext('test-user')
-                .verifyComplete()
+        verifier.verifyRefreshToken(token) == 'test-user'
     }
 
     def 'invalid refresh tokens should throw a BadCredentialsException'() {
-        expect:
-        StepVerifier.create(verifier.verifyRefreshToken('bad-token'))
-                .verifyError(BadCredentialsException)
+        when:
+        verifier.verifyRefreshToken('bad-token')
+
+        then:
+        thrown(BadCredentialsException)
     }
 
     def 'refresh tokens without the refresh claim should throw a BadCredentialsException'() {
         when:
         def token = JWT.create().withSubject('test-user').sign(algorithm)
+        verifier.verifyRefreshToken(token)
 
         then:
-        StepVerifier.create(verifier.verifyRefreshToken(token))
-                .verifyError(BadCredentialsException)
+        thrown(BadCredentialsException)
     }
 }
