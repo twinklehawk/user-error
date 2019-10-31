@@ -7,13 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Application entry point
  */
 @SpringBootApplication
-public class Application {
+public class UsersApplication {
 
     /**
      * Application entry point
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(UsersApplication.class, args);
     }
 }
