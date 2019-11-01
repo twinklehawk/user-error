@@ -40,7 +40,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def "retrieving a group by ID when no group matches returns empty"() {
         expect:
-        StepVerifier.create(repo.getForId(1))
+        StepVerifier.create(repo.getForId(100))
                 .expectNextCount(0)
                 .verifyComplete()
     }
@@ -88,7 +88,8 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
         then:
         StepVerifier.create(repo.getGroups(50, 0))
-                .expectNextCount(3)
+                // one group is inserted by the migration scripts
+                .expectNextCount(4)
                 .verifyComplete()
     }
 
@@ -113,7 +114,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
                 .block()
 
         then:
-        StepVerifier.create(repo.getGroups(2, 1))
+        StepVerifier.create(repo.getGroups(2, 2))
                 .expectNextMatches({ group -> group.name == 'group2' })
                 .expectNextMatches({ group -> group.name == 'group3' })
                 .verifyComplete()
