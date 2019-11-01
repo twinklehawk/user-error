@@ -8,8 +8,8 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom('org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE')
-        mavenBom 'io.r2dbc:r2dbc-bom:Arabba-RC2'
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE'
+        mavenBom 'org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.BUILD-SNAPSHOT'
     }
     dependencies {
         dependency 'org.codehaus.groovy:groovy-all:2.5.8'

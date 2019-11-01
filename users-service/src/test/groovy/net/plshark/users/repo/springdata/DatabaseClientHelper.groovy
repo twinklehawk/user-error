@@ -16,14 +16,14 @@ class DatabaseClientHelper {
      * @return the DatabaseClient
      */
     static DatabaseClient buildTestClient(PreparedDbRule dbRule) {
-        return DatabaseClient.create(
-                new PostgresqlConnectionFactory(
-                        PostgresqlConnectionConfiguration.builder()
-                                .database(dbRule.connectionInfo.dbName)
-                                .host('localhost')
-                                .port(dbRule.connectionInfo.port)
-                                .username(dbRule.connectionInfo.user)
-                                .password('')
-                                .build()))
+        def factory = new PostgresqlConnectionFactory(
+                PostgresqlConnectionConfiguration.builder()
+                        .database(dbRule.connectionInfo.dbName)
+                        .host('localhost')
+                        .port(dbRule.connectionInfo.port)
+                        .username(dbRule.connectionInfo.user)
+                        .password('')
+                        .build())
+        return DatabaseClient.create(factory)
     }
 }
