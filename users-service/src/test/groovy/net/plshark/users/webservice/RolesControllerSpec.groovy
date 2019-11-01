@@ -1,7 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.users.model.Role
-import net.plshark.users.service.RoleManagementService
+import net.plshark.users.service.RolesService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -10,34 +10,33 @@ import spock.lang.Specification
 
 class RolesControllerSpec extends Specification {
 
-    RoleManagementService service = Mock()
+    RolesService service = Mock()
     RolesController controller = new RolesController(service)
 
     def "insert passes role through to service"() {
-        service.insertRole({ Role role -> role.id == null && role.name == "admin" }) >>
-                Mono.just(Role.create(100, "admin", "app"))
+        def request = Role.builder().name('admin').build()
+        def inserted = Role.builder().id(100).name('app').applicationId(12).build()
+        service.insert('app', request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(controller.insert(Role.create("admin", "app")))
-            .expectNext(Role.create(100, "admin", "app"))
+        StepVerifier.create(controller.insert('app', request))
+            .expectNext(inserted)
             .verifyComplete()
     }
 
     def "delete passes ID through to service"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.deleteRole(100) >> probe.mono()
+        service.delete('app', 'role') >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.delete(100))
+        StepVerifier.create(controller.delete('app', 'role'))
             .verifyComplete()
         probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
     }
 
     def 'getRoles passes the max results and offset through'() {
-        def role1 = Role.create('role1', 'app')
-        def role2 = Role.create('role2', 'app')
+        def role1 = Role.builder().name('role1').applicationId(1).build()
+        def role2 = Role.builder().name('role2').applicationId(1).build()
         service.getRoles(3, 2) >> Flux.just(role1, role2)
 
         expect:
@@ -46,12 +45,12 @@ class RolesControllerSpec extends Specification {
                 .verifyComplete()
     }
 
-    def 'getByName passes the role name through'() {
-        def role1 = Role.create('role', 'app')
-        service.getRoleByName('role', 'app') >> Mono.just(role1)
+    def 'get passes the role name through'() {
+        def role1 = Role.builder().name('role').applicationId(1).build()
+        service.get('app', 'role') >> Mono.just(role1)
 
         expect:
-        StepVerifier.create(controller.getByName('role', 'app'))
+        StepVerifier.create(controller.get('app', 'role'))
                 .expectNext(role1)
                 .verifyComplete()
     }
