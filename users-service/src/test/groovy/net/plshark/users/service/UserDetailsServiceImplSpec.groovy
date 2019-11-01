@@ -17,26 +17,12 @@ class UserDetailsServiceImplSpec extends Specification {
     UserRolesRepository userRolesRepo = Mock()
     UserDetailsServiceImpl service = new UserDetailsServiceImpl(usersRepo, userRolesRepo)
 
-    def "constructor does not accept null args"() {
-        when:
-        new UserDetailsServiceImpl(null, userRolesRepo)
-
-        then:
-        thrown(NullPointerException)
-
-        when:
-        new UserDetailsServiceImpl(usersRepo, null)
-
-        then:
-        thrown(NullPointerException)
-    }
-
     def "a user and its roles are mapped to the correct UserDetails"() {
         usersRepo.getForUsernameWithPassword("user") >> Mono.just(User.builder().id(25L)
                 .username('user').password('pass').build())
         userRolesRepo.getRolesForUser(25) >> Flux.just(
-                Role.create(3, "normal-user", "app"),
-                Role.create(5, "admin", "app"))
+                Role.builder().id(3).applicationId(1).name('normal-user').build(),
+                Role.builder().id(5).applicationId(1).name('admin').build())
 
         expect:
         StepVerifier.create(service.findByUsername("user"))
