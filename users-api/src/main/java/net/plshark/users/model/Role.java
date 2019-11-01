@@ -26,6 +26,9 @@ public abstract class Role {
     @Nullable
     public abstract Long getId();
 
+    /**
+     * @return the application ID, can be null if not saved yet and inserting using the application name
+     */
     @Nullable
     @JsonProperty("application_id")
     public abstract Long getApplicationId();
