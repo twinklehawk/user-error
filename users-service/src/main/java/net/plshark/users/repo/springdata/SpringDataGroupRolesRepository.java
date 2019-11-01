@@ -19,7 +19,7 @@ public class SpringDataGroupRolesRepository implements GroupRolesRepository {
 
     @Override
     public Flux<Role> getRolesForGroup(long groupId) {
-        return client.execute("SELECT id, name, application FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE ur.group_id = :id")
+        return client.execute("SELECT r.* FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE ur.group_id = :id")
                 .bind("id", groupId)
                 .map(SpringDataRolesRepository::mapRow)
                 .all();
