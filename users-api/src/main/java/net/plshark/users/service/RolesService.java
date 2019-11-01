@@ -7,15 +7,15 @@ import reactor.core.publisher.Mono;
 /**
  * Service for managing roles
  */
-public interface RoleManagementService {
+public interface RolesService {
 
     /**
      * Retrieve a role by name
-     * @param name the role name
      * @param application the application the role belongs to
-     * @return the matching role
+     * @param name the role name
+     * @return the matching role or empty if not found
      */
-    Mono<Role> getRoleByName(String name, String application);
+    Mono<Role> get(String application, String name);
 
     /**
      * Get all roles up to the maximum result count and starting at an offset
@@ -30,14 +30,28 @@ public interface RoleManagementService {
      * @param role the role
      * @return the saved role
      */
-    Mono<Role> insertRole(Role role);
+    Mono<Role> insert(Role role);
+
+    /**
+     * Save a new role
+     * @param application the application the role should belong to
+     * @param role the role
+     * @return the saved role
+     */
+    Mono<Role> insert(String application, Role role);
+
+    /**
+     * Delete a role
+     * @param application the parent application name
+     * @param name the role name
+     * @return an empty result
+     */
+    Mono<Void> delete(String application, String name);
 
     /**
      * Delete a role
      * @param roleId the role ID
      * @return an empty result
      */
-    Mono<Void> deleteRole(long roleId);
-
-    // TODO method for retrieving all roles for an application
+    Mono<Void> delete(long roleId);
 }
