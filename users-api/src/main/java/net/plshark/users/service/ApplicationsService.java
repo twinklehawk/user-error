@@ -18,11 +18,11 @@ public interface ApplicationsService {
 
     /**
      * Get all applications up to the maximum result count and starting at an offset
-     * @param maxResults the maximum number of results to return
+     * @param limit the maximum number of results to return
      * @param offset the offset to start the list at, 0 to start at the beginning
      * @return the applications
      */
-    Flux<Application> getApplications(int maxResults, long offset);
+    Flux<Application> getApplications(int limit, long offset);
 
     /**
      * Save a new application
