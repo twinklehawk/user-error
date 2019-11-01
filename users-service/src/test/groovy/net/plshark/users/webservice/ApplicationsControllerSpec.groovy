@@ -10,11 +10,11 @@ import spock.lang.Specification
 class ApplicationsControllerSpec extends Specification {
 
     def applicationsService = Mock(ApplicationsService)
-    def controller = new ApplicationsController()
+    def controller = new ApplicationsController(applicationsService)
 
     def 'getting an application should pass through whatever the service returns'() {
         def app = Application.builder().id(123L).name('test-app').build()
-        applicationsService.get('test-app') >> app
+        applicationsService.get('test-app') >> Mono.just(app)
 
         expect:
         StepVerifier.create(controller.get('test-app'))
