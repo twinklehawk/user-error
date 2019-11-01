@@ -13,21 +13,21 @@ import reactor.core.publisher.Mono;
  * Group management service implementation
  */
 @Component
-public class GroupManagementServiceImpl implements GroupManagementService {
+public class GroupsServiceImpl implements GroupsService {
 
     private final GroupsRepository groupsRepo;
     private final UserGroupsRepository userGroupsRepo;
     private final GroupRolesRepository groupRolesRepo;
 
-    public GroupManagementServiceImpl(GroupsRepository groupsRepo, UserGroupsRepository userGroupsRepo,
-                                      GroupRolesRepository groupRolesRepo) {
+    public GroupsServiceImpl(GroupsRepository groupsRepo, UserGroupsRepository userGroupsRepo,
+                             GroupRolesRepository groupRolesRepo) {
         this.groupsRepo = Objects.requireNonNull(groupsRepo, "groupsRepo cannot be null");
         this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
         this.groupRolesRepo = Objects.requireNonNull(groupRolesRepo, "groupRolesRepo cannot be null");
     }
 
     @Override
-    public Mono<Group> getGroupByName(String name) {
+    public Mono<Group> get(String name) {
         return groupsRepo.getForName(name);
     }
 
@@ -37,15 +37,22 @@ public class GroupManagementServiceImpl implements GroupManagementService {
     }
 
     @Override
-    public Mono<Group> insertGroup(Group group) {
+    public Mono<Group> insert(Group group) {
         return groupsRepo.insert(group);
     }
 
     @Override
-    public Mono<Void> deleteGroup(long groupId) {
+    public Mono<Void> delete(long groupId) {
         return userGroupsRepo.deleteUserGroupsForGroup(groupId)
                 .then(groupRolesRepo.deleteForGroup(groupId))
                 .then(groupsRepo.delete(groupId));
+    }
+
+    @Override
+    public Mono<Void> delete(String name) {
+        //noinspection ConstantConditions
+        return get(name)
+                .flatMap(group -> delete(group.getId()));
     }
 
     @Override

@@ -10,18 +10,18 @@ import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
-class GroupManagementServiceImplSpec extends Specification {
+class GroupsServiceImplSpec extends Specification {
 
     GroupsRepository groupsRepo = Mock()
     UserGroupsRepository userGroupsRepo = Mock()
     GroupRolesRepository groupRolesRepo = Mock()
-    def service = new GroupManagementServiceImpl(groupsRepo, userGroupsRepo, groupRolesRepo)
+    def service = new GroupsServiceImpl(groupsRepo, userGroupsRepo, groupRolesRepo)
 
     def 'should be able to retrieve groups by name'() {
         groupsRepo.getForName('group-name') >> Mono.just(Group.create(123L, 'group-name'))
 
         expect:
-        StepVerifier.create(service.getGroupByName('group-name'))
+        StepVerifier.create(service.get('group-name'))
                 .expectNext(Group.create(123L, 'group-name'))
                 .verifyComplete()
     }
@@ -41,7 +41,7 @@ class GroupManagementServiceImplSpec extends Specification {
         groupsRepo.insert(Group.create('group')) >> Mono.just(Group.create(1L, 'group'))
 
         expect:
-        StepVerifier.create(service.insertGroup(Group.create('group')))
+        StepVerifier.create(service.insert(Group.create('group')))
                 .expectNext(Group.create(1L, 'group'))
                 .verifyComplete()
     }
@@ -55,7 +55,24 @@ class GroupManagementServiceImplSpec extends Specification {
         groupsRepo.delete(100) >> groupsProbe.mono()
 
         expect:
-        StepVerifier.create(service.deleteGroup(100))
+        StepVerifier.create(service.delete(100))
+                .verifyComplete()
+        userGroupsProbe.assertWasSubscribed()
+        groupRolesProbe.assertWasSubscribed()
+        groupsProbe.assertWasSubscribed()
+    }
+
+    def 'deleting by name should retrieve thr group, delete all associations, and delete the group'() {
+        groupsRepo.getForName('group') >> Mono.just(Group.create(100, 'group'))
+        PublisherProbe userGroupsProbe = PublisherProbe.empty()
+        userGroupsRepo.deleteUserGroupsForGroup(100) >> userGroupsProbe.mono()
+        PublisherProbe groupRolesProbe = PublisherProbe.empty()
+        groupRolesRepo.deleteForGroup(100) >> groupRolesProbe.mono()
+        PublisherProbe groupsProbe = PublisherProbe.empty()
+        groupsRepo.delete(100) >> groupsProbe.mono()
+
+        expect:
+        StepVerifier.create(service.delete('group'))
                 .verifyComplete()
         userGroupsProbe.assertWasSubscribed()
         groupRolesProbe.assertWasSubscribed()

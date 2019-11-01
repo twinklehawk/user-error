@@ -7,14 +7,14 @@ import reactor.core.publisher.Mono;
 /**
  * Service for managing groups
  */
-public interface GroupManagementService {
+public interface GroupsService {
 
     /**
      * Retrieve a group by name
      * @param name the group name
      * @return the matching group
      */
-    Mono<Group> getGroupByName(String name);
+    Mono<Group> get(String name);
 
     /**
      * Get all groups up to the maximum result count and starting at an offset
@@ -29,14 +29,21 @@ public interface GroupManagementService {
      * @param group the group
      * @return the saved group
      */
-    Mono<Group> insertGroup(Group group);
+    Mono<Group> insert(Group group);
 
     /**
      * Delete a group
      * @param groupId the group ID
      * @return when complete
      */
-    Mono<Void> deleteGroup(long groupId);
+    Mono<Void> delete(long groupId);
+
+    /**
+     * Delete a group
+     * @param name the group name
+     * @return when complete
+     */
+    Mono<Void> delete(String name);
 
     /**
      * Add a role to a group
