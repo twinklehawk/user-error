@@ -13,13 +13,13 @@ import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
-class UserManagementServiceImplSpec extends Specification {
+class UsersServiceImplSpec extends Specification {
 
     UsersRepository userRepo = Mock()
     UserRolesRepository userRolesRepo = Mock()
     UserGroupsRepository userGroupsRepo = Mock()
     PasswordEncoder encoder = Mock()
-    UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, userRolesRepo, userGroupsRepo, encoder)
+    UsersServiceImpl service = new UsersServiceImpl(userRepo, userRolesRepo, userGroupsRepo, encoder)
 
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
@@ -75,6 +75,23 @@ class UserManagementServiceImplSpec extends Specification {
         expect:
         StepVerifier.create(service.deleteUser(100))
             .verifyComplete()
+        rolesProbe.assertWasSubscribed()
+        userProbe.assertWasSubscribed()
+        groupsProbe.assertWasSubscribed()
+    }
+
+    def 'deleting by username retrieves the user, deletes all associations, and deletes the user'() {
+        userRepo.getForUsername('user') >> Mono.just(User.builder().id(100).username('user').build())
+        PublisherProbe rolesProbe = PublisherProbe.empty()
+        userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
+        PublisherProbe userProbe = PublisherProbe.empty()
+        userRepo.delete(100) >> userProbe.mono()
+        PublisherProbe groupsProbe = PublisherProbe.empty()
+        userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
+
+        expect:
+        StepVerifier.create(service.deleteUser(100))
+                .verifyComplete()
         rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()
         groupsProbe.assertWasSubscribed()

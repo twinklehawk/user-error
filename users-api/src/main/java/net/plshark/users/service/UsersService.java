@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 /**
  * Service for modifying users and roles
  */
-public interface UserManagementService {
+public interface UsersService {
 
     /**
      * Retrieve a user by username
@@ -41,10 +41,10 @@ public interface UserManagementService {
 
     /**
      * Delete a user
-     * @param user the user
+     * @param username the username
      * @return an empty result
      */
-    Mono<Void> deleteUser(User user);
+    Mono<Void> deleteUser(String username);
 
     /**
      * Update a user's password

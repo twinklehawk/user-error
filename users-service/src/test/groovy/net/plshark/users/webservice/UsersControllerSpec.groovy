@@ -2,7 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.model.User
-import net.plshark.users.service.UserManagementService
+import net.plshark.users.service.UsersService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -11,15 +11,15 @@ import spock.lang.Specification
 
 class UsersControllerSpec extends Specification {
 
-    UserManagementService service = Mock()
+    UsersService service = Mock()
     UsersController controller = new UsersController(service)
 
     def "delete passes the user ID through to be deleted"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.deleteUser(100) >> probe.mono()
+        service.deleteUser('user') >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.delete(100))
+        StepVerifier.create(controller.delete('user'))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()

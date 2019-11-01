@@ -5,7 +5,7 @@ import javax.validation.constraints.Min;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
 import net.plshark.users.model.User;
-import net.plshark.users.service.UserManagementService;
+import net.plshark.users.service.UsersService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +25,14 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/users")
 public class UsersController {
 
-    private final UserManagementService userMgmtService;
+    private final UsersService usersService;
 
     /**
      * Create a new instance
-     * @param userManagementService the service to use to modify users
+     * @param usersService the service to use to modify users
      */
-    public UsersController(UserManagementService userManagementService) {
-        this.userMgmtService = Objects.requireNonNull(userManagementService, "userManagementService cannot be null");
+    public UsersController(UsersService usersService) {
+        this.usersService = Objects.requireNonNull(usersService, "usersService cannot be null");
     }
 
     /**
@@ -44,7 +44,7 @@ public class UsersController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<User> getUsers(@RequestParam(value = "max-results", defaultValue = "50") @Min(1) int maxResults,
                                    @RequestParam(value = "offset", defaultValue = "0") @Min(0) long offset) {
-        return userMgmtService.getUsers(maxResults, offset);
+        return usersService.getUsers(maxResults, offset);
     }
 
     /**
@@ -54,7 +54,7 @@ public class UsersController {
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<User> getUser(@PathVariable("username") String username) {
-        return userMgmtService.getUserByUsername(username)
+        return usersService.getUserByUsername(username)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
     }
 
@@ -65,17 +65,17 @@ public class UsersController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<User> insert(@RequestBody User user) {
-        return userMgmtService.insertUser(user);
+        return usersService.insertUser(user);
     }
 
     /**
-     * Delete a user by ID
-     * @param id the user ID
+     * Delete a user by username
+     * @param username the username
      * @return an empty result
      */
-    @DeleteMapping("/{id}")
-    public Mono<Void> delete(@PathVariable("id") long id) {
-        return userMgmtService.deleteUser(id);
+    @DeleteMapping("/{username}")
+    public Mono<Void> delete(@PathVariable("username") String username) {
+        return usersService.deleteUser(username);
     }
 
     /**
@@ -86,7 +86,7 @@ public class UsersController {
      */
     @PostMapping(path = "/{id}/password")
     public Mono<Void> changePassword(@PathVariable("id") long userId, @RequestBody PasswordChangeRequest request) {
-        return userMgmtService.updateUserPassword(userId, request.getCurrentPassword(), request.getNewPassword());
+        return usersService.updateUserPassword(userId, request.getCurrentPassword(), request.getNewPassword());
     }
 
     /**
@@ -97,7 +97,7 @@ public class UsersController {
      */
     @PostMapping(path = "/{userId}/roles/{roleId}")
     public Mono<Void> grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
-        return userMgmtService.grantRoleToUser(userId, roleId);
+        return usersService.grantRoleToUser(userId, roleId);
     }
 
     /**
@@ -108,6 +108,6 @@ public class UsersController {
      */
     @DeleteMapping(path = "/{userId}/roles/{roleId}")
     public Mono<Void> removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
-        return userMgmtService.removeRoleFromUser(userId, roleId);
+        return usersService.removeRoleFromUser(userId, roleId);
     }
 }

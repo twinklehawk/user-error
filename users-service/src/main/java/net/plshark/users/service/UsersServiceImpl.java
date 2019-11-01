@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  * UserManagementService implementation
  */
 @Component
-public class UserManagementServiceImpl implements UserManagementService {
+public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository userRepo;
     private final UserRolesRepository userRolesRepo;
@@ -31,8 +31,8 @@ public class UserManagementServiceImpl implements UserManagementService {
      * @param userRolesRepo the repository for accessing user roles
      * @param passwordEncoder the encoder to use to encode passwords
      */
-    public UserManagementServiceImpl(UsersRepository userRepository, UserRolesRepository userRolesRepo,
-                                     UserGroupsRepository userGroupsRepo, PasswordEncoder passwordEncoder) {
+    public UsersServiceImpl(UsersRepository userRepository, UserRolesRepository userRolesRepo,
+                            UserGroupsRepository userGroupsRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
         this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
         this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
@@ -65,8 +65,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Mono<Void> deleteUser(User user) {
-        return deleteUser(user.getId());
+    public Mono<Void> deleteUser(String username) {
+        //noinspection ConstantConditions
+        return getUserByUsername(username)
+                .flatMap(user -> deleteUser(user.getId()));
     }
 
     @Override
