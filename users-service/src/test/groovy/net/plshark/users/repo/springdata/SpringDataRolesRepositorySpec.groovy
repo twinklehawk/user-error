@@ -3,6 +3,7 @@ package net.plshark.users.repo.springdata
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
 import net.plshark.testutils.PlsharkFlywayPreparer
+import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import org.junit.Rule
 import reactor.test.StepVerifier
@@ -14,26 +15,32 @@ class SpringDataRolesRepositorySpec extends Specification {
     PreparedDbRule dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
 
     SpringDataRolesRepository repo
+    SpringDataApplicationsRepository appsRepo
 
     def setup() {
-        repo = new SpringDataRolesRepository(DatabaseClientHelper.buildTestClient(dbRule))
+        def db = DatabaseClientHelper.buildTestClient(dbRule)
+        repo = new SpringDataRolesRepository(db)
+        appsRepo = new SpringDataApplicationsRepository(db)
     }
 
     def "inserting a role returns the inserted role with the ID set"() {
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+
         when:
-        Role inserted = repo.insert(Role.create("test-role", "app")).block()
+        Role inserted = repo.insert(Role.builder().name('test-role').applicationId(app.id).build()).block()
 
         then:
         inserted.id != null
         inserted.name == "test-role"
-        inserted.application == "app"
+        inserted.applicationId == app.id
     }
 
     def "can retrieve a previously inserted role by ID"() {
-        Role inserted = repo.insert(Role.create("test-role", "app")).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        Role inserted = repo.insert(Role.builder().name('test-role').applicationId(app.id).build()).block()
 
         when:
-        Role role = repo.getForId(inserted.id).block()
+        Role role = repo.get(inserted.id).block()
 
         then:
         role == inserted
@@ -41,17 +48,18 @@ class SpringDataRolesRepositorySpec extends Specification {
 
     def "retrieving a role by ID when no role matches returns empty"() {
         expect:
-        StepVerifier.create(repo.getForId(1000))
+        StepVerifier.create(repo.get(1000))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
     }
 
     def "can retrieve a previously inserted role by name"() {
-        Role inserted = repo.insert(Role.create("test-role", "test-app")).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        Role inserted = repo.insert(Role.builder().name('test-role').applicationId(app.id).build()).block()
 
         when:
-        Role role = repo.getForName("test-role", "test-app").block()
+        Role role = repo.get(app.id, "test-role").block()
 
         then:
         role == inserted
@@ -59,18 +67,19 @@ class SpringDataRolesRepositorySpec extends Specification {
 
     def "retrieving a role by name when no role matches returns empty"() {
         expect:
-        StepVerifier.create(repo.getForName("test-role", "test-app"))
+        StepVerifier.create(repo.get(1, "test-role"))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
     }
 
     def "can delete a previously inserted role by ID"() {
-        Role inserted = repo.insert(Role.create("test-role", "application")).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        Role inserted = repo.insert(Role.builder().name('test-role').applicationId(app.id).build()).block()
 
         when:
         repo.delete(inserted.id).block()
-        Role retrieved = repo.getForId(inserted.id).block()
+        Role retrieved = repo.get(inserted.id).block()
 
         then: "get should return empty since the row should be gone"
         retrieved == null
@@ -85,8 +94,9 @@ class SpringDataRolesRepositorySpec extends Specification {
     }
 
     def 'getRoles should return all results when there are less than max results'() {
-        repo.insert(Role.create("name", "app"))
-                .then(repo.insert(Role.create("name2", "app"))).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        repo.insert(Role.builder().name('name').applicationId(app.id).build())
+                .then(repo.insert(Role.builder().name('name2').applicationId(app.id).build())).block()
 
         when:
         List<Role> roles = repo.getRoles(5, 0).collectList().block()
@@ -94,30 +104,32 @@ class SpringDataRolesRepositorySpec extends Specification {
         then:
         roles.size() == 4
         // these are inserted by the migration scripts
-        roles.get(0).name == 'users-user'
-        roles.get(1).name == 'users-admin'
+        roles.get(0).name == 'bad-users-user'
+        roles.get(1).name == 'bad-users-admin'
         roles.get(2).name == 'name'
         roles.get(3).name == 'name2'
     }
 
     def 'getRoles should return up to max results when there are more results'() {
-        repo.insert(Role.create("name", "app")).block()
-        repo.insert(Role.create("name2", "app")).block()
-        repo.insert(Role.create("name3", "app")).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        repo.insert(Role.builder().name('name').applicationId(app.id).build()).block()
+        repo.insert(Role.builder().name('name2').applicationId(app.id).build()).block()
+        repo.insert(Role.builder().name('name3').applicationId(app.id).build()).block()
 
         when:
         List<Role> roles = repo.getRoles(2, 0).collectList().block()
 
         then:
         roles.size() == 2
-        roles.get(0).name == 'users-user'
-        roles.get(1).name == 'users-admin'
+        roles.get(0).name == 'bad-users-user'
+        roles.get(1).name == 'bad-users-admin'
     }
 
     def 'getRoles should start at the correct offset'() {
-        repo.insert(Role.create("name", "app"))
-                .then(repo.insert(Role.create("name2", "app")))
-                .then(repo.insert(Role.create("name3", "app"))).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        repo.insert(Role.builder().name('name').applicationId(app.id).build())
+                .then(repo.insert(Role.builder().name('name2').applicationId(app.id).build()))
+                .then(repo.insert(Role.builder().name('name3').applicationId(app.id).build())).block()
 
         when:
         List<Role> roles = repo.getRoles(2, 2).collectList().block()
@@ -126,5 +138,19 @@ class SpringDataRolesRepositorySpec extends Specification {
         roles.size() == 2
         roles.get(0).name == 'name'
         roles.get(1).name == 'name2'
+    }
+
+    def 'getRolesForApplication should return all rows with a matching application ID'() {
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        def app2 = appsRepo.insert(Application.builder().name('app2').build()).block()
+        repo.insert(Role.builder().name('r1').applicationId(app.id).build()).block()
+        repo.insert(Role.builder().name('r2').applicationId(app.id).build()).block()
+        repo.insert(Role.builder().name('r3').applicationId(app2.id).build()).block()
+
+        expect:
+        StepVerifier.create(repo.getRolesForApplication(app.id))
+                .expectNextMatches({ r -> r.name == 'r1' })
+                .expectNextMatches({ r -> r.name == 'r2' })
+                .verifyComplete()
     }
 }

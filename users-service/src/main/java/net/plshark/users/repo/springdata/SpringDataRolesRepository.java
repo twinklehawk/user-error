@@ -24,7 +24,7 @@ public class SpringDataRolesRepository implements RolesRepository {
     }
 
     @Override
-    public Mono<Role> getForId(long id) {
+    public Mono<Role> get(long id) {
         return client.execute("SELECT * FROM roles WHERE id = :id")
                 .bind("id", id)
                 .map(SpringDataRolesRepository::mapRow)
@@ -32,10 +32,10 @@ public class SpringDataRolesRepository implements RolesRepository {
     }
 
     @Override
-    public Mono<Role> getForName(String name, String application) {
-        return client.execute("SELECT * FROM roles WHERE name = :name AND application = :application")
+    public Mono<Role> get(long applicationId, String name) {
+        return client.execute("SELECT * FROM roles WHERE application_id = :applicationId AND name = :name")
+                .bind("applicationId", applicationId)
                 .bind("name", name)
-                .bind("application", application)
                 .map(SpringDataRolesRepository::mapRow)
                 .one();
     }
@@ -57,16 +57,18 @@ public class SpringDataRolesRepository implements RolesRepository {
     public Mono<Role> insert(Role role) {
         if (role.getId() != null)
             throw new IllegalArgumentException("Cannot insert role with ID already set");
+        if (role.getApplicationId() == null)
+            throw new IllegalArgumentException("Role application ID cannot be null");
 
-        return client.execute("INSERT INTO roles (name, application) VALUES (:name, :application) RETURNING id")
+        return client.execute("INSERT INTO roles (application_id, name) VALUES (:applicationId, :name) RETURNING id")
+                .bind("applicationId", role.getApplicationId())
                 .bind("name", role.getName())
-                .bind("application", role.getApplication())
                 .fetch().one()
                 .flatMap(map -> Optional.ofNullable((Long) map.get("id"))
                         .map(Mono::just)
                         .orElse(Mono.empty()))
                 .switchIfEmpty(Mono.error(() -> new IllegalStateException("No ID returned from insert")))
-                .map(id -> Role.create(id, role.getName(), role.getApplication()));
+                .map(id -> role.toBuilder().id(id).build());
     }
 
     @Override
@@ -76,8 +78,19 @@ public class SpringDataRolesRepository implements RolesRepository {
                 .then();
     }
 
+    @Override
+    public Flux<Role> getRolesForApplication(long applicationId) {
+        return client.execute("SELECT * FROM roles WHERE application_id = :applicationId ORDER BY id")
+                .bind("applicationId", applicationId)
+                .map(SpringDataRolesRepository::mapRow)
+                .all();
+    }
+
     static Role mapRow(Row row, RowMetadata rowMetadata) {
-        return Role.create(row.get("id", Long.class), row.get("name", String.class),
-                row.get("application", String.class));
+        return Role.builder()
+                .id(row.get("id", Long.class))
+                .applicationId(row.get("application_id", Long.class))
+                .name(row.get("name", String.class))
+                .build();
     }
 }
