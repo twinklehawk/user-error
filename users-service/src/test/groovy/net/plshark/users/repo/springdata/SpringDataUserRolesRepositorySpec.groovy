@@ -2,13 +2,11 @@ package net.plshark.users.repo.springdata
 
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
-import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
-import io.r2dbc.postgresql.PostgresqlConnectionFactory
 import net.plshark.testutils.PlsharkFlywayPreparer
+import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import org.junit.Rule
-import org.springframework.data.r2dbc.core.DatabaseClient
 import spock.lang.Specification
 
 class SpringDataUserRolesRepositorySpec extends Specification {
@@ -19,27 +17,22 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     SpringDataUserRolesRepository repo
     SpringDataUsersRepository usersRepo
     SpringDataRolesRepository rolesRepo
+    SpringDataApplicationsRepository appsRepo
     Role testRole1
     Role testRole2
     User user1
     User user2
 
     def setup() {
-        def client = DatabaseClient.create(
-                new PostgresqlConnectionFactory(
-                        PostgresqlConnectionConfiguration.builder()
-                                .database(dbRule.connectionInfo.dbName)
-                                .host('localhost')
-                                .port(dbRule.connectionInfo.port)
-                                .username(dbRule.connectionInfo.user)
-                                .password('')
-                                .build()))
+        def client = DatabaseClientHelper.buildTestClient(dbRule)
         repo = new SpringDataUserRolesRepository(client)
         usersRepo = new SpringDataUsersRepository(client)
         rolesRepo = new SpringDataRolesRepository(client)
+        appsRepo = new SpringDataApplicationsRepository(client)
 
-        testRole1 = rolesRepo.insert(Role.create("testRole1", "app")).block()
-        testRole2 = rolesRepo.insert(Role.create("testRole2", "app")).block()
+        def app = appsRepo.insert(Application.builder().name('app').build()).block()
+        testRole1 = rolesRepo.insert(Role.builder().name('testRole1').applicationId(app.id).build()).block()
+        testRole2 = rolesRepo.insert(Role.builder().name('testRole2').applicationId(app.id).build()).block()
         user1 = usersRepo.insert(User.builder().username('test-user').password('test-pass').build()).block()
         user2 = usersRepo.insert(User.builder().username('test-user2').password('test-pass').build()).block()
     }
