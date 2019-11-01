@@ -14,15 +14,15 @@ public interface RolesRepository {
      * @param id the ID
      * @return the matching role
      */
-    Mono<Role> getForId(long id);
+    Mono<Role> get(long id);
 
     /**
      * Get a role by name
+     * @param applicationId the application the role belongs to
      * @param name the role name
-     * @param application the application the role belongs to
      * @return the matching role
      */
-    Mono<Role> getForName(String name, String application);
+    Mono<Role> get(long applicationId, String name);
 
     /**
      * Get all roles up to the maximum result count and starting at an offset
@@ -41,8 +41,15 @@ public interface RolesRepository {
 
     /**
      * Delete a role by ID
-     * @param roleId the role ID
+     * @param id the role ID
      * @return an empty result
      */
-    Mono<Void> delete(long roleId);
+    Mono<Void> delete(long id);
+
+    /**
+     * Get all roles belonging to an application
+     * @param applicationId the application ID
+     * @return the roles
+     */
+    Flux<Role> getRolesForApplication(long applicationId);
 }
