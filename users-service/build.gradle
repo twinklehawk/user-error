@@ -25,4 +25,7 @@ dependencies {
     testImplementation 'com.opentable.components:otj-pg-embedded'
     testRuntimeOnly "net.bytebuddy:byte-buddy"
     testRuntimeOnly "org.objenesis:objenesis"
+    // for flyway
+    runtimeOnly 'org.springframework:spring-jdbc'
+    runtimeOnly 'org.postgresql:postgresql'
 }
