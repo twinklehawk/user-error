@@ -15,10 +15,16 @@ class ErrorResponseSpec extends Specification {
             .toOffsetDateTime()
 
         when:
-        String str = mapper.writeValueAsString(ErrorResponse.create(dt, 200, "status", "great", "/path"))
+        String str = mapper.writeValueAsString(ErrorResponse.builder()
+                .timestamp(dt)
+                .status(200)
+                .statusDetail('status')
+                .message('great')
+                .path('/path')
+                .build())
 
         then:
-        str == '{"timestamp":"2011-09-20T11:57:30.000000012-04:00","status":200,"message":"great","path":"/path","statusDetail":"status"}'
+        str == '{"timestamp":"2011-09-20T11:57:30.000000012-04:00","status":200,"statusDetail":"status","message":"great","path":"/path"}'
     }
 
     def "deserialized from JSON with correct values"() {

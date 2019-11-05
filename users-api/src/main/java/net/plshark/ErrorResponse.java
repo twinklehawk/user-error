@@ -1,91 +1,69 @@
 package net.plshark;
 
 import java.time.OffsetDateTime;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.google.auto.value.AutoValue;
+import reactor.util.annotation.Nullable;
 
 /**
  * Response containing information about an exception
  */
-public class ErrorResponse {
+@AutoValue
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonDeserialize(builder = AutoValue_ErrorResponse.Builder.class)
+public abstract class ErrorResponse {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private final OffsetDateTime timestamp;
-    private final int status;
-    private final String statusDetail;
-    private final String message;
-    private final String path;
-
-    private ErrorResponse(OffsetDateTime timestamp, int status, String statusDetail, String message, String path) {
-        this.timestamp = timestamp;
-        this.status = status;
-        this.statusDetail = statusDetail;
-        this.message = message;
-        this.path = path;
-    }
-
-    /**
-     * Create an instance with a date and time of now
-     * @param status the response status code
-     * @param statusDetail the response status description
-     * @param message the error detail message
-     * @param path the path of the request that caused the error
-     * @return the ErrorResponse instance
-     */
-    public static ErrorResponse create(int status, String statusDetail, String message, String path) {
-        return create(OffsetDateTime.now(), status, statusDetail, message, path);
-    }
-
-    /**
-     * Create an instance
-     * @param timestamp the date and time when the exception happened
-     * @param status the response status code
-     * @param statusDetail the response status description
-     * @param message the error detail message
-     * @param path the path of the request that caused the error
-     * @return the ErrorResponse instance
-     */
-    @JsonCreator
-    public static ErrorResponse create(@JsonProperty("timestamp") OffsetDateTime timestamp,
-            @JsonProperty("status") int status, @JsonProperty("error") String statusDetail,
-            @JsonProperty("message") String message, @JsonProperty("path") String path) {
-        return new ErrorResponse(timestamp, status, statusDetail, message, path);
+    public static Builder builder() {
+        return new AutoValue_ErrorResponse.Builder()
+                .timestamp(OffsetDateTime.now());
     }
 
     /**
      * @return the date and time when the exception happened
      */
-    public OffsetDateTime getTimestamp() {
-        return timestamp;
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public abstract OffsetDateTime getTimestamp();
 
     /**
      * @return the response status code
      */
-    public int getStatus() {
-        return status;
-    }
+    public abstract int getStatus();
 
     /**
      * @return the response status description
      */
-    public String getStatusDetail() {
-        return statusDetail;
-    }
+    public abstract String getStatusDetail();
 
     /**
      * @return the error detail message
      */
-    public String getMessage() {
-        return message;
-    }
+    @Nullable
+    public abstract String getMessage();
 
     /**
      * @return the path of the request that caused the error
      */
-    public String getPath() {
-        return path;
+    public abstract String getPath();
+
+    @AutoValue.Builder
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public abstract static class Builder {
+
+        public abstract Builder timestamp(OffsetDateTime timestamp);
+
+        public abstract Builder status(int status);
+
+        public abstract Builder statusDetail(String statusDetail);
+
+        public abstract Builder message(String message);
+
+        public abstract Builder path(String path);
+
+        public abstract ErrorResponse build();
     }
 }
