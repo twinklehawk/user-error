@@ -61,7 +61,7 @@ class ExceptionHandlerControllerAdviceSpec extends Specification {
 
         then:
         response.statusCode == HttpStatus.INTERNAL_SERVER_ERROR
-        response.body.message == "problem"
+        response.body.message == null
         response.body.path == "http://test/url"
         response.body.status == 500
         response.body.statusDetail == HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
