@@ -3,9 +3,12 @@ package net.plshark.users.repo.springdata
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
 import net.plshark.testutils.PlsharkFlywayPreparer
+import net.plshark.users.model.Application
 import net.plshark.users.model.Group
+import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import org.junit.Rule
+import reactor.test.StepVerifier
 import spock.lang.Specification
 
 class SpringDataUserGroupsRepositorySpec extends Specification {
@@ -16,12 +19,18 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     SpringDataUserGroupsRepository repo
     SpringDataUsersRepository usersRepo
     SpringDataGroupsRepository groupsRepo
+    SpringDataApplicationsRepository appsRepo
+    SpringDataRolesRepository rolesRepo
+    SpringDataGroupRolesRepository groupRolesRepo
 
     def setup() {
         def dbClient = DatabaseClientHelper.buildTestClient(dbRule)
         repo = new SpringDataUserGroupsRepository(dbClient)
         groupsRepo = new SpringDataGroupsRepository(dbClient)
         usersRepo = new SpringDataUsersRepository(dbClient)
+        appsRepo = new SpringDataApplicationsRepository(dbClient)
+        rolesRepo = new SpringDataRolesRepository(dbClient)
+        groupRolesRepo = new SpringDataGroupRolesRepository(dbClient)
     }
 
     def 'insert should save a group and user association and should be retrievable'() {
@@ -98,5 +107,22 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
         then:
         repo.getGroupsForUser(user1.id).count().block() == 0
         repo.getGroupsForUser(user2.id).collectList().block() == Arrays.asList(group1, group2)
+    }
+
+    def 'retrieving roles should return each role in each group the user belongs to'() {
+        def app1 = appsRepo.insert(Application.builder().name('test-app').build()).block()
+        def role1 = rolesRepo.insert(Role.builder().applicationId(app1.id).name('role1').build()).block()
+        def role2 = rolesRepo.insert(Role.builder().applicationId(app1.id).name('role2').build()).block()
+        rolesRepo.insert(Role.builder().applicationId(app1.id).name('role3').build()).block()
+        def group = groupsRepo.insert(Group.create('test-group')).block()
+        def user = usersRepo.insert(User.builder().username('user').password('pass').build()).block()
+        groupRolesRepo.insert(group.id, role1.id)
+                .then(groupRolesRepo.insert(group.id, role2.id))
+                .then(repo.insert(user.id, group.id)).block()
+
+        expect:
+        StepVerifier.create(repo.getGroupRolesForUser(user.id).collectList())
+                .expectNextMatches({ list -> list.size() == 2 && list.contains(role1) && list.contains(role2) })
+                .verifyComplete()
     }
 }

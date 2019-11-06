@@ -13,6 +13,7 @@ CREATE TABLE users
 CREATE INDEX users_username_idx ON users (username);
 ALTER TABLE users ADD CONSTRAINT users_unique_username_idx UNIQUE (username);
 GRANT SELECT, INSERT, UPDATE, DELETE ON users TO ${username};
+GRANT USAGE ON users_id_seq TO ${username};
 
 CREATE TABLE applications
 (
@@ -22,6 +23,7 @@ CREATE TABLE applications
 CREATE INDEX applications_name_idx ON applications (name);
 ALTER TABLE applications ADD CONSTRAINT applications_unique_name_idx UNIQUE (name);
 GRANT SELECT, INSERT, UPDATE, DELETE ON applications TO ${username};
+GRANT USAGE ON applications_id_seq TO ${username};
 
 CREATE TABLE roles
 (
@@ -33,6 +35,7 @@ CREATE INDEX roles_app_idx ON roles (application_id);
 CREATE INDEX roles_name_idx ON roles (application_id, name);
 ALTER TABLE roles ADD CONSTRAINT roles_unique_name_idx UNIQUE (application_id, name);
 GRANT SELECT, INSERT, UPDATE, DELETE ON roles TO ${username};
+GRANT USAGE ON roles_id_seq TO ${username};
 
 CREATE TABLE groups
 (
@@ -42,6 +45,7 @@ CREATE TABLE groups
 CREATE INDEX groups_name_idx ON groups (name);
 ALTER TABLE groups ADD CONSTRAINT groups_unique_name_idx UNIQUE (name);
 GRANT SELECT, INSERT, UPDATE, DELETE ON groups TO ${username};
+GRANT USAGE ON groups_id_seq TO ${username};
 
 -- relation tables
 CREATE TABLE user_roles

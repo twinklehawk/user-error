@@ -2,6 +2,7 @@ package net.plshark.users.repo.springdata;
 
 import java.util.Objects;
 import net.plshark.users.model.Group;
+import net.plshark.users.model.Role;
 import net.plshark.users.repo.UserGroupsRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,14 @@ public class SpringDataUserGroupsRepository implements UserGroupsRepository {
         return client.execute("SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE ug.user_id = :id")
                 .bind("id", userId)
                 .map(SpringDataGroupsRepository::mapRow)
+                .all();
+    }
+
+    @Override
+    public Flux<Role> getGroupRolesForUser(long userId) {
+        return client.execute("SELECT r.* from roles r, user_groups ug, group_roles gr WHERE ug.user_id = :userId AND gr.group_id = ug.group_id AND r.id = gr.role_id")
+                .bind("userId", userId)
+                .map(SpringDataRolesRepository::mapRow)
                 .all();
     }
 

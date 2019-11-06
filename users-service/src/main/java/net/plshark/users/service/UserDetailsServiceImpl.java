@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
+import net.plshark.users.repo.UserGroupsRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,15 +24,19 @@ public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
 
     private final UsersRepository userRepo;
     private final UserRolesRepository userRolesRepo;
+    private final UserGroupsRepository userGroupsRepo;
 
     /**
      * Create a new instance
      * @param userRepo the user repository
      * @param userRolesRepo the user roles repository
+     * @param userGroupsRepo the user groups repository
      */
-    public UserDetailsServiceImpl(UsersRepository userRepo, UserRolesRepository userRolesRepo) {
+    public UserDetailsServiceImpl(UsersRepository userRepo, UserRolesRepository userRolesRepo,
+                                  UserGroupsRepository userGroupsRepo) {
         this.userRepo = Objects.requireNonNull(userRepo, "userRepository cannot be null");
         this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
+        this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
     }
 
     @Override
@@ -39,8 +44,9 @@ public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
         return userRepo.getForUsernameWithPassword(username)
             .switchIfEmpty(Mono.defer(() -> Mono.error(new UsernameNotFoundException("No matching user for " + username))))
             .flatMap(user -> userRolesRepo.getRolesForUser(user.getId())
-                .collectList()
-                .map(roles -> buildUserDetails(user, roles)));
+                    .mergeWith(userGroupsRepo.getGroupRolesForUser(user.getId()))
+                    .collectList()
+                    .map(roles -> buildUserDetails(user, roles)));
     }
 
     /**
@@ -52,10 +58,10 @@ public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
     private UserDetails buildUserDetails(User user, List<Role> roles) {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
-                .password(user.getPassword())
+                .password(Objects.requireNonNull(user.getPassword()))
                 .authorities(roles.stream()
                         .map(this::buildGrantedAuthority)
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
