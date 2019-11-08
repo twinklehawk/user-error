@@ -1,6 +1,7 @@
 package net.plshark.users.webservice;
 
 import net.plshark.errors.BadRequestException;
+import net.plshark.errors.DuplicateException;
 import net.plshark.errors.ErrorResponse;
 import net.plshark.errors.ObjectNotFoundException;
 import org.slf4j.Logger;
@@ -44,6 +45,21 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<ErrorResponse> handleObjectNotFound(ObjectNotFoundException e, ServerHttpRequest request) {
         log.debug("Object not found", e);
         HttpStatus status = HttpStatus.NOT_FOUND;
+        return ResponseEntity
+                .status(status)
+                .body(buildResponse(status, e, request));
+    }
+
+    /**
+     * Handle a DuplicateException
+     * @param e the exception
+     * @param request the request that caused the exception
+     * @return the response to return to the client
+     */
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateException e, ServerHttpRequest request) {
+        log.debug("Duplicate", e);
+        HttpStatus status = HttpStatus.CONFLICT;
         return ResponseEntity
                 .status(status)
                 .body(buildResponse(status, e, request));

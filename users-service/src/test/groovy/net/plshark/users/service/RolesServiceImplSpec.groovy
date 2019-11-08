@@ -1,11 +1,13 @@
 package net.plshark.users.service
 
+import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.RolesRepository
 import net.plshark.users.repo.UserRolesRepository
+import org.springframework.dao.DataIntegrityViolationException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -20,7 +22,7 @@ class RolesServiceImplSpec extends Specification {
     GroupRolesRepository groupRolesRepo = Mock()
     def service = new RolesServiceImpl(rolesRepo, appsRepo, userRolesRepo, groupRolesRepo)
 
-    def 'inserting should save a role and return the saved role'() {
+    def 'creating should save a role and return the saved role'() {
         def role = Role.builder().name('role').applicationId(123).build()
         def inserted = role.toBuilder().id(1).build()
         rolesRepo.insert(role) >> Mono.just(inserted)
@@ -31,7 +33,7 @@ class RolesServiceImplSpec extends Specification {
                 .verifyComplete()
     }
 
-    def 'inserting with an application name should look up the application and set the ID before inserting'() {
+    def 'creating with an application name should look up the application and set the ID before inserting'() {
         def inserted = Role.builder().id(1).name('role').applicationId(321).build()
         appsRepo.get('app') >> Mono.just(Application.builder().id(321).name('app').build())
         rolesRepo.insert(Role.builder().name('role').applicationId(321).build()) >> Mono.just(inserted)
@@ -40,6 +42,17 @@ class RolesServiceImplSpec extends Specification {
         StepVerifier.create(service.create('app', Role.builder().name('role').build()))
                 .expectNext(inserted)
                 .verifyComplete()
+    }
+
+    def 'create should map the exception for a duplicate name to a DuplicateException'() {
+        def request = Role.builder().name('app').build()
+        appsRepo.get('app') >> Mono.just(Application.builder().id(321).name('app').build())
+        rolesRepo.insert(request.toBuilder().applicationId(321).build()) >>
+                Mono.error(new DataIntegrityViolationException("test error"))
+
+        expect:
+        StepVerifier.create(service.create('app', request))
+                .verifyError(DuplicateException)
     }
 
     def 'deleting a role should delete any group/role associations, any user/role associations, and the role'() {

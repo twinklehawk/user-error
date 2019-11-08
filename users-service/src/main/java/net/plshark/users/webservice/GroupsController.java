@@ -57,4 +57,6 @@ public class GroupsController {
     public Mono<Void> delete(@PathVariable("name") String name) {
         return groupsService.delete(name);
     }
+
+    // TODO methods for adding/removing roles from group, viewing roles in group
 }

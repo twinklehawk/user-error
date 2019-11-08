@@ -1,11 +1,13 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import net.plshark.errors.DuplicateException;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.ApplicationsRepository;
 import net.plshark.users.repo.GroupRolesRepository;
 import net.plshark.users.repo.RolesRepository;
 import net.plshark.users.repo.UserRolesRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,12 +34,15 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     public Mono<Role> create(Role role) {
-        return rolesRepo.insert(role);
+        return rolesRepo.insert(role)
+                .onErrorMap(DataIntegrityViolationException.class, e -> new DuplicateException("A role with name " +
+                        role.getName() + " already exists", e));
     }
 
     @Override
     public Mono<Role> create(String application, Role role) {
         return appsRepo.get(application)
+                // TODO handle no application found
                 .flatMap(app -> create(role.toBuilder().applicationId(app.getId()).build()));
     }
 

@@ -27,7 +27,8 @@ public interface UsersService {
     /**
      * Save a new user
      * @param user the user, must have a password set
-     * @return the saved user
+     * @return the saved useror a {@link net.plshark.errors.DuplicateException} if a user with the same username already
+     * exists
      */
     Mono<User> create(User user);
 

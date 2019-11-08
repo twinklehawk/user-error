@@ -1,10 +1,12 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import net.plshark.errors.DuplicateException;
 import net.plshark.users.model.Group;
 import net.plshark.users.repo.GroupRolesRepository;
 import net.plshark.users.repo.GroupsRepository;
 import net.plshark.users.repo.UserGroupsRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,7 +40,9 @@ public class GroupsServiceImpl implements GroupsService {
 
     @Override
     public Mono<Group> create(Group group) {
-        return groupsRepo.insert(group);
+        return groupsRepo.insert(group)
+                .onErrorMap(DataIntegrityViolationException.class, e -> new DuplicateException("A group with name " +
+                        group.getName() + " already exists", e));
     }
 
     @Override

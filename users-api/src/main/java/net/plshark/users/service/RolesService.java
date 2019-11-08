@@ -28,7 +28,8 @@ public interface RolesService {
     /**
      * Save a new role
      * @param role the role
-     * @return the saved role
+     * @return the saved role or a {@link net.plshark.errors.DuplicateException} if a role with the same name already
+     * exists in the same application
      */
     Mono<Role> create(Role role);
 

@@ -1,10 +1,12 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import net.plshark.errors.DuplicateException;
 import net.plshark.users.model.Application;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.ApplicationsRepository;
 import net.plshark.users.repo.RolesRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -39,7 +41,9 @@ public class ApplicationsServiceImpl implements ApplicationsService {
 
     @Override
     public Mono<Application> create(Application application) {
-        return appsRepo.insert(application);
+        return appsRepo.insert(application)
+                .onErrorMap(DataIntegrityViolationException.class, e -> new DuplicateException("An application with name " +
+                        application.getName() + " already exists", e));
     }
 
     @Override

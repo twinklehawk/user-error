@@ -27,7 +27,8 @@ public interface GroupsService {
     /**
      * Save a new group
      * @param group the group
-     * @return the saved group
+     * @return the saved group or a {@link net.plshark.errors.DuplicateException} if a group with the same name already
+     * exists
      */
     Mono<Group> create(Group group);
 

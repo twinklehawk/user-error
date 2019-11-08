@@ -82,6 +82,7 @@ public class UsersController {
         return usersService.delete(username);
     }
 
+    // TODO these should use username instead of ID
     /**
      * Change a user's password
      * @param userId the ID of the user

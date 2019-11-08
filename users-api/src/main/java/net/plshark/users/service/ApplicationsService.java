@@ -27,7 +27,8 @@ public interface ApplicationsService {
     /**
      * Save a new application
      * @param application the application
-     * @return the saved application
+     * @return the saved application or a {@link net.plshark.errors.DuplicateException} if an application with the same
+     * name already exists
      */
     Mono<Application> create(Application application);
 

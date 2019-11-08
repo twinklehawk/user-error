@@ -1,10 +1,12 @@
 package net.plshark.users.service
 
+import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 import reactor.core.publisher.Flux
@@ -30,6 +32,16 @@ class UsersServiceImplSpec extends Specification {
         StepVerifier.create(service.create(User.builder().username('user').password('pass').build()))
                 .expectNext(User.builder().id(1L).username('user').build())
                 .verifyComplete()
+    }
+
+    def 'create should map the exception for a duplicate username to a DuplicateException'() {
+        def request = User.builder().username('app').password('pass').build()
+        encoder.encode('pass') >> 'pass'
+        userRepo.insert(request) >> Mono.error(new DataIntegrityViolationException("test error"))
+
+        expect:
+        StepVerifier.create(service.create(request))
+                .verifyError(DuplicateException)
     }
 
     def "cannot update a user to have null password"() {

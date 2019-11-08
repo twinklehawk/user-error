@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.errors.DuplicateException
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpRequest
 
@@ -41,20 +42,20 @@ class ExceptionHandlerControllerAdviceSpec extends Specification {
         response.body.statusDetail == HttpStatus.NOT_FOUND.getReasonPhrase()
         response.body.timestamp != null
     }
-/*
-    def "method not supported builds correct response body"() {
+
+    def "duplicate builds correct response body"() {
         when:
-        def response = advice.handleMethodNotSupported(new HttpRequestMethodNotSupportedException("get something"), request)
+        def response = advice.handleDuplicate(new DuplicateException("duplicate name"), request)
 
         then:
-        response.statusCode == HttpStatus.METHOD_NOT_ALLOWED
-        response.body.message == "Request method 'get something' not supported"
+        response.statusCode == HttpStatus.CONFLICT
+        response.body.message == "duplicate name"
         response.body.path == "http://test/url"
-        response.body.status == 405
-        response.body.statusDetail == HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase()
+        response.body.status == 409
+        response.body.statusDetail == HttpStatus.CONFLICT.getReasonPhrase()
         response.body.timestamp != null
     }
-*/
+
     def "generic exception builds correct response body"() {
         when:
         def response = advice.handleThrowable(new Exception("problem"), request)

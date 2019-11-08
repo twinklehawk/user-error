@@ -1,17 +1,20 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import net.plshark.errors.DuplicateException;
 import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserGroupsRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * UserManagementService implementation
@@ -53,8 +56,11 @@ public class UsersServiceImpl implements UsersService {
         if (!StringUtils.hasLength(user.getPassword()))
             throw new IllegalArgumentException("Password cannot be empty");
         return Mono.just(user)
+                .subscribeOn(Schedulers.parallel())
                 .map(u -> u.toBuilder().password(passwordEncoder.encode(u.getPassword())).build())
-                .flatMap(userRepo::insert);
+                .flatMap(userRepo::insert)
+                .onErrorMap(DataIntegrityViolationException.class, e -> new DuplicateException("A user with username " +
+                        user.getUsername() + " already exists", e));
     }
 
     @Override
