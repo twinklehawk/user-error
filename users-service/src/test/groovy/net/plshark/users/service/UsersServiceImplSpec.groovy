@@ -27,7 +27,7 @@ class UsersServiceImplSpec extends Specification {
                 Mono.just(User.builder().id(1L).username('user').build())
 
         expect:
-        StepVerifier.create(service.insertUser(User.builder().username('user').password('pass').build()))
+        StepVerifier.create(service.create(User.builder().username('user').password('pass').build()))
                 .expectNext(User.builder().id(1L).username('user').build())
                 .verifyComplete()
     }
@@ -73,7 +73,7 @@ class UsersServiceImplSpec extends Specification {
         userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
-        StepVerifier.create(service.deleteUser(100))
+        StepVerifier.create(service.delete(100))
             .verifyComplete()
         rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()
@@ -90,7 +90,7 @@ class UsersServiceImplSpec extends Specification {
         userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
-        StepVerifier.create(service.deleteUser(100))
+        StepVerifier.create(service.delete(100))
                 .verifyComplete()
         rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()

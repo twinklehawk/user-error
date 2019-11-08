@@ -1,7 +1,6 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
-import net.plshark.errors.BadRequestException;
 import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserGroupsRepository;
@@ -10,6 +9,7 @@ import net.plshark.users.repo.UsersRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -39,7 +39,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Mono<User> getUserByUsername(String username) {
+    public Mono<User> get(String username) {
         return userRepo.getForUsername(username);
     }
 
@@ -49,25 +49,26 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Mono<User> insertUser(User user) {
+    public Mono<User> create(User user) {
+        if (!StringUtils.hasLength(user.getPassword()))
+            throw new IllegalArgumentException("Password cannot be empty");
         return Mono.just(user)
-                .flatMap(u -> u.getPassword() != null ? Mono.just(u) : Mono.error(() -> new BadRequestException("password cannot be empty")))
                 .map(u -> u.toBuilder().password(passwordEncoder.encode(u.getPassword())).build())
                 .flatMap(userRepo::insert);
     }
 
     @Override
-    public Mono<Void> deleteUser(long userId) {
+    public Mono<Void> delete(long userId) {
         return userRolesRepo.deleteUserRolesForUser(userId)
                 .then(userGroupsRepo.deleteUserGroupsForUser(userId))
                 .then(userRepo.delete(userId));
     }
 
     @Override
-    public Mono<Void> deleteUser(String username) {
+    public Mono<Void> delete(String username) {
         //noinspection ConstantConditions
-        return getUserByUsername(username)
-                .flatMap(user -> deleteUser(user.getId()));
+        return get(username)
+                .flatMap(user -> delete(user.getId()));
     }
 
     @Override
