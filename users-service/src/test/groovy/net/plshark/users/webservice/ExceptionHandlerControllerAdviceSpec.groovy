@@ -3,8 +3,8 @@ package net.plshark.users.webservice
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpRequest
 
-import net.plshark.BadRequestException
-import net.plshark.ObjectNotFoundException
+import net.plshark.errors.BadRequestException
+import net.plshark.errors.ObjectNotFoundException
 import spock.lang.Specification
 
 class ExceptionHandlerControllerAdviceSpec extends Specification {

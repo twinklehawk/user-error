@@ -1,7 +1,7 @@
 package net.plshark.users.webservice;
 
 import java.util.Objects;
-import net.plshark.ObjectNotFoundException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import net.plshark.users.service.GroupsService;
 import org.springframework.http.MediaType;

@@ -1,6 +1,6 @@
 package net.plshark.users.service
 
-import net.plshark.ObjectNotFoundException
+import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository

@@ -1,8 +1,8 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
-import net.plshark.BadRequestException;
-import net.plshark.ObjectNotFoundException;
+import net.plshark.errors.BadRequestException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserGroupsRepository;
 import net.plshark.users.repo.UserRolesRepository;

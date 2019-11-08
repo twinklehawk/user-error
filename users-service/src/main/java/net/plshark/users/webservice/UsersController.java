@@ -2,7 +2,7 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
-import net.plshark.ObjectNotFoundException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
 import net.plshark.users.model.User;
 import net.plshark.users.service.UsersService;

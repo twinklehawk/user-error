@@ -2,7 +2,7 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
-import net.plshark.ObjectNotFoundException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import net.plshark.users.service.RolesService;
 import org.springframework.http.MediaType;

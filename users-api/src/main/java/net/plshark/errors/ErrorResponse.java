@@ -1,4 +1,4 @@
-package net.plshark;
+package net.plshark.errors;
 
 import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
