@@ -38,7 +38,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     }
 
     @Override
-    public Mono<Application> insert(Application application) {
+    public Mono<Application> create(Application application) {
         return appsRepo.insert(application);
     }
 

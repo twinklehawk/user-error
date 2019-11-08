@@ -37,8 +37,8 @@ public class RolesController {
      * @return the inserted role
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Role> insert(@PathVariable("application") String application, @RequestBody Role role) {
-        return rolesService.insert(application, role);
+    public Mono<Role> create(@PathVariable("application") String application, @RequestBody Role role) {
+        return rolesService.create(application, role);
     }
 
     /**

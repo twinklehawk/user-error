@@ -37,7 +37,7 @@ public class GroupsServiceImpl implements GroupsService {
     }
 
     @Override
-    public Mono<Group> insert(Group group) {
+    public Mono<Group> create(Group group) {
         return groupsRepo.insert(group);
     }
 

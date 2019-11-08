@@ -29,7 +29,7 @@ public interface GroupsService {
      * @param group the group
      * @return the saved group
      */
-    Mono<Group> insert(Group group);
+    Mono<Group> create(Group group);
 
     /**
      * Delete a group

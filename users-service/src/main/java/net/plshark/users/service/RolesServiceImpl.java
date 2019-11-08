@@ -31,14 +31,14 @@ public class RolesServiceImpl implements RolesService {
 
 
     @Override
-    public Mono<Role> insert(Role role) {
+    public Mono<Role> create(Role role) {
         return rolesRepo.insert(role);
     }
 
     @Override
-    public Mono<Role> insert(String application, Role role) {
+    public Mono<Role> create(String application, Role role) {
         return appsRepo.get(application)
-                .flatMap(app -> insert(role.toBuilder().applicationId(app.getId()).build()));
+                .flatMap(app -> create(role.toBuilder().applicationId(app.getId()).build()));
     }
 
     @Override

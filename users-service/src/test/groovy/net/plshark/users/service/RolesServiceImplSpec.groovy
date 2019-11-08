@@ -26,7 +26,7 @@ class RolesServiceImplSpec extends Specification {
         rolesRepo.insert(role) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(service.insert(role))
+        StepVerifier.create(service.create(role))
                 .expectNext(inserted)
                 .verifyComplete()
     }
@@ -37,7 +37,7 @@ class RolesServiceImplSpec extends Specification {
         rolesRepo.insert(Role.builder().name('role').applicationId(321).build()) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(service.insert('app', Role.builder().name('role').build()))
+        StepVerifier.create(service.create('app', Role.builder().name('role').build()))
                 .expectNext(inserted)
                 .verifyComplete()
     }

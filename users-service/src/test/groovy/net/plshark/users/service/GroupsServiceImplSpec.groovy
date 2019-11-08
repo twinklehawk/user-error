@@ -41,7 +41,7 @@ class GroupsServiceImplSpec extends Specification {
         groupsRepo.insert(Group.create('group')) >> Mono.just(Group.create(1L, 'group'))
 
         expect:
-        StepVerifier.create(service.insert(Group.create('group')))
+        StepVerifier.create(service.create(Group.create('group')))
                 .expectNext(Group.create(1L, 'group'))
                 .verifyComplete()
     }

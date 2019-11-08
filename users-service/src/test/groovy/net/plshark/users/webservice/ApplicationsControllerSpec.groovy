@@ -46,10 +46,10 @@ class ApplicationsControllerSpec extends Specification {
     def 'inserting should pass through whatever the service returns'() {
         def request = Application.builder().name('name').build()
         def created = Application.builder().id(1L).name('name').build()
-        applicationsService.insert(request) >> Mono.just(created)
+        applicationsService.create(request) >> Mono.just(created)
 
         expect:
-        StepVerifier.create(controller.insert(request))
+        StepVerifier.create(controller.create(request))
                 .expectNext(created)
                 .verifyComplete()
     }

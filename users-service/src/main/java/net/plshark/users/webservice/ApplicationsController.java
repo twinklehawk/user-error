@@ -59,9 +59,9 @@ public class ApplicationsController {
      * @return the inserted application
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Application> insert(@RequestBody Application application) {
+    public Mono<Application> create(@RequestBody Application application) {
         // TODO verify DB constraint violations turn into conflict response status code
-        return applicationsService.insert(application);
+        return applicationsService.create(application);
     }
 
     /**

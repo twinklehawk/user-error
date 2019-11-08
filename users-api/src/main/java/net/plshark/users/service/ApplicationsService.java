@@ -29,7 +29,7 @@ public interface ApplicationsService {
      * @param application the application
      * @return the saved application
      */
-    Mono<Application> insert(Application application);
+    Mono<Application> create(Application application);
 
     /**
      * Delete an application

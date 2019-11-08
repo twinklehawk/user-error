@@ -30,7 +30,7 @@ public interface RolesService {
      * @param role the role
      * @return the saved role
      */
-    Mono<Role> insert(Role role);
+    Mono<Role> create(Role role);
 
     /**
      * Save a new role
@@ -38,7 +38,7 @@ public interface RolesService {
      * @param role the role
      * @return the saved role
      */
-    Mono<Role> insert(String application, Role role);
+    Mono<Role> create(String application, Role role);
 
     /**
      * Delete a role

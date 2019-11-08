@@ -33,7 +33,7 @@ class ApplicationsServiceImplSpec extends Specification {
         appsRepo.insert(request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(service.insert(request))
+        StepVerifier.create(service.create(request))
                 .expectNext(inserted)
                 .verifyComplete()
     }

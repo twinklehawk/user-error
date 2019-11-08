@@ -17,10 +17,10 @@ class RolesControllerSpec extends Specification {
     def "insert passes role through to service"() {
         def request = Role.builder().name('admin').build()
         def inserted = Role.builder().id(100).name('app').applicationId(12).build()
-        service.insert('app', request) >> Mono.just(inserted)
+        service.create('app', request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(controller.insert('app', request))
+        StepVerifier.create(controller.create('app', request))
             .expectNext(inserted)
             .verifyComplete()
     }

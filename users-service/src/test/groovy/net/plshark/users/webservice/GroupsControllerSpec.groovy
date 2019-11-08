@@ -34,10 +34,10 @@ class GroupsControllerSpec extends Specification {
     def 'insert should pass through the response from the service'() {
         def request = Group.create('group')
         def inserted = Group.create(1, 'group')
-        groupsService.insert(request) >> Mono.just(inserted)
+        groupsService.create(request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(controller.insert(request))
+        StepVerifier.create(controller.create(request))
                 .expectNext(inserted)
                 .verifyComplete()
     }

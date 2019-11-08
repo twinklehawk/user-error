@@ -44,8 +44,8 @@ public class GroupsController {
      * @return the inserted group
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Group> insert(@RequestBody Group group) {
-        return groupsService.insert(group);
+    public Mono<Group> create(@RequestBody Group group) {
+        return groupsService.create(group);
     }
 
     /**
