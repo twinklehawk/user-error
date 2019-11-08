@@ -3,7 +3,6 @@ package net.plshark.users.service;
 import java.util.Objects;
 import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;
-import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UserGroupsRepository;
 import net.plshark.users.repo.UserRolesRepository;
@@ -73,14 +72,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public Mono<Void> grantRoleToUser(long userId, long roleId) {
+        // TODO what status code when user or role does not exist?
         return userRolesRepo.insertUserRole(userId, roleId);
-    }
-
-    @Override
-    public Mono<Void> grantRoleToUser(User user, Role role) {
-        Objects.requireNonNull(user.getId(), "User ID cannot be null");
-        Objects.requireNonNull(role.getId(), "Role ID cannot be null");
-        return grantRoleToUser(user.getId(), role.getId());
     }
 
     @Override

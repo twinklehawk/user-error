@@ -64,14 +64,6 @@ public interface UsersService {
     Mono<Void> grantRoleToUser(long userId, long roleId);
 
     /**
-     * Grant a role to a user
-     * @param user the user to grant the role to
-     * @param role the role to grant
-     * @return an empty result or ObjectNotFoundException if the user or role does not exist
-     */
-    Mono<Void> grantRoleToUser(User user, Role role);
-
-    /**
      * Remove a role from a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove
