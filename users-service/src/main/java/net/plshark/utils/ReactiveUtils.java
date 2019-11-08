@@ -19,7 +19,7 @@ public class ReactiveUtils {
      */
     public static <T> Mono<T> wrapWithMono(Callable<T> callable) {
         Mono<T> blockingWrapper = Mono.fromCallable(callable);
-        return blockingWrapper.subscribeOn(Schedulers.elastic())
+        return blockingWrapper.subscribeOn(Schedulers.boundedElastic())
                 .publishOn(Schedulers.parallel());
     }
 
