@@ -1,6 +1,7 @@
 package net.plshark.users.webservice;
 
 import java.util.Objects;
+import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import net.plshark.users.service.GroupsService;
 import org.springframework.http.MediaType;
@@ -33,7 +34,8 @@ public class GroupsController {
      */
     @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Group> get(@PathVariable("name") String name) {
-        return groupsService.get(name);
+        return groupsService.get(name)
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No group found for " + name)));
     }
 
     /**

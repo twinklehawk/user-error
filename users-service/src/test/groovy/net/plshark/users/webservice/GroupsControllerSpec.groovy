@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.ObjectNotFoundException
 import net.plshark.users.model.Group
 import net.plshark.users.service.GroupsService
 import reactor.core.publisher.Mono
@@ -20,6 +21,14 @@ class GroupsControllerSpec extends Specification {
         StepVerifier.create(controller.get('group'))
                 .expectNext(group)
                 .verifyComplete()
+    }
+
+    def 'getting a group should throw an exception when the group does not exist'() {
+        groupsService.get('test-group') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(controller.get('test-group'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def 'insert should pass through the response from the service'() {

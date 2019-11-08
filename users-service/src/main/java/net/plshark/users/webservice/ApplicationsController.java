@@ -2,6 +2,7 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
+import net.plshark.ObjectNotFoundException;
 import net.plshark.users.model.Application;
 import net.plshark.users.service.ApplicationsService;
 import org.springframework.http.MediaType;
@@ -48,9 +49,8 @@ public class ApplicationsController {
      */
     @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Application> get(@PathVariable("name") String name) {
-        // TODO does this return 404 if empty?
-        return applicationsService.get(name);
-                //.switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No application found for " + name)));
+        return applicationsService.get(name)
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No application found for " + name)));
     }
 
     /**

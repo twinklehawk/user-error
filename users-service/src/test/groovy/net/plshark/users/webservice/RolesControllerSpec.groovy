@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.ObjectNotFoundException
 import net.plshark.users.model.Role
 import net.plshark.users.service.RolesService
 import reactor.core.publisher.Flux
@@ -22,6 +23,14 @@ class RolesControllerSpec extends Specification {
         StepVerifier.create(controller.insert('app', request))
             .expectNext(inserted)
             .verifyComplete()
+    }
+
+    def 'getting a role should throw an exception when the role does not exist'() {
+        service.get('test-app', 'test-role') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(controller.get('test-app', 'test-role'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def "delete passes ID through to service"() {

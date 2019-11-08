@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.service.ApplicationsService
 import reactor.core.publisher.Flux
@@ -20,6 +21,14 @@ class ApplicationsControllerSpec extends Specification {
         StepVerifier.create(controller.get('test-app'))
                 .expectNext(app)
                 .verifyComplete()
+    }
+
+    def 'getting an application should throw an exception when the application does not exist'() {
+        applicationsService.get('test-app') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(controller.get('test-app'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def 'getting all applications should pass through whatever the service returns'() {
