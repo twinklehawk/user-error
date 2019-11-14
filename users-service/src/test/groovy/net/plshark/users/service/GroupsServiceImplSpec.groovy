@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.errors.DuplicateException
+import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
 import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.GroupsRepository
@@ -26,6 +27,18 @@ class GroupsServiceImplSpec extends Specification {
         StepVerifier.create(service.get('group-name'))
                 .expectNext(Group.create(123L, 'group-name'))
                 .verifyComplete()
+
+        StepVerifier.create(service.getRequired('group-name'))
+                .expectNext(Group.create(123L, 'group-name'))
+                .verifyComplete()
+    }
+
+    def 'should throw an exception when a required group is not found'() {
+        groupsRepo.getForName('group-name') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.getRequired('group-name'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def 'should be able to retrieve all groups'() {

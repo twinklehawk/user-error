@@ -2,6 +2,7 @@ package net.plshark.users.service;
 
 import java.util.Objects;
 import net.plshark.errors.DuplicateException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import net.plshark.users.repo.GroupRolesRepository;
 import net.plshark.users.repo.GroupsRepository;
@@ -31,6 +32,11 @@ public class GroupsServiceImpl implements GroupsService {
     @Override
     public Mono<Group> get(String name) {
         return groupsRepo.getForName(name);
+    }
+
+    @Override
+    public Mono<Group> getRequired(String name) {
+        return get(name).switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No group found for " + name)));
     }
 
     @Override

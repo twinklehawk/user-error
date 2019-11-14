@@ -1,5 +1,6 @@
 package net.plshark.users.service;
 
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,9 +13,16 @@ public interface GroupsService {
     /**
      * Retrieve a group by name
      * @param name the group name
-     * @return the matching group
+     * @return the matching group if found
      */
     Mono<Group> get(String name);
+
+    /**
+     * Retrieve a group by name
+     * @param name the group name
+     * @return the matching group or an {@link ObjectNotFoundException} if no match is found
+     */
+    Mono<Group> getRequired(String name);
 
     /**
      * Get all groups up to the maximum result count and starting at an offset
