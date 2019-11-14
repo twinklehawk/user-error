@@ -23,7 +23,7 @@ jobs:
       with:
         java-version: ${{ matrix.java_version }}
     - name: Build
-      run: ./gradlew build jacocoTestReport
+      run: ./gradlew build jacocoTestReport -s -i
     - name: Run analysis
       if: matrix.java_version == '1.11'
-      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_LOGIN }}
+      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_LOGIN }} -s -i
