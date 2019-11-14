@@ -1,11 +1,13 @@
 plugins {
     id 'java'
     id 'groovy'
+    id 'jacoco'
     id 'org.springframework.boot' version '2.2.1.RELEASE'
 }
 
 apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
+apply from: '../build-scripts/coverage.gradle'
 
 dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

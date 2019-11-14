@@ -23,7 +23,7 @@ jobs:
       with:
         java-version: ${{ matrix.java_version }}
     - name: Build
-      run: ./gradlew build
+      run: ./gradlew build jacocoTestReport
     - name: Run analysis
       if: matrix.java_version == '1.11'
       run: ./gradlew sonarqube -Dsonar.projectKey=twinklehawk_bad-users -Dsonar.organization=twinklehawk -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_LOGIN }}
