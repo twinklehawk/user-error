@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.errors.DuplicateException
+import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
@@ -100,6 +101,27 @@ class RolesServiceImplSpec extends Specification {
         StepVerifier.create(service.get('app-name', 'role-name'))
                 .expectNext(role)
                 .verifyComplete()
+
+        StepVerifier.create(service.getRequired('app-name', 'role-name'))
+                .expectNext(role)
+                .verifyComplete()
+    }
+
+    def "should return an error when a required role's application does not exist"() {
+        appsRepo.get('app-name') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.get('app-name', 'role-name'))
+                .verifyError(ObjectNotFoundException)
+    }
+
+    def 'should return an error when a required role does not exist'() {
+        appsRepo.get('app-name') >> Mono.just(Application.builder().id(132).name('app-name').build())
+        rolesRepo.get(123, 'role-name') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.get('app-name', 'role-name'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def 'should be able to retrieve all roles'() {

@@ -1,5 +1,6 @@
 package net.plshark.users.service;
 
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,14 @@ public interface RolesService {
      * @return the matching role or empty if not found
      */
     Mono<Role> get(String application, String name);
+
+    /**
+     * Retrieve a role by name
+     * @param application the application the role belongs to
+     * @param name the role name
+     * @return the matching role or an {@link ObjectNotFoundException} if not found
+     */
+    Mono<Role> getRequired(String application, String name);
 
     /**
      * Get all roles up to the maximum result count and starting at an offset

@@ -2,6 +2,7 @@ package net.plshark.users.service;
 
 import java.util.Objects;
 import net.plshark.errors.DuplicateException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.ApplicationsRepository;
 import net.plshark.users.repo.GroupRolesRepository;
@@ -65,6 +66,12 @@ public class RolesServiceImpl implements RolesService {
         //noinspection ConstantConditions
         return appsRepo.get(application)
                 .flatMap(app -> rolesRepo.get(app.getId(), name));
+    }
+
+    @Override
+    public Mono<Role> getRequired(String application, String name) {
+        return get(application, name)
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No role found for " + application +":" + name)));
     }
 
     @Override
