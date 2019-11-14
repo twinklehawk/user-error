@@ -134,7 +134,7 @@ class UsersServiceImplSpec extends Specification {
         rolesService.getRequired('app', 'role') >> Mono.just(Role.builder().id(34)
                 .applicationId(1).name('role').build())
         PublisherProbe probe = PublisherProbe.empty()
-        userRolesRepo.insertUserRole(12, 34) >> probe.mono()
+        userRolesRepo.insert(12, 34) >> probe.mono()
 
         expect:
         StepVerifier.create(service.grantRoleToUser('bill', 'app', 'role'))
@@ -150,7 +150,7 @@ class UsersServiceImplSpec extends Specification {
         rolesService.getRequired('app', 'role') >> Mono.just(Role.builder().id(200)
                 .applicationId(1).name('role').build())
         PublisherProbe probe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRole(100, 200) >> probe.mono()
+        userRolesRepo.delete(100, 200) >> probe.mono()
 
         expect:
         StepVerifier.create(service.removeRoleFromUser('ted', 'app', 'role'))

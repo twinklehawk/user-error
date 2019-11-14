@@ -94,14 +94,14 @@ public class UsersServiceImpl implements UsersService {
     public Mono<Void> grantRoleToUser(String username, String applicationName, String roleName) {
         return getRequired(username)
                 .flatMap(user -> rolesService.getRequired(applicationName, roleName)
-                        .flatMap(role -> userRolesRepo.insertUserRole(user.getId(), role.getId())));
+                        .flatMap(role -> userRolesRepo.insert(user.getId(), role.getId())));
     }
 
     @Override
     public Mono<Void> removeRoleFromUser(String username, String applicationName, String roleName) {
         return getRequired(username)
                 .flatMap(user -> rolesService.getRequired(applicationName, roleName)
-                        .flatMap(role -> userRolesRepo.deleteUserRole(user.getId(), role.getId())));
+                        .flatMap(role -> userRolesRepo.delete(user.getId(), role.getId())));
     }
 
     @Override

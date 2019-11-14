@@ -39,15 +39,15 @@ class SpringDataUserRolesRepositorySpec extends Specification {
 
     def "can add a role to a user"() {
         when:
-        repo.insertUserRole(user1.id, testRole1.id).block()
+        repo.insert(user1.id, testRole1.id).block()
 
         then:
         repo.getRolesForUser(user1.id).collectList().block().stream().anyMatch{role -> role.id == testRole1.id}
     }
 
     def "can retrieve all roles for a user"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user1.id, testRole2.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user1.id, testRole2.id).block()
 
         when:
         List<Role> roles = repo.getRolesForUser(user1.id).collectList().block()
@@ -59,8 +59,8 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     }
 
     def "retrieving roles for a user does not return roles for other users"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user2.id, testRole2.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user2.id, testRole2.id).block()
 
         when:
         List<Role> roles = repo.getRolesForUser(user1.id).collectList().block()
@@ -71,10 +71,10 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     }
 
     def "can delete an existing user role"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
+        repo.insert(user1.id, testRole1.id).block()
 
         when:
-        repo.deleteUserRole(user1.id, testRole1.id).block()
+        repo.delete(user1.id, testRole1.id).block()
 
         then:
         repo.getRolesForUser(user1.id).collectList().block().size() == 0
@@ -82,15 +82,15 @@ class SpringDataUserRolesRepositorySpec extends Specification {
 
     def "deleting a user role that does not exist does not throw an exception"() {
         when:
-        repo.deleteUserRole(user1.id, 200).block()
+        repo.delete(user1.id, 200).block()
 
         then:
         notThrown(Exception)
     }
 
     def "can delete all roles for a user"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user1.id, testRole2.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user1.id, testRole2.id).block()
 
         when:
         repo.deleteUserRolesForUser(user1.id).block()
@@ -100,8 +100,8 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     }
 
     def "deleting all roles for a user does not affect other users"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user2.id, testRole2.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user2.id, testRole2.id).block()
 
         when:
         repo.deleteUserRolesForUser(user1.id).block()
@@ -112,8 +112,8 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     }
 
     def "can remove a role from all users"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user2.id, testRole1.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user2.id, testRole1.id).block()
 
         when:
         repo.deleteUserRolesForRole(testRole1.id).block()
@@ -124,8 +124,8 @@ class SpringDataUserRolesRepositorySpec extends Specification {
     }
 
     def "removing a role from all users does not affect other roles"() {
-        repo.insertUserRole(user1.id, testRole1.id).block()
-        repo.insertUserRole(user2.id, testRole2.id).block()
+        repo.insert(user1.id, testRole1.id).block()
+        repo.insert(user2.id, testRole2.id).block()
 
         when:
         repo.deleteUserRolesForRole(testRole1.id).block()

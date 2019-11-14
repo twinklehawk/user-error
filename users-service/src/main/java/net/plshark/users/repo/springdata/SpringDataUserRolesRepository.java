@@ -29,7 +29,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
     }
 
     @Override
-    public Mono<Void> insertUserRole(long userId, long roleId) {
+    public Mono<Void> insert(long userId, long roleId) {
         return client.execute("INSERT INTO user_roles (user_id, role_id) values (:userId, :roleId)")
                 .bind("userId", userId)
                 .bind("roleId", roleId)
@@ -37,7 +37,7 @@ public class SpringDataUserRolesRepository implements UserRolesRepository {
     }
 
     @Override
-    public Mono<Void> deleteUserRole(long userId, long roleId) {
+    public Mono<Void> delete(long userId, long roleId) {
         return client.execute("DELETE FROM user_roles WHERE user_id = :userId AND role_id = :roleId")
                 .bind("userId", userId)
                 .bind("roleId", roleId)

@@ -22,7 +22,7 @@ public interface UserRolesRepository {
      * @param roleId the ID of the role to grant
      * @return an empty result
      */
-    Mono<Void> insertUserRole(long userId, long roleId);
+    Mono<Void> insert(long userId, long roleId);
 
     /**
      * Remove a role to a user
@@ -30,7 +30,7 @@ public interface UserRolesRepository {
      * @param roleId the ID of the role to remove
      * @return an empty result
      */
-    Mono<Void> deleteUserRole(long userId, long roleId);
+    Mono<Void> delete(long userId, long roleId);
 
     /**
      * Delete all user roles for a user
