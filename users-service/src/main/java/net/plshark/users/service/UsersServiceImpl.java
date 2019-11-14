@@ -25,25 +25,38 @@ public class UsersServiceImpl implements UsersService {
     private final UsersRepository userRepo;
     private final UserRolesRepository userRolesRepo;
     private final UserGroupsRepository userGroupsRepo;
+    private final RolesService rolesService;
+    private final GroupsService groupsService;
     private final PasswordEncoder passwordEncoder;
 
     /**
      * Create a new instance
      * @param userRepository the repository for accessing users
      * @param userRolesRepo the repository for accessing user roles
+     * @param userGroupsRepo the repository for user groups
+     * @param rolesService the roles service
+     * @param groupsService the groups service
      * @param passwordEncoder the encoder to use to encode passwords
      */
     public UsersServiceImpl(UsersRepository userRepository, UserRolesRepository userRolesRepo,
-                            UserGroupsRepository userGroupsRepo, PasswordEncoder passwordEncoder) {
+                            UserGroupsRepository userGroupsRepo, RolesService rolesService,
+                            GroupsService groupsService, PasswordEncoder passwordEncoder) {
         this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
         this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
         this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
+        this.rolesService = Objects.requireNonNull(rolesService, "rolesService cannot be null");
+        this.groupsService = Objects.requireNonNull(groupsService, "groupsService cannot be null");
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder cannot be null");
     }
 
     @Override
     public Mono<User> get(String username) {
         return userRepo.getForUsername(username);
+    }
+
+    @Override
+    public Mono<User> getRequired(String username) {
+        return get(username).switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No user found for " + username)));
     }
 
     @Override
@@ -78,35 +91,44 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Mono<Void> grantRoleToUser(long userId, long roleId) {
-        // TODO what status code when user or role does not exist?
-        return userRolesRepo.insertUserRole(userId, roleId);
+    public Mono<Void> grantRoleToUser(String username, String applicationName, String roleName) {
+        return getRequired(username)
+                .flatMap(user -> rolesService.getRequired(applicationName, roleName)
+                        .flatMap(role -> userRolesRepo.insertUserRole(user.getId(), role.getId())));
     }
 
     @Override
-    public Mono<Void> removeRoleFromUser(long userId, long roleId) {
-        return userRolesRepo.deleteUserRole(userId, roleId);
+    public Mono<Void> removeRoleFromUser(String username, String applicationName, String roleName) {
+        return getRequired(username)
+                .flatMap(user -> rolesService.getRequired(applicationName, roleName)
+                        .flatMap(role -> userRolesRepo.deleteUserRole(user.getId(), role.getId())));
     }
 
     @Override
-    public Mono<Void> addUserToGroup(long userId, long groupId) {
-        return userGroupsRepo.insert(userId, groupId);
+    public Mono<Void> grantGroupToUser(String username, String groupName) {
+        return getRequired(username)
+                .flatMap(user -> groupsService.getRequired(groupName)
+                        .flatMap(group -> userGroupsRepo.insert(user.getId(), group.getId())));
     }
 
     @Override
-    public Mono<Void> removeUserFromGroup(long userId, long groupId) {
-        return userGroupsRepo.delete(userId, groupId);
+    public Mono<Void> removeGroupFromUser(String username, String groupName) {
+        return getRequired(username)
+                .flatMap(user -> groupsService.getRequired(groupName)
+                        .flatMap(group -> userGroupsRepo.delete(user.getId(), group.getId())));
     }
 
     @Override
-    public Mono<Void> updateUserPassword(long userId, String currentPassword, String newPassword) {
+    public Mono<Void> updateUserPassword(String username, String currentPassword, String newPassword) {
         Objects.requireNonNull(currentPassword, "currentPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");
 
         String newPasswordEncoded = passwordEncoder.encode(newPassword);
         String currentPasswordEncoded = passwordEncoder.encode(currentPassword);
 
-        return userRepo.updatePassword(userId, currentPasswordEncoded, newPasswordEncoded)
-            .onErrorResume(EmptyResultDataAccessException.class, e -> Mono.error(new ObjectNotFoundException("User not found", e)));
+        return getRequired(username)
+                .flatMap(user -> userRepo.updatePassword(user.getId(), currentPasswordEncoded, newPasswordEncoded)
+                        .onErrorResume(EmptyResultDataAccessException.class,
+                                e -> Mono.error(new ObjectNotFoundException("Incorrect current password", e))));
     }
 }

@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 import net.plshark.errors.BadRequestException;
 import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
+import net.plshark.users.model.RoleGrant;
 import net.plshark.users.model.User;
 import net.plshark.users.service.UsersService;
 import org.springframework.http.MediaType;
@@ -82,37 +83,59 @@ public class UsersController {
         return usersService.delete(username);
     }
 
-    // TODO these should use username instead of ID
     /**
      * Change a user's password
-     * @param userId the ID of the user
+     * @param username the username of the user
      * @param request the password change request
      * @return an empty result or ObjectNotFoundException if the user was not found or the current password was incorrect
      */
-    @PostMapping(path = "/{id}/password")
-    public Mono<Void> changePassword(@PathVariable("id") long userId, @RequestBody PasswordChangeRequest request) {
-        return usersService.updateUserPassword(userId, request.getCurrentPassword(), request.getNewPassword());
+    @PostMapping(path = "/{username}/password")
+    public Mono<Void> changePassword(@PathVariable("username") String username, @RequestBody PasswordChangeRequest request) {
+        return usersService.updateUserPassword(username, request.getCurrentPassword(), request.getNewPassword());
     }
 
     /**
      * Grant a role to a user
-     * @param userId the ID of the user to grant to
-     * @param roleId the ID of the role to grant
+     * @param username the username of the user to grant to
+     * @param roleGrant the role to grant
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
-    @PostMapping(path = "/{userId}/roles/{roleId}")
-    public Mono<Void> grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
-        return usersService.grantRoleToUser(userId, roleId);
+    @PostMapping(path = "/{username}/roles")
+    public Mono<Void> grantRole(@PathVariable("username") String username, @RequestBody RoleGrant roleGrant) {
+        return usersService.grantRoleToUser(username, roleGrant.getApplication(), roleGrant.getRole());
     }
 
     /**
      * Remove a role from a user
-     * @param userId the ID of the user to remove the role from
-     * @param roleId the ID of the role to remove
+     * @param username the name of the user to remove the role from
+     * @param role the name of the role to remove
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
-    @DeleteMapping(path = "/{userId}/roles/{roleId}")
-    public Mono<Void> removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
-        return usersService.removeRoleFromUser(userId, roleId);
+    @DeleteMapping(path = "/{username}/roles/{application}/{role}")
+    public Mono<Void> removeRole(@PathVariable("username") String username, @PathVariable("application") String application,
+                                 @PathVariable("role") String role) {
+        return usersService.removeRoleFromUser(username, application, role);
+    }
+
+    /**
+     * Grant a group to a user
+     * @param username the username of the user to grant to
+     * @param group the name of the group to grant
+     * @return an empty result or ObjectNotFoundException if the user or group does not exist
+     */
+    @PostMapping(path = "/{username}/groups/{group}")
+    public Mono<Void> grantGroup(@PathVariable("username") String username, @PathVariable("group") String group) {
+        return usersService.grantGroupToUser(username, group);
+    }
+
+    /**
+     * Remove a group from a user
+     * @param username the name of the user to remove the role from
+     * @param group the name of the group to remove
+     * @return an empty result or ObjectNotFoundException if the user does not exist
+     */
+    @DeleteMapping(path = "/{username}/groups/{group}")
+    public Mono<Void> removeGroup(@PathVariable("username") String username, @PathVariable("group") String group) {
+        return usersService.removeGroupFromUser(username, group);
     }
 }

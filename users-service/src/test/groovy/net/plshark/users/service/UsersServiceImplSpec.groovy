@@ -2,6 +2,8 @@ package net.plshark.users.service
 
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
+import net.plshark.users.model.Group
+import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
@@ -20,8 +22,11 @@ class UsersServiceImplSpec extends Specification {
     UsersRepository userRepo = Mock()
     UserRolesRepository userRolesRepo = Mock()
     UserGroupsRepository userGroupsRepo = Mock()
+    RolesService rolesService = Mock()
+    GroupsService groupsService = Mock()
     PasswordEncoder encoder = Mock()
-    UsersServiceImpl service = new UsersServiceImpl(userRepo, userRolesRepo, userGroupsRepo, encoder)
+    UsersServiceImpl service = new UsersServiceImpl(userRepo, userRolesRepo, userGroupsRepo, rolesService,
+            groupsService, encoder)
 
     def "new users have password encoded"() {
         encoder.encode("pass") >> "pass-encoded"
@@ -46,7 +51,7 @@ class UsersServiceImplSpec extends Specification {
 
     def "cannot update a user to have null password"() {
         when:
-        service.updateUserPassword(100, "current", null)
+        service.updateUserPassword('bill', "current", null)
 
         then:
         thrown(NullPointerException)
@@ -55,11 +60,13 @@ class UsersServiceImplSpec extends Specification {
     def "new password is encoded when updating password"() {
         encoder.encode("current") >> "current-encoded"
         encoder.encode("new-pass") >> "new-pass-encoded"
+        userRepo.getForUsername('ted') >> Mono.just(User.builder().id(100).username('ted')
+                .password('current-encoded').build())
         PublisherProbe probe = PublisherProbe.empty()
         userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") >> probe.mono()
 
         expect:
-        StepVerifier.create(service.updateUserPassword(100, "current", "new-pass"))
+        StepVerifier.create(service.updateUserPassword('ted', "current", "new-pass"))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -69,11 +76,23 @@ class UsersServiceImplSpec extends Specification {
     def "no matching user when updating password throws exception"() {
         encoder.encode("current") >> "current-encoded"
         encoder.encode("new") >> "new-encoded"
+        userRepo.getForUsername('ted') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(service.updateUserPassword('ted', "current", "new"))
+            .verifyError(ObjectNotFoundException.class)
+    }
+
+    def "no matching existing password when updating password throws exception"() {
+        encoder.encode("current") >> "current-encoded"
+        encoder.encode("new") >> "new-encoded"
+        userRepo.getForUsername('ted') >> Mono.just(User.builder().id(100).username('ted')
+                .password('current-encoded').build())
         userRepo.updatePassword(100, "current-encoded", "new-encoded") >> Mono.error(new EmptyResultDataAccessException(1))
 
         expect:
-        StepVerifier.create(service.updateUserPassword(100, "current", "new"))
-            .verifyError(ObjectNotFoundException.class)
+        StepVerifier.create(service.updateUserPassword('ted', "current", "new"))
+                .verifyError(ObjectNotFoundException.class)
     }
 
     def "all roles and groups for a user are removed when the user is deleted"() {
@@ -110,11 +129,15 @@ class UsersServiceImplSpec extends Specification {
     }
 
     def "granting a role to a user should add the role to the user's roles"() {
+        userRepo.getForUsername('bill') >> Mono.just(User.builder().id(12).username('bill')
+                .password('pass').build())
+        rolesService.getRequired('app', 'role') >> Mono.just(Role.builder().id(34)
+                .applicationId(1).name('role').build())
         PublisherProbe probe = PublisherProbe.empty()
         userRolesRepo.insertUserRole(12, 34) >> probe.mono()
 
         expect:
-        StepVerifier.create(service.grantRoleToUser(12, 34))
+        StepVerifier.create(service.grantRoleToUser('bill', 'app', 'role'))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -122,12 +145,15 @@ class UsersServiceImplSpec extends Specification {
     }
 
     def "removing a role from a user should remove the role from the user's roles"() {
-        userRepo.getForId(100) >> Mono.just(User.builder().username('name').password('pass').build())
+        userRepo.getForUsername('ted') >> Mono.just(User.builder().id(100).username('bill')
+                .password('pass').build())
+        rolesService.getRequired('app', 'role') >> Mono.just(Role.builder().id(200)
+                .applicationId(1).name('role').build())
         PublisherProbe probe = PublisherProbe.empty()
         userRolesRepo.deleteUserRole(100, 200) >> probe.mono()
 
         expect:
-        StepVerifier.create(service.removeRoleFromUser(100, 200))
+        StepVerifier.create(service.removeRoleFromUser('ted', 'app', 'role'))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -146,18 +172,24 @@ class UsersServiceImplSpec extends Specification {
     }
 
     def 'should be able to add a user to a group'() {
+        userRepo.getForUsername('bill') >> Mono.just(User.builder().id(100).username('bill')
+                .password('pass').build())
+        groupsService.getRequired('group') >> Mono.just(Group.create(200, 'group'))
         userGroupsRepo.insert(100, 200) >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.addUserToGroup(100, 200))
+        StepVerifier.create(service.grantGroupToUser('bill', 'group'))
                 .verifyComplete()
     }
 
     def 'should be able to remove a user from a group'() {
+        userRepo.getForUsername('ted') >> Mono.just(User.builder().id(100).username('ted')
+                .password('pass').build())
+        groupsService.getRequired('group') >> Mono.just(Group.create(200, 'group'))
         userGroupsRepo.delete(100, 200) >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.removeUserFromGroup(100, 200))
+        StepVerifier.create(service.removeGroupFromUser('ted', 'group'))
                 .verifyComplete()
     }
 }

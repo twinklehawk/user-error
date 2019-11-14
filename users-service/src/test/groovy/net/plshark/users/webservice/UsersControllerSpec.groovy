@@ -2,6 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.errors.BadRequestException
 import net.plshark.users.model.PasswordChangeRequest
+import net.plshark.users.model.RoleGrant
 import net.plshark.users.model.User
 import net.plshark.users.service.UsersService
 import reactor.core.publisher.Flux
@@ -29,35 +30,59 @@ class UsersControllerSpec extends Specification {
 
     def "change password passes the user ID, current password, and new passwords through"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.updateUserPassword(100, "current", "new") >> probe.mono()
+        service.updateUserPassword('bob', "current", "new") >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.changePassword(100, PasswordChangeRequest.create("current", "new")))
+        StepVerifier.create(controller.changePassword('bob', PasswordChangeRequest.create("current", "new")))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
     }
 
-    def "granting a role passes the user and role IDs through"() {
+    def "granting a role passes the user and role names through"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.grantRoleToUser(100, 200) >> probe.mono()
+        service.grantRoleToUser('user', 'test-app', 'role1') >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.grantRole(100, 200))
+        StepVerifier.create(controller.grantRole('user', RoleGrant.create('test-app', 'role1')))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
     }
 
-    def "removing a role passes the user and role IDs through"() {
+    def "removing a role passes the user and role names through"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.removeRoleFromUser(200, 300) >> probe.mono()
+        service.removeRoleFromUser('ted', 'app', 'role') >> probe.mono()
 
         expect:
-        StepVerifier.create(controller.removeRole(200, 300))
+        StepVerifier.create(controller.removeRole('ted', 'app', 'role'))
             .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
+    }
+
+    def "granting a group passes the user and group names through"() {
+        PublisherProbe probe = PublisherProbe.empty()
+        service.grantGroupToUser('user', 'group') >> probe.mono()
+
+        expect:
+        StepVerifier.create(controller.grantGroup('user', 'group'))
+                .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
+    }
+
+    def "removing a group passes the user and role names through"() {
+        PublisherProbe probe = PublisherProbe.empty()
+        service.removeGroupFromUser('ted', 'group') >> probe.mono()
+
+        expect:
+        StepVerifier.create(controller.removeGroup('ted', 'group'))
+                .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()
