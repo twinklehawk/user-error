@@ -111,16 +111,16 @@ class RolesServiceImplSpec extends Specification {
         appsRepo.get('app-name') >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.get('app-name', 'role-name'))
+        StepVerifier.create(service.getRequired('app-name', 'role-name'))
                 .verifyError(ObjectNotFoundException)
     }
 
     def 'should return an error when a required role does not exist'() {
         appsRepo.get('app-name') >> Mono.just(Application.builder().id(132).name('app-name').build())
-        rolesRepo.get(123, 'role-name') >> Mono.empty()
+        rolesRepo.get(132, 'role-name') >> Mono.empty()
 
         expect:
-        StepVerifier.create(service.get('app-name', 'role-name'))
+        StepVerifier.create(service.getRequired('app-name', 'role-name'))
                 .verifyError(ObjectNotFoundException)
     }
 
