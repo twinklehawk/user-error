@@ -1,10 +1,12 @@
 package net.plshark.users.service
 
-import net.plshark.ObjectNotFoundException
+import net.plshark.errors.DuplicateException
+import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 import reactor.core.publisher.Flux
@@ -27,9 +29,19 @@ class UsersServiceImplSpec extends Specification {
                 Mono.just(User.builder().id(1L).username('user').build())
 
         expect:
-        StepVerifier.create(service.insertUser(User.builder().username('user').password('pass').build()))
+        StepVerifier.create(service.create(User.builder().username('user').password('pass').build()))
                 .expectNext(User.builder().id(1L).username('user').build())
                 .verifyComplete()
+    }
+
+    def 'create should map the exception for a duplicate username to a DuplicateException'() {
+        def request = User.builder().username('app').password('pass').build()
+        encoder.encode('pass') >> 'pass'
+        userRepo.insert(request) >> Mono.error(new DataIntegrityViolationException("test error"))
+
+        expect:
+        StepVerifier.create(service.create(request))
+                .verifyError(DuplicateException)
     }
 
     def "cannot update a user to have null password"() {
@@ -73,7 +85,7 @@ class UsersServiceImplSpec extends Specification {
         userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
-        StepVerifier.create(service.deleteUser(100))
+        StepVerifier.create(service.delete(100))
             .verifyComplete()
         rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()
@@ -90,7 +102,7 @@ class UsersServiceImplSpec extends Specification {
         userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
-        StepVerifier.create(service.deleteUser(100))
+        StepVerifier.create(service.delete(100))
                 .verifyComplete()
         rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()

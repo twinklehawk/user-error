@@ -1,6 +1,7 @@
 package net.plshark.users.webservice;
 
 import java.util.Objects;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import net.plshark.users.service.GroupsService;
 import org.springframework.http.MediaType;
@@ -33,7 +34,8 @@ public class GroupsController {
      */
     @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Group> get(@PathVariable("name") String name) {
-        return groupsService.get(name);
+        return groupsService.get(name)
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No group found for " + name)));
     }
 
     /**
@@ -42,8 +44,8 @@ public class GroupsController {
      * @return the inserted group
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Group> insert(@RequestBody Group group) {
-        return groupsService.insert(group);
+    public Mono<Group> create(@RequestBody Group group) {
+        return groupsService.create(group);
     }
 
     /**
@@ -55,4 +57,6 @@ public class GroupsController {
     public Mono<Void> delete(@PathVariable("name") String name) {
         return groupsService.delete(name);
     }
+
+    // TODO methods for adding/removing roles from group, viewing roles in group
 }

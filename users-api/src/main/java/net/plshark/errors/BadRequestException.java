@@ -1,9 +1,9 @@
-package net.plshark;
+package net.plshark.errors;
 
 /**
  * Exception indicating a request was invalid
  */
-public class BadRequestException extends Exception {
+public class BadRequestException extends RuntimeException {
 
     private static final long serialVersionUID = 5359694168645391199L;
 

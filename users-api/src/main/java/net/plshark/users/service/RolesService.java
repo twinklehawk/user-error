@@ -28,9 +28,10 @@ public interface RolesService {
     /**
      * Save a new role
      * @param role the role
-     * @return the saved role
+     * @return the saved role or a {@link net.plshark.errors.DuplicateException} if a role with the same name already
+     * exists in the same application
      */
-    Mono<Role> insert(Role role);
+    Mono<Role> create(Role role);
 
     /**
      * Save a new role
@@ -38,7 +39,7 @@ public interface RolesService {
      * @param role the role
      * @return the saved role
      */
-    Mono<Role> insert(String application, Role role);
+    Mono<Role> create(String application, Role role);
 
     /**
      * Delete a role

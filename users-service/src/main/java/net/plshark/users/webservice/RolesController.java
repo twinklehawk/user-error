@@ -2,6 +2,7 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Role;
 import net.plshark.users.service.RolesService;
 import org.springframework.http.MediaType;
@@ -36,8 +37,8 @@ public class RolesController {
      * @return the inserted role
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Role> insert(@PathVariable("application") String application, @RequestBody Role role) {
-        return rolesService.insert(application, role);
+    public Mono<Role> create(@PathVariable("application") String application, @RequestBody Role role) {
+        return rolesService.create(application, role);
     }
 
     /**
@@ -72,6 +73,7 @@ public class RolesController {
      */
     @GetMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Role> get(@PathVariable("application") String application, @PathVariable("name") String name) {
-        return rolesService.get(application, name);
+        return rolesService.get(application, name)
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No role found for " + application + ":" + name)));
     }
 }

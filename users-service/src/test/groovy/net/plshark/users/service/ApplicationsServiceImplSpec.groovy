@@ -1,9 +1,11 @@
 package net.plshark.users.service
 
+import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
+import org.springframework.dao.DataIntegrityViolationException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -27,15 +29,24 @@ class ApplicationsServiceImplSpec extends Specification {
                 .verifyComplete()
     }
 
-    def 'insert should pass through the response from the repo'() {
+    def 'create should pass through the response from the repo'() {
         def request = Application.builder().name('app').build()
         def inserted = request.toBuilder().id(1).build()
         appsRepo.insert(request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(service.insert(request))
+        StepVerifier.create(service.create(request))
                 .expectNext(inserted)
                 .verifyComplete()
+    }
+
+    def 'create should map the exception for a duplicate name to a DuplicateException'() {
+        def request = Application.builder().name('app').build()
+        appsRepo.insert(request) >> Mono.error(new DataIntegrityViolationException("test error"))
+
+        expect:
+        StepVerifier.create(service.create(request))
+                .verifyError(DuplicateException)
     }
 
     def 'delete should delete all roles belonging to the app then delete the app'() {

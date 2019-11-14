@@ -4,6 +4,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import com.fasterxml.jackson.databind.ObjectMapper
+import net.plshark.errors.ErrorResponse
 import spock.lang.Specification
 
 class ErrorResponseSpec extends Specification {

@@ -1,9 +1,11 @@
 package net.plshark.users.service
 
+import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Group
 import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.GroupsRepository
 import net.plshark.users.repo.UserGroupsRepository
+import org.springframework.dao.DataIntegrityViolationException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -37,13 +39,22 @@ class GroupsServiceImplSpec extends Specification {
                 .verifyComplete()
     }
 
-    def 'inserting should save and return the saved group'() {
+    def 'creating should save and return the saved group'() {
         groupsRepo.insert(Group.create('group')) >> Mono.just(Group.create(1L, 'group'))
 
         expect:
-        StepVerifier.create(service.insert(Group.create('group')))
+        StepVerifier.create(service.create(Group.create('group')))
                 .expectNext(Group.create(1L, 'group'))
                 .verifyComplete()
+    }
+
+    def 'create should map the exception for a duplicate name to a DuplicateException'() {
+        def request = Group.create('app')
+        groupsRepo.insert(request) >> Mono.error(new DataIntegrityViolationException("test error"))
+
+        expect:
+        StepVerifier.create(service.create(request))
+                .verifyError(DuplicateException)
     }
 
     def 'deleting should delete all user/group associations, all group/role associations, and the group'() {

@@ -6,6 +6,7 @@ plugins {
 
 apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
+// TODO enable spotbugs
 //apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {

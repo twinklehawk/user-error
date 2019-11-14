@@ -2,11 +2,13 @@ package net.plshark.users.webservice;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
-import net.plshark.ObjectNotFoundException;
+import net.plshark.errors.BadRequestException;
+import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.PasswordChangeRequest;
 import net.plshark.users.model.User;
 import net.plshark.users.service.UsersService;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +56,7 @@ public class UsersController {
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<User> getUser(@PathVariable("username") String username) {
-        return usersService.getUserByUsername(username)
+        return usersService.get(username)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
     }
 
@@ -64,8 +66,10 @@ public class UsersController {
      * @return the inserted user
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<User> insert(@RequestBody User user) {
-        return usersService.insertUser(user);
+    public Mono<User> create(@RequestBody User user) {
+        if (!StringUtils.hasLength(user.getPassword()))
+            throw new BadRequestException("Password cannot be empty");
+        return usersService.create(user);
     }
 
     /**
@@ -75,9 +79,10 @@ public class UsersController {
      */
     @DeleteMapping("/{username}")
     public Mono<Void> delete(@PathVariable("username") String username) {
-        return usersService.deleteUser(username);
+        return usersService.delete(username);
     }
 
+    // TODO these should use username instead of ID
     /**
      * Change a user's password
      * @param userId the ID of the user

@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.errors.BadRequestException
 import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.model.User
 import net.plshark.users.service.UsersService
@@ -16,7 +17,7 @@ class UsersControllerSpec extends Specification {
 
     def "delete passes the user ID through to be deleted"() {
         PublisherProbe probe = PublisherProbe.empty()
-        service.deleteUser('user') >> probe.mono()
+        service.delete('user') >> probe.mono()
 
         expect:
         StepVerifier.create(controller.delete('user'))
@@ -75,11 +76,32 @@ class UsersControllerSpec extends Specification {
 
     def 'getUser passes the username through'() {
         def user1 = User.builder().id(1L).username('user').build()
-        service.getUserByUsername('user') >> Mono.just(user1)
+        service.get('user') >> Mono.just(user1)
 
         expect:
         StepVerifier.create(controller.getUser('user'))
                 .expectNext(user1)
                 .verifyComplete()
+    }
+
+    def 'insert passes through the response from the service'() {
+        def request = User.builder().username('user').password('test-pass').build()
+        def created = User.builder().id(1L).username('user').build()
+        service.create(request) >> Mono.just(created)
+
+        expect:
+        StepVerifier.create(controller.create(request))
+                .expectNext(created)
+                .verifyComplete()
+    }
+
+    def 'an insert request is rejected if the password is empty'() {
+        def request = User.builder().username('user').build()
+
+        when:
+        controller.create(request)
+
+        then:
+        thrown(BadRequestException)
     }
 }

@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
 import net.plshark.users.service.RolesService
 import reactor.core.publisher.Flux
@@ -16,12 +17,20 @@ class RolesControllerSpec extends Specification {
     def "insert passes role through to service"() {
         def request = Role.builder().name('admin').build()
         def inserted = Role.builder().id(100).name('app').applicationId(12).build()
-        service.insert('app', request) >> Mono.just(inserted)
+        service.create('app', request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(controller.insert('app', request))
+        StepVerifier.create(controller.create('app', request))
             .expectNext(inserted)
             .verifyComplete()
+    }
+
+    def 'getting a role should throw an exception when the role does not exist'() {
+        service.get('test-app', 'test-role') >> Mono.empty()
+
+        expect:
+        StepVerifier.create(controller.get('test-app', 'test-role'))
+                .verifyError(ObjectNotFoundException)
     }
 
     def "delete passes ID through to service"() {

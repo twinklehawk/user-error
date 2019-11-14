@@ -1,6 +1,5 @@
 package net.plshark.users.service;
 
-import net.plshark.users.model.Role;
 import net.plshark.users.model.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,7 +14,7 @@ public interface UsersService {
      * @param username the username
      * @return the matching user if found
      */
-    Mono<User> getUserByUsername(String username);
+    Mono<User> get(String username);
 
     /**
      * Get all users up to the maximum result count and starting at an offset
@@ -27,24 +26,25 @@ public interface UsersService {
 
     /**
      * Save a new user
-     * @param user the user
-     * @return the saved user
+     * @param user the user, must have a password set
+     * @return the saved useror a {@link net.plshark.errors.DuplicateException} if a user with the same username already
+     * exists
      */
-    Mono<User> insertUser(User user);
+    Mono<User> create(User user);
 
     /**
      * Delete a user by ID
      * @param userId the user ID
      * @return an empty result
      */
-    Mono<Void> deleteUser(long userId);
+    Mono<Void> delete(long userId);
 
     /**
      * Delete a user
      * @param username the username
      * @return an empty result
      */
-    Mono<Void> deleteUser(String username);
+    Mono<Void> delete(String username);
 
     /**
      * Update a user's password
@@ -62,14 +62,6 @@ public interface UsersService {
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
     Mono<Void> grantRoleToUser(long userId, long roleId);
-
-    /**
-     * Grant a role to a user
-     * @param user the user to grant the role to
-     * @param role the role to grant
-     * @return an empty result or ObjectNotFoundException if the user or role does not exist
-     */
-    Mono<Void> grantRoleToUser(User user, Role role);
 
     /**
      * Remove a role from a user
