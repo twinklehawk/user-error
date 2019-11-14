@@ -11,7 +11,7 @@ jobs:
         java_version: ['1.8', '1.11']
     steps:
     - uses: actions/checkout@v1
-    - name: Restore cache
+    - name: Setup cache
       uses: actions/cache@v1
       with:
         path: ~/.gradle/caches
@@ -22,5 +22,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java_version }}
-    - name: Build with Gradle
+    - name: Build
       run: ./gradlew build
+    - name: Run analysis
+      if: matrix.java_version == '1.11'
+      run: ./gradlew sonarqube -Dsonar.projectKey=twinklehawk_bad-users -Dsonar.organization=twinklehawk -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_LOGIN }}
