@@ -40,6 +40,6 @@ jobs:
         for f in */build/reports/jacoco/test/jacocoTestReport.xml
         do
           ./cc-test-reporter format-coverage -t jacoco -o build/coverage/codeclimate-${f%/build/reports/jacoco/test/jacocoTestReport.xml}.json $f
-        end
+        done
         ./cc-test-reporter sum-coverage build/coverage/codeclimate-*.json -o build/coverage/codeclimate-total.json
         ./cc-test-reporter upload-coverage -i build/coverage/codeclimate-total.json
