@@ -8,8 +8,6 @@ plugins {
 apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/coverage.gradle'
-// TODO enable spotbugs
-//apply from: '../build-scripts/spotbugs.gradle'
 
 dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
