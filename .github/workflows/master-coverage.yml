@@ -23,7 +23,6 @@ jobs:
     - name: Build and test
       run: ./gradlew build jacocoTestReport
     - name: Upload test coverage
-      if: matrix.java_version == '1.11'
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
         GIT_COMMIT_SHA: ${{ github.sha }}
