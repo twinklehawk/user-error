@@ -33,6 +33,8 @@ jobs:
         GIT_COMMIT_SHA: ${{ github.sha }}
         GIT_BRANCH: ${{ github.head_ref }}
       run: |
+        echo ${{ github.sha }}
+        echo $GITHUB_SHA
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         chmod +x ./cc-test-reporter
         ./cc-test-reporter before-build
