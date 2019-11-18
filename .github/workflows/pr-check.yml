@@ -31,7 +31,7 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
         GIT_COMMIT_SHA: ${{ github.sha }}
-        GIT_BRANCH: ${{ github.head_ref }}
+        GIT_BRANCH: ${{ github.ref }}
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         chmod +x ./cc-test-reporter
