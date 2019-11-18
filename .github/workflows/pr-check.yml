@@ -30,8 +30,8 @@ jobs:
       if: matrix.java_version == '1.11'
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
-        GIT_COMMIT_SHA: ${{ github.sha }}
-        GIT_BRANCH: ${{ github.ref }}
+        GIT_COMMIT_SHA: $(git log ${{ github.head_ref }} -1 --pretty=format:%H)
+        GIT_BRANCH: ${{ github.head_ref }}
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         chmod +x ./cc-test-reporter
