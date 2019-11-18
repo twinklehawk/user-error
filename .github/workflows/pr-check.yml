@@ -1,4 +1,4 @@
-name: Java CI
+name: Pull request check
 
 on:
   pull_request:
