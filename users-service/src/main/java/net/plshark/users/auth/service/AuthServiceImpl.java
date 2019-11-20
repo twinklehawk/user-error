@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
         return userDetailsService.findByUsername(username)
                 .publishOn(Schedulers.parallel())
                 .filter(user -> this.passwordEncoder.matches(credentials.getPassword(), user.getPassword()))
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid Credentials"))))
+                .switchIfEmpty(Mono.error(() -> new BadCredentialsException("Invalid Credentials")))
                 .map(this::buildAuthToken);
     }
 
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
                 .publishOn(Schedulers.parallel())
                 .map(tokenVerifier::verifyRefreshToken)
                 .flatMap(userDetailsService::findByUsername)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid Credentials"))))
+                .switchIfEmpty(Mono.error(() -> new BadCredentialsException("Invalid Credentials")))
                 // TODO run any checks to see if user is allowed to refresh
                 .map(this::buildAuthToken);
     }

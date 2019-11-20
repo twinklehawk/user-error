@@ -58,7 +58,7 @@ public class UsersController {
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<User> getUser(@PathVariable("username") String username) {
         return usersService.get(username)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new ObjectNotFoundException("No user found for username"))));
+                .switchIfEmpty(Mono.error(() -> new ObjectNotFoundException("No user found for username")));
     }
 
     /**

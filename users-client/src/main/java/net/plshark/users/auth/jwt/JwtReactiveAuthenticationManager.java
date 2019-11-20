@@ -33,7 +33,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
                 .map(JwtAuthenticationToken::getCredentials)
                 .publishOn(Schedulers.parallel())
                 .flatMap(this::verifyToken)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid credentials"))))
+                .switchIfEmpty(Mono.error(() -> new BadCredentialsException("Invalid credentials")))
                 .map(user -> JwtAuthenticationToken.builder()
                         .username(user.getUsername())
                         .authorities(user.getAuthorities().stream()
