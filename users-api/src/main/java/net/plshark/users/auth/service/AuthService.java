@@ -10,9 +10,6 @@ import reactor.core.publisher.Mono;
  */
 public interface AuthService {
 
-    String AUTHORITIES_CLAIM = "https://users.plshark.net/authorities";
-    String REFRESH_CLAIM = "https://users.plshark.net/refresh";
-
     /**
      * Authenticate a user and generate an auth token
      * @param credentials the user credentials
