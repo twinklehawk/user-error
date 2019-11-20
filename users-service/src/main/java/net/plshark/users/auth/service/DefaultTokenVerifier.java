@@ -34,7 +34,7 @@ public class DefaultTokenVerifier implements TokenVerifier{
     @Override
     public String verifyRefreshToken(String token) {
         DecodedJWT jwt = decodeToken(token);
-        if (!Boolean.TRUE.equals(jwt.getClaim(AuthService.REFRESH_CLAIM).asBoolean()))
+        if (!Boolean.TRUE.equals(jwt.getClaim(PlsharkClaim.REFRESH).asBoolean()))
             throw new BadCredentialsException("Token is not a refresh token");
         return jwt.getSubject();
     }
@@ -58,7 +58,7 @@ public class DefaultTokenVerifier implements TokenVerifier{
      * @return the list of authorities from the token
      */
     private List<String> parseAuthorities(DecodedJWT jwt) {
-        return Optional.ofNullable(jwt.getClaim(AuthService.AUTHORITIES_CLAIM).asList(String.class))
+        return Optional.ofNullable(jwt.getClaim(PlsharkClaim.AUTHORITIES).asList(String.class))
                 .orElse(Collections.emptyList());
     }
 }

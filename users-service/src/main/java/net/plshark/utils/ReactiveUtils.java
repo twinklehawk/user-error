@@ -33,4 +33,6 @@ public class ReactiveUtils {
         Mono<List<T>> mono = wrapWithMono(callable);
         return mono.flatMapMany(Flux::fromIterable);
     }
+
+    private ReactiveUtils() { }
 }

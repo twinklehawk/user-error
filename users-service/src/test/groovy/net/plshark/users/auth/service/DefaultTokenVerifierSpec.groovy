@@ -15,7 +15,7 @@ class DefaultTokenVerifierSpec extends Specification {
     def 'valid access tokens should return the username and authorities'() {
         when:
         def token = JWT.create().withSubject('test-user')
-                .withArrayClaim(AuthService.AUTHORITIES_CLAIM, ['user'] as String[]).sign(algorithm)
+                .withArrayClaim(PlsharkClaim.AUTHORITIES, ['user'] as String[]).sign(algorithm)
 
         then:
         verifier.verifyToken(token) == AuthenticatedUser.create('test-user', Collections.singleton('user'))
@@ -39,7 +39,7 @@ class DefaultTokenVerifierSpec extends Specification {
 
     def 'valid refresh tokens should return the username'() {
         when:
-        def token = JWT.create().withSubject('test-user').withClaim(AuthService.REFRESH_CLAIM, true).sign(algorithm)
+        def token = JWT.create().withSubject('test-user').withClaim(PlsharkClaim.REFRESH, true).sign(algorithm)
 
         then:
         verifier.verifyRefreshToken(token) == 'test-user'

@@ -27,14 +27,14 @@ public class DefaultTokenBuilder implements TokenBuilder {
     @Override
     public String buildAccessToken(String username, long expirationMs, String[] authorities) {
         return buildBaseToken(username, expirationMs)
-                .withArrayClaim(AuthService.AUTHORITIES_CLAIM, authorities)
+                .withArrayClaim(PlsharkClaim.AUTHORITIES, authorities)
                 .sign(algorithm);
     }
 
     @Override
     public String buildRefreshToken(String username, long expirationMs) {
         return buildBaseToken(username, expirationMs)
-                .withClaim(AuthService.REFRESH_CLAIM, true)
+                .withClaim(PlsharkClaim.REFRESH, true)
                 .sign(algorithm);
     }
 

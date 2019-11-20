@@ -19,7 +19,7 @@ class DefaultTokenBuilderSpec extends Specification {
         decodedToken.subject == 'test-user'
         decodedToken.expiresAt != null
         decodedToken.issuer == 'test-issuer'
-        decodedToken.getClaim(AuthService.AUTHORITIES_CLAIM).asList(String.class).size() == 2
+        decodedToken.getClaim(PlsharkClaim.AUTHORITIES).asList(String.class).size() == 2
     }
 
     def 'refresh tokens should include the username, issuer, refresh claim, and expiration'() {
@@ -31,6 +31,6 @@ class DefaultTokenBuilderSpec extends Specification {
         decodedToken.subject == 'test-user'
         decodedToken.expiresAt != null
         decodedToken.issuer == 'test-issuer'
-        !decodedToken.getClaim(AuthService.REFRESH_CLAIM).isNull()
+        !decodedToken.getClaim(PlsharkClaim.REFRESH).isNull()
     }
 }
