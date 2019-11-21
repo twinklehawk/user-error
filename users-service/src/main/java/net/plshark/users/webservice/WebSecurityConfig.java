@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 // auth controller handles its own authentication
                 .pathMatchers("/auth/**")
                     .permitAll()
-                .pathMatchers("/users/**", "/roles/**")
+                .pathMatchers("/users/**", "/groups/**", "/applications/**")
                     .hasRole("users-admin")
                 .anyExchange()
                     .hasRole("users-user")
