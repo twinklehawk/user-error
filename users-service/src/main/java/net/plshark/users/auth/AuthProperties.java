@@ -15,6 +15,7 @@ public class AuthProperties {
     private String issuer;
     @Min(1)
     private long tokenExpiration = 15 * 60 * 1000;
+    private String secret;
     @Valid
     private final Keystore keystore = new Keystore();
     @Valid
@@ -74,6 +75,14 @@ public class AuthProperties {
      */
     public Key getKey() {
         return key;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 
     public static class Keystore {

@@ -8,6 +8,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import com.auth0.jwt.algorithms.Algorithm;
 import net.plshark.users.auth.AuthProperties;
+import org.springframework.util.StringUtils;
 
 /**
  * Builds an algorithm from the auth properties
@@ -15,6 +16,8 @@ import net.plshark.users.auth.AuthProperties;
 public class AlgorithmFactory {
 
     public static final String NONE = "none";
+    public static final String HMAC256 = "hmac256";
+    public static final String HMAC512 = "hmac512";
     public static final String ECDSA256 = "ecdsa256";
 
     /**
@@ -32,6 +35,16 @@ public class AlgorithmFactory {
         switch (name) {
             case NONE:
                 algorithm = Algorithm.none();
+                break;
+            case HMAC256:
+                if (!StringUtils.hasLength(props.getSecret()))
+                    throw new IllegalStateException("Must set a secret when using the HMAC256 algorithm");
+                algorithm = Algorithm.HMAC256(props.getSecret());
+                break;
+            case HMAC512:
+                if (!StringUtils.hasLength(props.getSecret()))
+                    throw new IllegalStateException("Must set a secret when using the HMAC512 algorithm");
+                algorithm = Algorithm.HMAC512(props.getSecret());
                 break;
             case ECDSA256: {
                 KeyStore keyStore = KeyStore.getInstance(props.getKeystore().getType());

@@ -41,4 +41,46 @@ class AlgorithmFactorySpec extends Specification {
         then:
         algorithm.name == 'none'
     }
+
+    def 'hmac256 should load the corresponding algorithm'() {
+        props.algorithm = AlgorithmFactory.HMAC256
+        props.secret = 'test-secret'
+
+        when:
+        def algorithm = factory.buildAlgorithm(props)
+
+        then:
+        algorithm.name == 'HS256'
+    }
+
+    def 'hmac256 should fail if there is no secret set'() {
+        props.algorithm = AlgorithmFactory.HMAC256
+
+        when:
+        factory.buildAlgorithm(props)
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def 'hmac512 should load the corresponding algorithm'() {
+        props.algorithm = AlgorithmFactory.HMAC512
+        props.secret = 'test-secret'
+
+        when:
+        def algorithm = factory.buildAlgorithm(props)
+
+        then:
+        algorithm.name == 'HS512'
+    }
+
+    def 'hmac512 should fail if there is no secret set'() {
+        props.algorithm = AlgorithmFactory.HMAC512
+
+        when:
+        factory.buildAlgorithm(props)
+
+        then:
+        thrown(IllegalStateException)
+    }
 }
