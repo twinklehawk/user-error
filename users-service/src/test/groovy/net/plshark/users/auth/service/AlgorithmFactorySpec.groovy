@@ -1,16 +1,17 @@
 package net.plshark.users.auth.service
 
+import com.google.common.collect.ImmutableList
 import net.plshark.users.auth.AuthProperties
 import spock.lang.Specification
 
 class AlgorithmFactorySpec extends Specification {
 
-    def props = new AuthProperties()
-    def factory = new AlgorithmFactory()
+    def factory = new AlgorithmFactory(ImmutableList.of())
 
     def 'should throw an IllegalArgumentException if the algorithm name is not recognized'() {
+        def props = AuthProperties.forSecret('made up name', 'bad-users', 1000, 'secret')
+
         when:
-        props.algorithm = 'made up name'
         factory.buildAlgorithm(props)
 
         then:
@@ -30,57 +31,5 @@ class AlgorithmFactorySpec extends Specification {
 
         then:
         algorithm.name == 'ES256'
-    }
-
-    def 'none should load the none algorithm'() {
-        props.algorithm = AlgorithmFactory.NONE
-
-        when:
-        def algorithm = factory.buildAlgorithm(props)
-
-        then:
-        algorithm.name == 'none'
-    }
-
-    def 'hmac256 should load the corresponding algorithm'() {
-        props.algorithm = AlgorithmFactory.HMAC256
-        props.secret = 'test-secret'
-
-        when:
-        def algorithm = factory.buildAlgorithm(props)
-
-        then:
-        algorithm.name == 'HS256'
-    }
-
-    def 'hmac256 should fail if there is no secret set'() {
-        props.algorithm = AlgorithmFactory.HMAC256
-
-        when:
-        factory.buildAlgorithm(props)
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def 'hmac512 should load the corresponding algorithm'() {
-        props.algorithm = AlgorithmFactory.HMAC512
-        props.secret = 'test-secret'
-
-        when:
-        def algorithm = factory.buildAlgorithm(props)
-
-        then:
-        algorithm.name == 'HS512'
-    }
-
-    def 'hmac512 should fail if there is no secret set'() {
-        props.algorithm = AlgorithmFactory.HMAC512
-
-        when:
-        factory.buildAlgorithm(props)
-
-        then:
-        thrown(IllegalStateException)
     }
 }

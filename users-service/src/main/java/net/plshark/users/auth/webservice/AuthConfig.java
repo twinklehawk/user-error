@@ -2,10 +2,12 @@ package net.plshark.users.auth.webservice;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import net.plshark.users.auth.AuthProperties;
+import net.plshark.users.auth.service.AlgorithmBuilder;
 import net.plshark.users.auth.service.AlgorithmFactory;
 import net.plshark.users.auth.service.AuthService;
 import net.plshark.users.auth.service.AuthServiceImpl;
@@ -49,8 +51,9 @@ public class AuthConfig {
     }
 
     @Bean
-    public Algorithm algorithm(AuthProperties props) throws GeneralSecurityException, IOException {
-        return new AlgorithmFactory().buildAlgorithm(props);
+    public Algorithm algorithm(AuthProperties props, List<AlgorithmBuilder> algorithmBuilders) throws
+            GeneralSecurityException, IOException {
+        return new AlgorithmFactory(algorithmBuilders).buildAlgorithm(props);
     }
 
     @Bean
