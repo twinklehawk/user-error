@@ -2,11 +2,12 @@ package net.plshark.users.auth.webservice;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import javax.validation.Valid;
+import java.util.List;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import net.plshark.users.auth.AuthProperties;
+import net.plshark.users.auth.service.AlgorithmBuilder;
 import net.plshark.users.auth.service.AlgorithmFactory;
 import net.plshark.users.auth.service.AuthService;
 import net.plshark.users.auth.service.AuthServiceImpl;
@@ -14,7 +15,7 @@ import net.plshark.users.auth.service.DefaultTokenBuilder;
 import net.plshark.users.auth.service.DefaultTokenVerifier;
 import net.plshark.users.auth.service.TokenBuilder;
 import net.plshark.users.auth.service.TokenVerifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Spring configuration for auth services
  */
 @Configuration
+@EnableConfigurationProperties(AuthProperties.class)
 public class AuthConfig {
 
     @Bean
@@ -49,19 +51,13 @@ public class AuthConfig {
     }
 
     @Bean
-    public Algorithm algorithm(AuthProperties props) throws GeneralSecurityException, IOException {
-        return new AlgorithmFactory().buildAlgorithm(props);
+    public Algorithm algorithm(AuthProperties props, List<AlgorithmBuilder> algorithmBuilders) throws
+            GeneralSecurityException, IOException {
+        return new AlgorithmFactory(algorithmBuilders).buildAlgorithm(props);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    @Valid
-    @ConfigurationProperties("auth")
-    public AuthProperties authProperties() {
-        return new AuthProperties();
     }
 }

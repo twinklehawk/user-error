@@ -1,12 +1,10 @@
 package net.plshark.users.auth.service;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
+import java.util.List;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.common.collect.ImmutableList;
 import net.plshark.users.auth.AuthProperties;
 
 /**
@@ -14,8 +12,11 @@ import net.plshark.users.auth.AuthProperties;
  */
 public class AlgorithmFactory {
 
-    public static final String NONE = "none";
-    public static final String ECDSA256 = "ecdsa256";
+    private final List<AlgorithmBuilder> algorithmBuilders;
+
+    public AlgorithmFactory(List<AlgorithmBuilder> algorithmBuilders) {
+        this.algorithmBuilders = ImmutableList.copyOf(algorithmBuilders);
+    }
 
     /**
      * Build the algorithm configured in the auth properties
@@ -27,24 +28,16 @@ public class AlgorithmFactory {
      */
     public Algorithm buildAlgorithm(AuthProperties props) throws GeneralSecurityException, IOException {
         String name = props.getAlgorithm();
-        Algorithm algorithm;
+        Algorithm algorithm = null;
 
-        switch (name) {
-            case NONE:
-                algorithm = Algorithm.none();
+        for (AlgorithmBuilder builder : algorithmBuilders) {
+            algorithm = builder.build(props);
+            if (algorithm != null)
                 break;
-            case ECDSA256: {
-                KeyStore keyStore = KeyStore.getInstance(props.getKeystore().getType());
-                try (FileInputStream stream = new FileInputStream(props.getKeystore().getLocation())) {
-                    keyStore.load(stream, props.getKeystore().getPassword().toCharArray());
-                }
-                ECPrivateKey privateKey = (ECPrivateKey) keyStore.getKey(props.getKey().getAlias(), props.getKey().getPassword().toCharArray());
-                ECPublicKey publicKey = (ECPublicKey) keyStore.getCertificate(props.getKey().getAlias()).getPublicKey();
-                algorithm = Algorithm.ECDSA256(publicKey, privateKey);
-                break;
-            } default:
-                throw new IllegalArgumentException("Unsupported algorithm: " + name);
         }
+
+        if (algorithm == null)
+            throw new IllegalArgumentException("Unsupported algorithm: " + name);
 
         return algorithm;
     }
