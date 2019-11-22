@@ -20,7 +20,7 @@ public abstract class Group {
     }
 
     @JsonCreator
-    public static Group create(@Nullable @JsonProperty("id") Long id, @JsonProperty("name") String name) {
+    public static Group create(@Nullable @JsonProperty Long id, @JsonProperty String name) {
         return new AutoValue_Group(id, name);
     }
 

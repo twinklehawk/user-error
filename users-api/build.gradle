@@ -16,7 +16,8 @@ dependencies {
     api 'com.google.guava:guava'
     annotationProcessor 'com.google.auto.value:auto-value'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    runtimeOnly 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    runtimeOnly 'com.fasterxml.jackson.module:jackson-module-parameter-names'
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.hamcrest:hamcrest-core"
