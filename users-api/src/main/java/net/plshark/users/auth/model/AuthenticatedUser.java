@@ -15,8 +15,7 @@ import com.google.common.collect.ImmutableSet;
 public abstract class AuthenticatedUser {
 
     @JsonCreator
-    public static AuthenticatedUser create(@JsonProperty(value = "username") String username,
-                                    @JsonProperty(value = "authorities") ImmutableSet<String> authorities) {
+    public static AuthenticatedUser create(@JsonProperty String username, @JsonProperty ImmutableSet<String> authorities) {
         return new AutoValue_AuthenticatedUser(username, authorities);
     }
 

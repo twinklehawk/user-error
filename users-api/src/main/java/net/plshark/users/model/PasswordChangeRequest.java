@@ -20,8 +20,7 @@ public abstract class PasswordChangeRequest {
      * @param newPassword the requested new password
      */
     @JsonCreator
-    public static PasswordChangeRequest create(@JsonProperty("currentPassword") String currentPassword,
-                                               @JsonProperty("newPassword") String newPassword) {
+    public static PasswordChangeRequest create(@JsonProperty String currentPassword, String newPassword) {
         return new AutoValue_PasswordChangeRequest(currentPassword, newPassword);
     }
 
