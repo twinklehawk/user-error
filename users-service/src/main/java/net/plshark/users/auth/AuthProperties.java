@@ -3,36 +3,44 @@ package net.plshark.users.auth;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Properties for the auth service
  */
+@ConfigurationProperties("auth")
+@ConstructorBinding
 public class AuthProperties {
 
     @NotEmpty
-    private String algorithm;
+    private final String algorithm;
     @NotEmpty
-    private String issuer;
+    private final String issuer;
     @Min(1)
-    private long tokenExpiration = 15 * 60 * 1000;
-    private String secret;
+    private final long tokenExpiration;
+    private final String secret;
     @Valid
-    private final Keystore keystore = new Keystore();
+    private final Keystore keystore;
     @Valid
-    private final Key key = new Key();
+    private final Key key;
+
+    public AuthProperties(String algorithm, String issuer, @DefaultValue("900000") long tokenExpiration, String secret,
+                          Keystore keystore, Key key) {
+        this.algorithm = algorithm;
+        this.issuer = issuer;
+        this.tokenExpiration = tokenExpiration;
+        this.secret = secret;
+        this.keystore = keystore;
+        this.key = key;
+    }
 
     /**
      * @return the algorithm used for signing and validating JWT
      */
     public String getAlgorithm() {
         return algorithm;
-    }
-
-    /**
-     * @param algorithm the algorithm used for signing and validating JWT
-     */
-    public void setAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
     }
 
     /**
@@ -43,24 +51,10 @@ public class AuthProperties {
     }
 
     /**
-     * @param issuer the issuer set in generated tokens and required to validate tokens
-     */
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
-    }
-
-    /**
      * @return the number of milliseconds after creation that a token should expire
      */
     public long getTokenExpiration() {
         return tokenExpiration;
-    }
-
-    /**
-     * @param tokenExpiration the number of milliseconds after creation that a token should expire
-     */
-    public void setTokenExpiration(long tokenExpiration) {
-        this.tokenExpiration = tokenExpiration;
     }
 
     /**
@@ -81,28 +75,23 @@ public class AuthProperties {
         return secret;
     }
 
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
     public static class Keystore {
 
-        private String type = "pkcs12";
-        private String location;
-        private String password;
+        private final String type;
+        private final String location;
+        private final String password;
+
+        public Keystore(@DefaultValue("pkcs12") String type, String location, String password) {
+            this.type = type;
+            this.location = location;
+            this.password = password;
+        }
 
         /**
          * @return the keystore type
          */
         public String getType() {
             return type;
-        }
-
-        /**
-         * @param type the keystore type
-         */
-        public void setType(String type) {
-            this.type = type;
         }
 
         /**
@@ -113,31 +102,22 @@ public class AuthProperties {
         }
 
         /**
-         * @param location the location of the keystore
-         */
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-        /**
          * @return the password to access the keystore
          */
         public String getPassword() {
             return password;
         }
-
-        /**
-         * @param password the password to access the keystore
-         */
-        public void setPassword(String password) {
-            this.password = password;
-        }
     }
 
     public static class Key {
 
-        private String alias;
-        private String password;
+        private final String alias;
+        private final String password;
+
+        public Key(String alias, String password) {
+            this.alias = alias;
+            this.password = password;
+        }
 
         /**
          * @return the alias of the key in the keystore
@@ -147,24 +127,10 @@ public class AuthProperties {
         }
 
         /**
-         * @param alias the alias of the key in the keystore
-         */
-        public void setAlias(String alias) {
-            this.alias = alias;
-        }
-
-        /**
          * @return the password to access the key
          */
         public String getPassword() {
             return password;
-        }
-
-        /**
-         * @param password the password to access the key
-         */
-        public void setPassword(String password) {
-            this.password = password;
         }
     }
 }
