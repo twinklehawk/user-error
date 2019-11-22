@@ -55,17 +55,4 @@ class ExceptionHandlerControllerAdviceSpec extends Specification {
         response.body.statusDetail == HttpStatus.CONFLICT.getReasonPhrase()
         response.body.timestamp != null
     }
-
-    def "generic exception builds correct response body"() {
-        when:
-        def response = advice.handleThrowable(new Exception("problem"), request)
-
-        then:
-        response.statusCode == HttpStatus.INTERNAL_SERVER_ERROR
-        response.body.message == null
-        response.body.path == "http://test/url"
-        response.body.status == 500
-        response.body.statusDetail == HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
-        response.body.timestamp != null
-    }
 }

@@ -65,29 +65,6 @@ public class ExceptionHandlerControllerAdvice {
                 .body(buildResponse(status, e, request));
     }
 
-    /**
-     * Handle a Throwable
-     * @param t the throwable
-     * @param request the request that caused the throwable
-     * @return the response to return to the client
-     */
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ErrorResponse> handleThrowable(Throwable t, ServerHttpRequest request) {
-        log.error("Internal error", t);
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity
-                .status(status)
-                .body(buildResponse(status, request));
-    }
-
-    private ErrorResponse buildResponse(HttpStatus status, ServerHttpRequest request) {
-        return ErrorResponse.builder()
-                .status(status.value())
-                .statusDetail(status.getReasonPhrase())
-                .path(request.getURI().toString())
-                .build();
-    }
-
     private ErrorResponse buildResponse(HttpStatus status, Throwable e, ServerHttpRequest request) {
         return ErrorResponse.builder()
                 .status(status.value())
