@@ -17,19 +17,4 @@ class AlgorithmFactorySpec extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
-
-    def 'should load the keystore from the filesystem and access the correct key for ECDSA256'() {
-        props.algorithm = AlgorithmFactory.ECDSA256
-        props.keystore.location = AlgorithmFactorySpec.class.getResource('test-store.jks').file
-        props.keystore.password = 'test-pass'
-        props.keystore.type = 'pkcs12'
-        props.key.password = 'test-pass'
-        props.key.alias = 'test-key'
-
-        when:
-        def algorithm = factory.buildAlgorithm(props)
-
-        then:
-        algorithm.name == 'ES256'
-    }
 }
