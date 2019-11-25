@@ -24,7 +24,7 @@ class JwtReactiveAuthenticationManagerSpec extends Specification {
         expect:
         StepVerifier.create(manager.authenticate(token))
                 .expectNext(JwtAuthenticationToken.builder().username('test-user').authenticated(true)
-                        .authority('a').authority('b').build())
+                        .authorityName('a').authorityName('b').build())
                 .verifyComplete()
     }
 

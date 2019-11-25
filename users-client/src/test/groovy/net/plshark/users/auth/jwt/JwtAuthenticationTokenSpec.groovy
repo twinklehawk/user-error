@@ -11,8 +11,8 @@ class JwtAuthenticationTokenSpec extends Specification {
                 .username('username')
                 .token('test-token')
                 .authenticated(true)
-                .authority('auth1')
-                .authority('auth2')
+                .authorityName('auth1')
+                .authorityName('auth2')
                 .build()
 
         then:

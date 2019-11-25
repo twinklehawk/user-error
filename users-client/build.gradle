@@ -2,11 +2,14 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'jacoco'
+    id 'io.freefair.lombok' version '4.1.5'
 }
 
 apply from: '../build-scripts/java.gradle'
 apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/coverage.gradle'
+
+generateLombokConfig.enabled = false
 
 dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
@@ -15,9 +18,7 @@ dependencies {
     api 'com.auth0:java-jwt'
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework.security:spring-security-config'
-    api 'com.google.auto.value:auto-value-annotations'
     api 'com.google.guava:guava'
-    annotationProcessor 'com.google.auto.value:auto-value'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.codehaus.groovy:groovy-all"
     testImplementation "org.spockframework:spock-core"
