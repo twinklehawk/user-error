@@ -1,11 +1,11 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
 
 /**
  * Request to grant a role to a user
@@ -16,10 +16,10 @@ import reactor.util.annotation.NonNull;
 public class RoleGrant {
 
     /** the application name of the role to grant */
-    @NonNull
+    @Nonnull
     private final String application;
     /** the name of the role to grant */
-    @NonNull
+    @Nonnull
     private final String role;
 
     @JsonCreator

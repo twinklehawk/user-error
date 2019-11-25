@@ -1,11 +1,11 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
 
 /**
  * Request for changing a user's password
@@ -15,9 +15,9 @@ import reactor.util.annotation.NonNull;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PasswordChangeRequest {
 
-    @NonNull
+    @Nonnull
     private final String currentPassword;
-    @NonNull
+    @Nonnull
     private final String newPassword;
 
     @JsonCreator

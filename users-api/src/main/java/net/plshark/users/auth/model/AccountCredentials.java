@@ -1,20 +1,20 @@
 package net.plshark.users.auth.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
 
 @Value
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountCredentials {
 
-    @NonNull
+    @Nonnull
     private final String username;
-    @NonNull
+    @Nonnull
     private final String password;
 
     @JsonCreator

@@ -1,6 +1,8 @@
 package net.plshark.errors;
 
 import java.time.OffsetDateTime;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,8 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
-import reactor.util.annotation.Nullable;
 
 /**
  * Response containing information about an exception
@@ -21,18 +21,18 @@ import reactor.util.annotation.Nullable;
 public class ErrorResponse {
 
     /** the date and time when the exception happened */
-    @NonNull @Builder.Default @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Nonnull @Builder.Default @JsonFormat(shape = JsonFormat.Shape.STRING)
     private final OffsetDateTime timestamp = OffsetDateTime.now();
     /** the response status code */
     private final int status;
     /** the response status description */
-    @NonNull
+    @Nonnull
     private final String statusDetail;
     /** the error detail message */
     @Nullable
     private final String message;
     /** the path of the request that caused the error */
-    @NonNull
+    @Nonnull
     private final String path;
 
     @JsonPOJOBuilder(withPrefix = "")

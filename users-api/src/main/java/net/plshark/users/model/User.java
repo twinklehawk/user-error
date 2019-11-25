@@ -1,13 +1,13 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
-import reactor.util.annotation.Nullable;
 
 /**
  * Data for a user
@@ -22,7 +22,7 @@ public class User {
     @Nullable
     private final Long id;
     /** the username */
-    @NonNull
+    @Nonnull
     private final String username;
     /** the password, must not be null when creating a user, will otherwise be null except unless specifically requested */
     @Nullable

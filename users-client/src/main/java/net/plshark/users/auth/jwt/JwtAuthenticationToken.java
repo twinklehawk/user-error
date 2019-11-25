@@ -1,12 +1,12 @@
 package net.plshark.users.auth.jwt;
 
 import java.util.Set;
+import javax.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import reactor.util.annotation.Nullable;
 
 /**
  * Authentication implementation for use with JWT authentication

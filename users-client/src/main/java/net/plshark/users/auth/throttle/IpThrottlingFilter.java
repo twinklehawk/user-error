@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Nonnull;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-import reactor.util.annotation.NonNull;
 
 /**
  * Filter to limit the number of requests coming from an IP address
@@ -45,8 +45,8 @@ public class IpThrottlingFilter implements WebFilter {
                 .build(key -> new AtomicInteger(0));
     }
 
-    @Override
-    public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+    @Override @Nonnull
+    public Mono<Void> filter(@Nonnull ServerWebExchange exchange, @Nonnull WebFilterChain chain) {
         ServerHttpRequest httpRequest = exchange.getRequest();
         String clientIp = getClientIp(httpRequest);
 

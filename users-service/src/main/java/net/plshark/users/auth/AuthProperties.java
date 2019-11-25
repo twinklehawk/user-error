@@ -1,13 +1,13 @@
 package net.plshark.users.auth;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import reactor.util.annotation.Nullable;
 
 /**
  * Properties for the auth service

@@ -1,5 +1,6 @@
 package net.plshark.users.auth.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,7 +9,6 @@ import com.google.common.collect.ImmutableSet;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
-import reactor.util.annotation.NonNull;
 
 @Value
 @Builder(toBuilder = true)
@@ -16,9 +16,9 @@ import reactor.util.annotation.NonNull;
 @JsonDeserialize(builder = AuthenticatedUser.AuthenticatedUserBuilder.class)
 public class AuthenticatedUser {
 
-    @NonNull
+    @Nonnull
     private final String username;
-    @NonNull @Singular
+    @Nonnull @Singular
     private final ImmutableSet<String> authorities;
 
     @JsonPOJOBuilder(withPrefix = "")
