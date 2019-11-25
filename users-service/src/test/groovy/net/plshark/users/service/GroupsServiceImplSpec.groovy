@@ -21,15 +21,15 @@ class GroupsServiceImplSpec extends Specification {
     def service = new GroupsServiceImpl(groupsRepo, userGroupsRepo, groupRolesRepo)
 
     def 'should be able to retrieve groups by name'() {
-        groupsRepo.getForName('group-name') >> Mono.just(Group.create(123L, 'group-name'))
+        groupsRepo.getForName('group-name') >> Mono.just(Group.builder().id(123L).name('group-name').build())
 
         expect:
         StepVerifier.create(service.get('group-name'))
-                .expectNext(Group.create(123L, 'group-name'))
+                .expectNext(Group.builder().id(123L).name('group-name').build())
                 .verifyComplete()
 
         StepVerifier.create(service.getRequired('group-name'))
-                .expectNext(Group.create(123L, 'group-name'))
+                .expectNext(Group.builder().id(123L).name('group-name').build())
                 .verifyComplete()
     }
 
@@ -43,26 +43,29 @@ class GroupsServiceImplSpec extends Specification {
 
     def 'should be able to retrieve all groups'() {
         groupsRepo.getGroups(100, 0) >> Flux.just(
-                Group.create(1L, 'group1'),
-                Group.create(2L, 'group2'))
+                Group.builder().id(1L).name('group1').build(),
+                Group.builder().id(2L).name('group2').build())
 
         expect:
         StepVerifier.create(service.getGroups(100, 0))
-                .expectNext(Group.create(1L, 'group1'), Group.create(2L, 'group2'))
+                .expectNext(Group.builder().id(1L).name('group1').build(),
+                        Group.builder().id(2L).name('group2').build())
                 .verifyComplete()
     }
 
     def 'creating should save and return the saved group'() {
-        groupsRepo.insert(Group.create('group')) >> Mono.just(Group.create(1L, 'group'))
+        def request = Group.builder().name('group').build()
+        def inserted = Group.builder().id(1L).name('group').build()
+        groupsRepo.insert(request) >> Mono.just(inserted)
 
         expect:
-        StepVerifier.create(service.create(Group.create('group')))
-                .expectNext(Group.create(1L, 'group'))
+        StepVerifier.create(service.create(request))
+                .expectNext(inserted)
                 .verifyComplete()
     }
 
     def 'create should map the exception for a duplicate name to a DuplicateException'() {
-        def request = Group.create('app')
+        def request = Group.builder().name('app').build()
         groupsRepo.insert(request) >> Mono.error(new DataIntegrityViolationException("test error"))
 
         expect:
@@ -87,7 +90,7 @@ class GroupsServiceImplSpec extends Specification {
     }
 
     def 'deleting by name should retrieve thr group, delete all associations, and delete the group'() {
-        groupsRepo.getForName('group') >> Mono.just(Group.create(100, 'group'))
+        groupsRepo.getForName('group') >> Mono.just(Group.builder().id(100L).name('group').build())
         PublisherProbe userGroupsProbe = PublisherProbe.empty()
         userGroupsRepo.deleteUserGroupsForGroup(100) >> userGroupsProbe.mono()
         PublisherProbe groupRolesProbe = PublisherProbe.empty()

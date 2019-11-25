@@ -21,7 +21,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def "inserting a group returns the inserted group with the ID set"() {
         when:
-        def group = repo.insert(Group.create('test-group')).block()
+        def group = repo.insert(Group.builder().name('test-group').build()).block()
 
         then:
         group.id != null
@@ -30,7 +30,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def "can retrieve a previously inserted group by ID"() {
         when:
-        def group = repo.insert(Group.create('group')).block()
+        def group = repo.insert(Group.builder().name('group').build()).block()
 
         then:
         StepVerifier.create(repo.getForId(group.id))
@@ -47,7 +47,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def "can retrieve a previously inserted group by name"() {
         when:
-        def group = repo.insert(Group.create('group')).block()
+        def group = repo.insert(Group.builder().name('group').build()).block()
 
         then:
         StepVerifier.create(repo.getForName('group'))
@@ -64,7 +64,7 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def "can delete a previously inserted group by ID"() {
         when:
-        def group = repo.insert(Group.create('group')).block()
+        def group = repo.insert(Group.builder().name('group').build()).block()
         repo.delete(group.id).block()
 
         then:
@@ -81,9 +81,9 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def 'getGroups should return all results when there are less than max results'() {
         when:
-        repo.insert(Group.create('group1'))
-                .then(repo.insert(Group.create('group2')))
-                .then(repo.insert(Group.create('group3')))
+        repo.insert(Group.builder().name('group1').build())
+                .then(repo.insert(Group.builder().name('group2').build()))
+                .then(repo.insert(Group.builder().name('group3').build()))
                 .block()
 
         then:
@@ -95,9 +95,9 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def 'getGroups should return up to max results when there are more results'() {
         when:
-        repo.insert(Group.create('group1'))
-                .then(repo.insert(Group.create('group2')))
-                .then(repo.insert(Group.create('group3')))
+        repo.insert(Group.builder().name('group1').build())
+                .then(repo.insert(Group.builder().name('group2').build()))
+                .then(repo.insert(Group.builder().name('group3').build()))
                 .block()
 
         then:
@@ -108,9 +108,9 @@ class SpringDataGroupsRepositorySpec extends Specification {
 
     def 'getGroups should start at the correct offset'() {
         when:
-        repo.insert(Group.create('group1'))
-                .then(repo.insert(Group.create('group2')))
-                .then(repo.insert(Group.create('group3')))
+        repo.insert(Group.builder().name('group1').build())
+                .then(repo.insert(Group.builder().name('group2').build()))
+                .then(repo.insert(Group.builder().name('group3').build()))
                 .block()
 
         then:

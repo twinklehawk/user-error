@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'jacoco'
+    id 'io.freefair.lombok' version '4.1.5'
 }
 
 apply from: '../build-scripts/java.gradle'
@@ -11,10 +12,8 @@ apply from: '../build-scripts/coverage.gradle'
 dependencies {
     api 'org.slf4j:slf4j-api'
     api 'io.projectreactor:reactor-core'
-    api 'com.google.auto.value:auto-value-annotations'
     api 'com.fasterxml.jackson.core:jackson-annotations'
     api 'com.google.guava:guava'
-    annotationProcessor 'com.google.auto.value:auto-value'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     runtimeOnly 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     runtimeOnly 'com.fasterxml.jackson.module:jackson-module-parameter-names'

@@ -33,7 +33,7 @@ class SpringDataGroupRolesRepositorySpec extends Specification {
         def app2 = appsRepo.insert(Application.builder().name('app2').build()).block()
         def role1 = rolesRepo.insert(Role.builder().name('test1').applicationId(app1.id).build()).block()
         def role2 = rolesRepo.insert(Role.builder().name('test2').applicationId(app2.id).build()).block()
-        def group = groupsRepo.insert(Group.create('group1')).block()
+        def group = groupsRepo.insert(Group.builder().name('group1').build()).block()
 
         when:
         def roles = repo.insert(group.id, role1.id)
@@ -59,7 +59,7 @@ class SpringDataGroupRolesRepositorySpec extends Specification {
     def 'delete should delete a group/role association'() {
         def app = appsRepo.insert(Application.builder().name('app1').build()).block()
         def role = rolesRepo.insert(Role.builder().name('test1').applicationId(app.id).build()).block()
-        def group = groupsRepo.insert(Group.create('group1')).block()
+        def group = groupsRepo.insert(Group.builder().name('group1').build()).block()
 
         when:
         def roles = repo.insert(group.id, role.id)
@@ -85,7 +85,7 @@ class SpringDataGroupRolesRepositorySpec extends Specification {
         def app2 = appsRepo.insert(Application.builder().name('app2').build()).block()
         def role1 = rolesRepo.insert(Role.builder().name('test1').applicationId(app1.id).build()).block()
         def role2 = rolesRepo.insert(Role.builder().name('test2').applicationId(app2.id).build()).block()
-        def group = groupsRepo.insert(Group.create('group1')).block()
+        def group = groupsRepo.insert(Group.builder().name('group1').build()).block()
 
         when:
         def roles = repo.insert(group.id, role1.id)
@@ -102,8 +102,8 @@ class SpringDataGroupRolesRepositorySpec extends Specification {
     def 'deleting a role ID should delete all associations for that role'() {
         def app = appsRepo.insert(Application.builder().name('app1').build()).block()
         def role = rolesRepo.insert(Role.builder().name('test1').applicationId(app.id).build()).block()
-        def group1 = groupsRepo.insert(Group.create('group1')).block()
-        def group2 = groupsRepo.insert(Group.create('group2')).block()
+        def group1 = groupsRepo.insert(Group.builder().name('group1').build()).block()
+        def group2 = groupsRepo.insert(Group.builder().name('group2').build()).block()
 
         when:
         def roles = repo.insert(group1.id, role.id)

@@ -1,31 +1,33 @@
 package net.plshark.users.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.auto.value.AutoValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.Value;
+import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 
 /**
  * Data for a group
  */
-@AutoValue
+@Value
+@Builder(toBuilder = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class Group {
+@JsonDeserialize(builder = Group.GroupBuilder.class)
+public class Group {
 
-    public static Group create(String name) {
-        return create(null, name);
-    }
-
-    @JsonCreator
-    public static Group create(@Nullable @JsonProperty Long id, @JsonProperty String name) {
-        return new AutoValue_Group(id, name);
-    }
-
+    /** the ID, can be null if not saved yet */
     @Nullable
-    public abstract Long getId();
+    private final Long id;
+    @NonNull
+    private final String name;
 
-    public abstract String getName();
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class GroupBuilder {
+
+    }
 }

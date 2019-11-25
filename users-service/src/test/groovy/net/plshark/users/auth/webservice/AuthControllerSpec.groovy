@@ -36,11 +36,11 @@ class AuthControllerSpec extends Specification {
     }
 
     def 'validateToken should pass the token through to the service'() {
-        service.validateToken('refresh') >> Mono.just(AuthenticatedUser.create('user', Collections.emptySet()))
+        service.validateToken('refresh') >> Mono.just(AuthenticatedUser.builder().username('user').build())
 
         expect:
         StepVerifier.create(controller.validateToken('refresh'))
-                .expectNext(AuthenticatedUser.create('user', Collections.emptySet()))
+                .expectNext(AuthenticatedUser.builder().username('user').authorities(Collections.emptySet()).build())
                 .verifyComplete()
     }
 }

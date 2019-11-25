@@ -6,64 +6,38 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.auto.value.AutoValue;
+import lombok.Builder;
+import lombok.Value;
+import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 
 /**
  * Response containing information about an exception
  */
-@AutoValue
+@Value
+@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = AutoValue_ErrorResponse.Builder.class)
-public abstract class ErrorResponse {
+@JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
+public class ErrorResponse {
 
-    public static Builder builder() {
-        return new AutoValue_ErrorResponse.Builder()
-                .timestamp(OffsetDateTime.now());
-    }
-
-    /**
-     * @return the date and time when the exception happened
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    public abstract OffsetDateTime getTimestamp();
-
-    /**
-     * @return the response status code
-     */
-    public abstract int getStatus();
-
-    /**
-     * @return the response status description
-     */
-    public abstract String getStatusDetail();
-
-    /**
-     * @return the error detail message
-     */
+    /** the date and time when the exception happened */
+    @NonNull @Builder.Default @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private final OffsetDateTime timestamp = OffsetDateTime.now();
+    /** the response status code */
+    private final int status;
+    /** the response status description */
+    @NonNull
+    private final String statusDetail;
+    /** the error detail message */
     @Nullable
-    public abstract String getMessage();
+    private final String message;
+    /** the path of the request that caused the error */
+    @NonNull
+    private final String path;
 
-    /**
-     * @return the path of the request that caused the error
-     */
-    public abstract String getPath();
-
-    @AutoValue.Builder
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public abstract static class Builder {
+    public static class ErrorResponseBuilder {
 
-        public abstract Builder timestamp(OffsetDateTime timestamp);
-
-        public abstract Builder status(int status);
-
-        public abstract Builder statusDetail(String statusDetail);
-
-        public abstract Builder message(String message);
-
-        public abstract Builder path(String path);
-
-        public abstract ErrorResponse build();
     }
 }
