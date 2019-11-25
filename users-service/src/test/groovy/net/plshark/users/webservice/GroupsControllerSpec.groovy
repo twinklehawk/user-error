@@ -14,7 +14,7 @@ class GroupsControllerSpec extends Specification {
     def controller = new GroupsController(groupsService)
 
     def 'get should pass through the response from the service'() {
-        def group = Group.create(1, 'group')
+        def group = Group.builder().id(1).name('group').build()
         groupsService.get('group') >> Mono.just(group)
 
         expect:
@@ -32,8 +32,8 @@ class GroupsControllerSpec extends Specification {
     }
 
     def 'insert should pass through the response from the service'() {
-        def request = Group.create('group')
-        def inserted = Group.create(1, 'group')
+        def request = Group.builder().name('group').build()
+        def inserted = Group.builder().id(1).name('group').build()
         groupsService.create(request) >> Mono.just(inserted)
 
         expect:

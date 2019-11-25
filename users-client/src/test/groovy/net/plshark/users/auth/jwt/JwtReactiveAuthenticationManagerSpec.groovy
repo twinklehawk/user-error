@@ -15,12 +15,16 @@ class JwtReactiveAuthenticationManagerSpec extends Specification {
 
     def 'should parse the username and authorities from the token and set the authorized flag'() {
         def token = JwtAuthenticationToken.builder().token('test-token').build()
-        authService.validateToken('test-token') >> Mono.just(AuthenticatedUser.create('test-user', 'a', 'b'))
+        authService.validateToken('test-token') >> Mono.just(AuthenticatedUser.builder()
+                .username('test-user')
+                .authority('a')
+                .authority('b')
+                .build())
 
         expect:
         StepVerifier.create(manager.authenticate(token))
                 .expectNext(JwtAuthenticationToken.builder().username('test-user').authenticated(true)
-                        .authority('a').authority('b').build())
+                        .authorityName('a').authorityName('b').build())
                 .verifyComplete()
     }
 

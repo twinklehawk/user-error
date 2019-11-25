@@ -78,7 +78,10 @@ class AuthServiceImplSpec extends Specification {
     }
 
     def 'validate should complete successfully for a valid token'() {
-        def user = AuthenticatedUser.create('test-user', Collections.emptySet())
+        def user = AuthenticatedUser.builder()
+                .username('test-user')
+                .authorities(Collections.emptySet())
+                .build()
         tokenVerifier.verifyToken('access-token') >> user
 
         expect:

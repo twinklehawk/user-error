@@ -64,7 +64,7 @@ public class SpringDataGroupsRepository implements GroupsRepository {
                         .map(Mono::just)
                         .orElse(Mono.empty()))
                 .switchIfEmpty(Mono.error(() -> new IllegalStateException("No ID returned from insert")))
-                .map(id -> Group.create(id, group.getName()));
+                .map(id -> group.toBuilder().id(id).build());
     }
 
     @Override
@@ -81,6 +81,9 @@ public class SpringDataGroupsRepository implements GroupsRepository {
      * @return the mapped group
      */
     static Group mapRow(Row row, RowMetadata rowMetadata) {
-        return Group.create(row.get("id", Long.class), row.get("name", String.class));
+        return Group.builder()
+                .id(row.get("id", Long.class))
+                .name(row.get("name", String.class))
+                .build();
     }
 }

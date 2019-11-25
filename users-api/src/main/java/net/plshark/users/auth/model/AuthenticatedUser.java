@@ -1,33 +1,29 @@
 package net.plshark.users.auth.model;
 
-import java.util.Arrays;
-import java.util.Collection;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.auto.value.AutoValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.common.collect.ImmutableSet;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
 
-@AutoValue
+@Value
+@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AuthenticatedUser {
+@JsonDeserialize(builder = AuthenticatedUser.AuthenticatedUserBuilder.class)
+public class AuthenticatedUser {
 
-    @JsonCreator
-    public static AuthenticatedUser create(@JsonProperty String username, @JsonProperty ImmutableSet<String> authorities) {
-        return new AutoValue_AuthenticatedUser(username, authorities);
+    @Nonnull
+    private final String username;
+    @Nonnull @Singular
+    private final ImmutableSet<String> authorities;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class AuthenticatedUserBuilder {
+
     }
-
-    public static AuthenticatedUser create(String username, String... authorities) {
-        return create(username, Arrays.asList(authorities));
-    }
-
-    public static AuthenticatedUser create(String username, Collection<String> authorities) {
-        return create(username, ImmutableSet.copyOf(authorities));
-    }
-
-    public abstract String getUsername();
-
-    public abstract ImmutableSet<String> getAuthorities();
 }

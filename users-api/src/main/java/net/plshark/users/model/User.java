@@ -1,55 +1,36 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.auto.value.AutoValue;
-import reactor.util.annotation.Nullable;
+import lombok.Builder;
+import lombok.Value;
 
 /**
  * Data for a user
  */
-@AutoValue
+@Value
+@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = AutoValue_User.Builder.class)
-public abstract class User {
+@JsonDeserialize(builder = User.UserBuilder.class)
+public class User {
 
-    /**
-     * @return the ID, null if the user has not been saved yet
-     */
+    /** the ID, null if the user has not been saved yet */
     @Nullable
-    public abstract Long getId();
-
-    /**
-     * @return the username
-     */
-    public abstract String getUsername();
-
-    /**
-     * @return the password, must not be null when creating a user, will otherwise be null except unless specifically
-     * requested
-     */
+    private final Long id;
+    /** the username */
+    @Nonnull
+    private final String username;
+    /** the password, must not be null when creating a user, will otherwise be null except unless specifically requested */
     @Nullable
-    public abstract String getPassword();
+    private final String password;
 
-    public abstract Builder toBuilder();
-
-    public static Builder builder() {
-        return new AutoValue_User.Builder();
-    }
-
-    @AutoValue.Builder
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public abstract static class Builder {
+    public static class UserBuilder {
 
-        public abstract Builder id(Long id);
-
-        public abstract Builder username(String username);
-
-        public abstract Builder password(String password);
-
-        public abstract User build();
     }
 }

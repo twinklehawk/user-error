@@ -1,22 +1,24 @@
 package net.plshark.users.auth.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.auto.value.AutoValue;
+import lombok.Value;
 
-@AutoValue
+@Value
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AccountCredentials {
+public class AccountCredentials {
+
+    @Nonnull
+    private final String username;
+    @Nonnull
+    private final String password;
 
     @JsonCreator
     public static AccountCredentials create(@JsonProperty String username, @JsonProperty String password) {
-        return new AutoValue_AccountCredentials(username, password);
+        return new AccountCredentials(username, password);
     }
-
-    public abstract String getUsername();
-
-    public abstract String getPassword();
 }

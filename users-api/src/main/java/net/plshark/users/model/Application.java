@@ -1,49 +1,32 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.auto.value.AutoValue;
-import reactor.util.annotation.Nullable;
+import lombok.Builder;
+import lombok.Value;
 
 /**
  * Data for an application
  */
-@AutoValue
+@Value
+@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = AutoValue_Application.Builder.class)
-public abstract class Application {
+@JsonDeserialize(builder = Application.ApplicationBuilder.class)
+public class Application {
 
-    public static Builder builder() {
-        return new AutoValue_Application.Builder();
-    }
-
-    /**
-     * @return the ID, can be null if not saved yet
-     */
+    /** the ID, can be null if not saved yet */
     @Nullable
-    public abstract Long getId();
+    private final Long id;
+    @Nonnull
+    private final String name;
 
-    /**
-     * @return the application name
-     */
-    public abstract String getName();
-
-    /**
-     * @return a new builder initialized with the values of this application
-     */
-    public abstract Builder toBuilder();
-
-    @AutoValue.Builder
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public abstract static class Builder {
+    public static class ApplicationBuilder {
 
-        public abstract Builder id(Long id);
-
-        public abstract Builder name(String name);
-
-        public abstract Application build();
     }
 }

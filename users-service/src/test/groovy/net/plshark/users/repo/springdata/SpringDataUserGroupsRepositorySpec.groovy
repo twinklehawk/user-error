@@ -34,7 +34,7 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     }
 
     def 'insert should save a group and user association and should be retrievable'() {
-        def group = groupsRepo.insert(Group.create('test-group')).block()
+        def group = groupsRepo.insert(Group.builder().name('test-group').build()).block()
         def user = usersRepo.insert(User.builder().username('test-user').password('pass').build()).block()
 
         when:
@@ -50,7 +50,7 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     }
 
     def 'delete should delete a group/user association'() {
-        def group = groupsRepo.insert(Group.create('test-group')).block()
+        def group = groupsRepo.insert(Group.builder().name('test-group').build()).block()
         def user = usersRepo.insert(User.builder().username('test-user').password('pass').build()).block()
         repo.insert(user.id, group.id).block()
 
@@ -70,8 +70,8 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     }
 
     def 'deleting a group ID should delete all associations for that group'() {
-        def group1 = groupsRepo.insert(Group.create('group1')).block()
-        def group2 = groupsRepo.insert(Group.create('group2')).block()
+        def group1 = groupsRepo.insert(Group.builder().name('group1').build()).block()
+        def group2 = groupsRepo.insert(Group.builder().name('group2').build()).block()
         def user1 = usersRepo.insert(User.builder().username('user1').password('pass').build()).block()
         def user2 = usersRepo.insert(User.builder().username('user2').password('pass').build()).block()
         def user3 = usersRepo.insert(User.builder().username('user3').password('pass').build()).block()
@@ -91,8 +91,8 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
     }
 
     def 'deleting a user ID should delete all associations for that user'() {
-        def group1 = groupsRepo.insert(Group.create('group1')).block()
-        def group2 = groupsRepo.insert(Group.create('group2')).block()
+        def group1 = groupsRepo.insert(Group.builder().name('group1').build()).block()
+        def group2 = groupsRepo.insert(Group.builder().name('group2').build()).block()
         def user1 = usersRepo.insert(User.builder().username('user1').password('pass').build()).block()
         def user2 = usersRepo.insert(User.builder().username('user2').password('pass').build()).block()
         repo.insert(user1.id, group1.id)
@@ -114,7 +114,7 @@ class SpringDataUserGroupsRepositorySpec extends Specification {
         def role1 = rolesRepo.insert(Role.builder().applicationId(app1.id).name('role1').build()).block()
         def role2 = rolesRepo.insert(Role.builder().applicationId(app1.id).name('role2').build()).block()
         rolesRepo.insert(Role.builder().applicationId(app1.id).name('role3').build()).block()
-        def group = groupsRepo.insert(Group.create('test-group')).block()
+        def group = groupsRepo.insert(Group.builder().name('test-group').build()).block()
         def user = usersRepo.insert(User.builder().username('user').password('pass').build()).block()
         groupRolesRepo.insert(group.id, role1.id)
                 .then(groupRolesRepo.insert(group.id, role2.id))

@@ -1,36 +1,27 @@
 package net.plshark.users.model;
 
+import javax.annotation.Nonnull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.auto.value.AutoValue;
+import lombok.Value;
 
 /**
  * Request for changing a user's password
  */
-@AutoValue
+@Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class PasswordChangeRequest {
+public class PasswordChangeRequest {
 
-    /**
-     * Create a new instance
-     * @param currentPassword the current password
-     * @param newPassword the requested new password
-     */
+    @Nonnull
+    private final String currentPassword;
+    @Nonnull
+    private final String newPassword;
+
     @JsonCreator
-    public static PasswordChangeRequest create(@JsonProperty String currentPassword, String newPassword) {
-        return new AutoValue_PasswordChangeRequest(currentPassword, newPassword);
+    public static PasswordChangeRequest create(@JsonProperty String currentPassword, @JsonProperty String newPassword) {
+        return new PasswordChangeRequest(currentPassword, newPassword);
     }
-
-    /**
-     * @return the current password
-     */
-    public abstract String getCurrentPassword();
-
-    /**
-     * @return the requested new password
-     */
-    public abstract String getNewPassword();
 }

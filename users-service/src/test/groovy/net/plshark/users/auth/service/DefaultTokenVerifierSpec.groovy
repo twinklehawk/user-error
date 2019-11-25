@@ -18,7 +18,10 @@ class DefaultTokenVerifierSpec extends Specification {
                 .withArrayClaim(PlsharkClaim.AUTHORITIES, ['user'] as String[]).sign(algorithm)
 
         then:
-        verifier.verifyToken(token) == AuthenticatedUser.create('test-user', Collections.singleton('user'))
+        verifier.verifyToken(token) == AuthenticatedUser.builder()
+                .username('test-user')
+                .authority('user')
+                .build()
     }
 
     def 'no authorities claim should build an empty authorities list'() {
@@ -26,7 +29,10 @@ class DefaultTokenVerifierSpec extends Specification {
         def token = JWT.create().withSubject('test-user').sign(algorithm)
 
         then:
-        verifier.verifyToken(token) == AuthenticatedUser.create('test-user', Collections.emptySet())
+        verifier.verifyToken(token) == AuthenticatedUser.builder()
+                .username('test-user')
+                .authorities(Collections.emptySet())
+                .build()
     }
 
     def 'invalid access tokens should throw a BadCredentialsException'() {

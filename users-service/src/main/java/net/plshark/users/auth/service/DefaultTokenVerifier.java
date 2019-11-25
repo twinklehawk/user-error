@@ -28,7 +28,10 @@ public class DefaultTokenVerifier implements TokenVerifier{
     @Override
     public AuthenticatedUser verifyToken(String token) {
         DecodedJWT jwt = decodeToken(token);
-        return AuthenticatedUser.create(jwt.getSubject(), parseAuthorities(jwt));
+        return AuthenticatedUser.builder()
+                .username(jwt.getSubject())
+                .authorities(parseAuthorities(jwt))
+                .build();
     }
 
     @Override

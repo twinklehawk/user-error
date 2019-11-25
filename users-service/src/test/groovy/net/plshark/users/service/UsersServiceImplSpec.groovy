@@ -174,7 +174,7 @@ class UsersServiceImplSpec extends Specification {
     def 'should be able to add a user to a group'() {
         userRepo.getForUsername('bill') >> Mono.just(User.builder().id(100).username('bill')
                 .password('pass').build())
-        groupsService.getRequired('group') >> Mono.just(Group.create(200, 'group'))
+        groupsService.getRequired('group') >> Mono.just(Group.builder().id(200L).name('group').build())
         userGroupsRepo.insert(100, 200) >> Mono.empty()
 
         expect:
@@ -185,7 +185,7 @@ class UsersServiceImplSpec extends Specification {
     def 'should be able to remove a user from a group'() {
         userRepo.getForUsername('ted') >> Mono.just(User.builder().id(100).username('ted')
                 .password('pass').build())
-        groupsService.getRequired('group') >> Mono.just(Group.create(200, 'group'))
+        groupsService.getRequired('group') >> Mono.just(Group.builder().id(200L).name('group').build())
         userGroupsRepo.delete(100, 200) >> Mono.empty()
 
         expect:
