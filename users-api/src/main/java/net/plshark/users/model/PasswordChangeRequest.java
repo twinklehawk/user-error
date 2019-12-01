@@ -15,13 +15,14 @@ import lombok.Value;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PasswordChangeRequest {
 
-    @Nonnull
+    @Nonnull @JsonProperty("current_password")
     private final String currentPassword;
-    @Nonnull
+    @Nonnull @JsonProperty("new_password")
     private final String newPassword;
 
     @JsonCreator
-    public static PasswordChangeRequest create(@JsonProperty String currentPassword, @JsonProperty String newPassword) {
+    public static PasswordChangeRequest create(@JsonProperty("current_password") String currentPassword,
+                                               @JsonProperty("new_password") String newPassword) {
         return new PasswordChangeRequest(currentPassword, newPassword);
     }
 }
