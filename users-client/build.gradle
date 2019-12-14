@@ -6,12 +6,12 @@ plugins {
 }
 
 apply from: '../build-scripts/java.gradle'
-apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/coverage.gradle'
 
 generateLombokConfig.enabled = false
 
 dependencies {
+    api platform(project(':platform'))
     implementation 'com.github.ben-manes.caffeine:caffeine'
     api project(':users-api')
     api 'org.springframework:spring-webflux'

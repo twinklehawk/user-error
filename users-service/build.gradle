@@ -6,11 +6,12 @@ plugins {
 }
 
 apply from: '../build-scripts/java.gradle'
-apply from: '../build-scripts/deps.gradle'
 apply from: '../build-scripts/coverage.gradle'
 
 dependencies {
+    annotationProcessor platform(project(':platform'))
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation platform(project(':platform'))
     implementation project(':users-api')
     implementation project(':users-client')
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

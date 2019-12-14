@@ -1,10 +1,7 @@
-plugins {
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
-}
-
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://repo.spring.io/libs-snapshot' }
     }
     group = 'net.plshark.users'
     version = '0.0.4'
