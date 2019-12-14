@@ -8,7 +8,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.2.1.RELEASE'
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.2.2.RELEASE'
         mavenBom 'org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.BUILD-SNAPSHOT'
     }
     dependencies {

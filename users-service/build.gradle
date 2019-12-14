@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'groovy'
     id 'jacoco'
-    id 'org.springframework.boot' version '2.2.1.RELEASE'
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
 }
 
 apply from: '../build-scripts/java.gradle'
