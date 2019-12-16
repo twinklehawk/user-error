@@ -3,7 +3,6 @@ package net.plshark.users.repo.springdata;
 import java.util.Objects;
 import java.util.Optional;
 import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.User;
 import net.plshark.users.repo.UsersRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -99,14 +98,14 @@ public class SpringDataUsersRepository implements UsersRepository {
                 .all();
     }
 
-    static User mapRow(Row row, RowMetadata rowMetadata) {
+    static User mapRow(Row row) {
         return User.builder()
                 .id(row.get("id", Long.class))
                 .username(row.get("username", String.class))
                 .build();
     }
 
-    private static User mapRowWithPassword(Row row, RowMetadata rowMetadata) {
+    private static User mapRowWithPassword(Row row) {
         return User.builder()
                 .id(row.get("id", Long.class))
                 .username(row.get("username", String.class))

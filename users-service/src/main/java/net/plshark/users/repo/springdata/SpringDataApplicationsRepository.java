@@ -3,7 +3,6 @@ package net.plshark.users.repo.springdata;
 import java.util.Objects;
 import java.util.Optional;
 import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Application;
 import net.plshark.users.repo.ApplicationsRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
@@ -67,7 +66,7 @@ public class SpringDataApplicationsRepository implements ApplicationsRepository 
                 .then();
     }
 
-    static Application mapRow(Row row, RowMetadata rowMetadata) {
+    static Application mapRow(Row row) {
         return Application.builder()
                 .id(row.get("id", Long.class))
                 .name(row.get("name", String.class))

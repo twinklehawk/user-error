@@ -3,7 +3,6 @@ package net.plshark.users.repo.springdata;
 import java.util.Objects;
 import java.util.Optional;
 import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Role;
 import net.plshark.users.repo.RolesRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
@@ -86,7 +85,7 @@ public class SpringDataRolesRepository implements RolesRepository {
                 .all();
     }
 
-    static Role mapRow(Row row, RowMetadata rowMetadata) {
+    static Role mapRow(Row row) {
         return Role.builder()
                 .id(row.get("id", Long.class))
                 .applicationId(row.get("application_id", Long.class))

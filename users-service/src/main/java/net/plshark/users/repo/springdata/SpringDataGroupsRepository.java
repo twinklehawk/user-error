@@ -3,7 +3,6 @@ package net.plshark.users.repo.springdata;
 import java.util.Objects;
 import java.util.Optional;
 import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
 import net.plshark.users.model.Group;
 import net.plshark.users.repo.GroupsRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
@@ -77,10 +76,9 @@ public class SpringDataGroupsRepository implements GroupsRepository {
     /**
      * Map a database row to a {@link Group}
      * @param row the database row
-     * @param rowMetadata the row metadata
      * @return the mapped group
      */
-    static Group mapRow(Row row, RowMetadata rowMetadata) {
+    static Group mapRow(Row row) {
         return Group.builder()
                 .id(row.get("id", Long.class))
                 .name(row.get("name", String.class))
