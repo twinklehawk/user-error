@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import net.plshark.users.auth.model.UserAuthSettings;
 import net.plshark.users.auth.repo.UserAuthSettingsRepository;
 import org.springframework.data.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import static org.springframework.data.r2dbc.query.Criteria.where;
 
+@Repository
 @AllArgsConstructor
 public class SpringDataUserAuthSettingsRepository implements UserAuthSettingsRepository {
 
@@ -21,6 +23,15 @@ public class SpringDataUserAuthSettingsRepository implements UserAuthSettingsRep
         return client.select()
                 .from(UserAuthSettings.class)
                 .matching(where("user_id").is(userId))
+                .fetch()
+                .one();
+    }
+
+    @Override
+    public Mono<UserAuthSettings> findByUsername(String username) {
+        return client.execute("SELECT * FROM user_auth_settings uas, users u WHERE uas.user_id = u.id AND u.username = :username")
+                .bind("username", username)
+                .as(UserAuthSettings.class)
                 .fetch()
                 .one();
     }

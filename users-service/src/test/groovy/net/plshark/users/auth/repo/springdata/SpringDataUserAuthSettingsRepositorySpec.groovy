@@ -68,4 +68,21 @@ class SpringDataUserAuthSettingsRepositorySpec extends Specification {
         StepVerifier.create(repo.findByUserId(1000))
                 .verifyComplete()
     }
+
+    def 'can retrieve previously inserted settings by username'() {
+        def user = usersRepo.insert(User.builder().username('test-user').password('test-pass').build()).block()
+        def inserted = repo.insert(UserAuthSettings.builder().userId(user.id).refreshTokenEnabled(true).build()).block()
+
+        when:
+        def settings = repo.findByUsername(user.username).block()
+
+        then:
+        settings == inserted
+    }
+
+    def 'retrieving by username when no rows match returns empty'() {
+        expect:
+        StepVerifier.create(repo.findByUsername('not a user'))
+                .verifyComplete()
+    }
 }
