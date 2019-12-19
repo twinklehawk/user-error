@@ -15,6 +15,7 @@ import net.plshark.users.auth.service.DefaultTokenBuilder;
 import net.plshark.users.auth.service.DefaultTokenVerifier;
 import net.plshark.users.auth.service.TokenBuilder;
 import net.plshark.users.auth.service.TokenVerifier;
+import net.plshark.users.auth.service.UserAuthSettingsService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,8 +47,10 @@ public class AuthConfig {
 
     @Bean
     public AuthService authService(PasswordEncoder passwordEncoder, TokenVerifier tokenVerifier, TokenBuilder tokenBuilder,
-                                   ReactiveUserDetailsService userDetailsService, AuthProperties props) {
-        return new AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder, props.getTokenExpiration());
+                                   ReactiveUserDetailsService userDetailsService, UserAuthSettingsService userAuthSettingsService,
+                                   AuthProperties props) {
+        return new AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder,
+                userAuthSettingsService, props.getTokenExpiration());
     }
 
     @Bean

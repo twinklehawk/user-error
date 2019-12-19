@@ -21,6 +21,7 @@ public class AuthServiceImpl implements AuthService {
     private final ReactiveUserDetailsService userDetailsService;
     private final TokenVerifier tokenVerifier;
     private final TokenBuilder tokenBuilder;
+    private final UserAuthSettingsService userAuthSettingsService;
     private final long defaultExpirationMs;
 
     /**
@@ -29,14 +30,17 @@ public class AuthServiceImpl implements AuthService {
      * @param userDetailsService the service to use to look up user information
      * @param tokenVerifier the object to use to verify tokens
      * @param tokenBuilder the object to use to build new tokens
+     * @param userAuthSettingsService the service to retrieve user authentication settings
      * @param expirationMs the default number of milliseconds until a token expires
      */
     public AuthServiceImpl(PasswordEncoder passwordEncoder, ReactiveUserDetailsService userDetailsService,
-                           TokenVerifier tokenVerifier, TokenBuilder tokenBuilder, long expirationMs) {
+                           TokenVerifier tokenVerifier, TokenBuilder tokenBuilder,
+                           UserAuthSettingsService userAuthSettingsService, long expirationMs) {
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
         this.userDetailsService = Objects.requireNonNull(userDetailsService);
         this.tokenVerifier = Objects.requireNonNull(tokenVerifier);
         this.tokenBuilder = Objects.requireNonNull(tokenBuilder);
+        this.userAuthSettingsService = Objects.requireNonNull(userAuthSettingsService);
         this.defaultExpirationMs = expirationMs;
     }
 
@@ -47,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
                 .publishOn(Schedulers.parallel())
                 .filter(user -> this.passwordEncoder.matches(credentials.getPassword(), user.getPassword()))
                 .switchIfEmpty(Mono.error(() -> new BadCredentialsException("Invalid Credentials")))
-                .map(this::buildAuthToken);
+                .flatMap(this::buildAuthToken);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
                 .flatMap(userDetailsService::findByUsername)
                 .switchIfEmpty(Mono.error(() -> new BadCredentialsException("Invalid Credentials")))
                 // TODO run any checks to see if user is allowed to refresh
-                .map(this::buildAuthToken);
+                .flatMap(this::buildAuthToken);
     }
 
     @Override
@@ -69,16 +73,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // TODO make expiration configurable
-    // TODO refresh token should be optional
-    private AuthToken buildAuthToken(UserDetails user) {
-        long expirationMs = this.defaultExpirationMs;
-        String accessToken = tokenBuilder.buildAccessToken(user.getUsername(), expirationMs,
-                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
-        String refreshToken = tokenBuilder.buildRefreshToken(user.getUsername(), expirationMs);
-        return AuthToken.builder()
-                .accessToken(accessToken)
-                .expiresIn(expirationMs / 1000)
-                .refreshToken(refreshToken)
-                .build();
+    private Mono<AuthToken> buildAuthToken(UserDetails user) {
+        return userAuthSettingsService.findByUsername(user.getUsername())
+                .map(settings -> {
+                    long expirationMs = this.defaultExpirationMs;
+                    String accessToken = tokenBuilder.buildAccessToken(user.getUsername(), expirationMs,
+                            user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
+                    AuthToken.AuthTokenBuilder builder = AuthToken.builder()
+                            .expiresIn(expirationMs / 1000)
+                            .accessToken(accessToken);
+                    if (settings.isRefreshTokenEnabled())
+                        builder.refreshToken(tokenBuilder.buildRefreshToken(user.getUsername(), expirationMs));
+                    return builder.build();
+                });
     }
 }
