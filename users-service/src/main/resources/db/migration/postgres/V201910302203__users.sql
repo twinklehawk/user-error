@@ -28,7 +28,7 @@ GRANT USAGE ON applications_id_seq TO ${username};
 CREATE TABLE roles
 (
     id             BIGSERIAL PRIMARY KEY,
-    application_id BIGINT      NOT NULL REFERENCES applications,
+    application_id BIGINT      NOT NULL REFERENCES applications ON DELETE CASCADE,
     name           VARCHAR(64) NOT NULL
 );
 CREATE INDEX roles_app_idx ON roles (application_id);
@@ -50,8 +50,8 @@ GRANT USAGE ON groups_id_seq TO ${username};
 -- relation tables
 CREATE TABLE user_roles
 (
-    user_id BIGINT NOT NULL REFERENCES users,
-    role_id BIGINT NOT NULL REFERENCES roles
+    user_id BIGINT NOT NULL REFERENCES users ON DELETE CASCADE,
+    role_id BIGINT NOT NULL REFERENCES roles ON DELETE CASCADE
 );
 CREATE INDEX user_roles_user_id_idx ON user_roles (user_id);
 CREATE INDEX user_roles_role_id_idx ON user_roles (role_id);
@@ -59,8 +59,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON user_roles TO ${username};
 
 CREATE TABLE group_roles
 (
-    group_id BIGINT NOT NULL REFERENCES groups,
-    role_id  BIGINT NOT NULL REFERENCES roles
+    group_id BIGINT NOT NULL REFERENCES groups ON DELETE CASCADE,
+    role_id  BIGINT NOT NULL REFERENCES roles ON DELETE CASCADE
 );
 CREATE INDEX group_roles_group_id_idx ON group_roles (group_id);
 CREATE INDEX group_roles_role_id_idx ON group_roles (role_id);
@@ -68,8 +68,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON group_roles TO ${username};
 
 CREATE TABLE user_groups
 (
-    user_id  BIGINT NOT NULL REFERENCES users,
-    group_id BIGINT NOT NULL REFERENCES groups
+    user_id  BIGINT NOT NULL REFERENCES users ON DELETE CASCADE,
+    group_id BIGINT NOT NULL REFERENCES groups ON DELETE CASCADE
 );
 CREATE INDEX user_groups_user_id_idx ON user_groups (user_id);
 CREATE INDEX user_groups_group_id_idx ON user_groups (group_id);

@@ -5,9 +5,7 @@ import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
-import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.RolesRepository
-import net.plshark.users.repo.UserRolesRepository
 import org.springframework.dao.DataIntegrityViolationException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,9 +17,7 @@ class RolesServiceImplSpec extends Specification {
 
     RolesRepository rolesRepo = Mock()
     ApplicationsRepository appsRepo = Mock()
-    UserRolesRepository userRolesRepo = Mock()
-    GroupRolesRepository groupRolesRepo = Mock()
-    def service = new RolesServiceImpl(rolesRepo, appsRepo, userRolesRepo, groupRolesRepo)
+    def service = new RolesServiceImpl(rolesRepo, appsRepo)
 
     def 'creating should save a role and return the saved role'() {
         def role = Role.builder().name('role').applicationId(123).build()
@@ -56,38 +52,26 @@ class RolesServiceImplSpec extends Specification {
                 .verifyError(DuplicateException)
     }
 
-    def 'deleting a role should delete any group/role associations, any user/role associations, and the role'() {
-        PublisherProbe userRolesProbe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRolesForRole(100) >> userRolesProbe.mono()
-        PublisherProbe groupRolesProbe = PublisherProbe.empty()
-        groupRolesRepo.deleteForRole(100) >> groupRolesProbe.mono()
+    def 'deleting a role should delete the role'() {
         PublisherProbe rolesProbe = PublisherProbe.empty()
         rolesRepo.delete(100) >> rolesProbe.mono()
 
         expect:
         StepVerifier.create(service.delete(100))
                 .verifyComplete()
-        userRolesProbe.assertWasSubscribed()
-        groupRolesProbe.assertWasSubscribed()
         rolesProbe.assertWasSubscribed()
     }
 
-    def 'deleting a role by name should look up the role then delete all associations and the role'() {
+    def 'deleting a role by name should look up the role then delete the role'() {
         appsRepo.get('app') >> Mono.just(Application.builder().id(123).name('app').build())
         rolesRepo.get(123, 'role') >> Mono.just(Role.builder().id(456).name('role')
                 .applicationId(123).build())
-        PublisherProbe userRolesProbe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRolesForRole(456) >> userRolesProbe.mono()
-        PublisherProbe groupRolesProbe = PublisherProbe.empty()
-        groupRolesRepo.deleteForRole(456) >> groupRolesProbe.mono()
         PublisherProbe rolesProbe = PublisherProbe.empty()
         rolesRepo.delete(456) >> rolesProbe.mono()
 
         expect:
         StepVerifier.create(service.delete('app', 'role'))
                 .verifyComplete()
-        userRolesProbe.assertWasSubscribed()
-        groupRolesProbe.assertWasSubscribed()
         rolesProbe.assertWasSubscribed()
     }
 

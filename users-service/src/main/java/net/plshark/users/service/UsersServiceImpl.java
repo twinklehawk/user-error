@@ -1,6 +1,8 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
 import net.plshark.errors.DuplicateException;
 import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.User;
@@ -17,37 +19,24 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 /**
- * UserManagementService implementation
+ * {@link UsersService} implementation
  */
 @Component
+@AllArgsConstructor
 public class UsersServiceImpl implements UsersService {
 
+    @Nonnull
     private final UsersRepository userRepo;
+    @Nonnull
     private final UserRolesRepository userRolesRepo;
+    @Nonnull
     private final UserGroupsRepository userGroupsRepo;
+    @Nonnull
     private final RolesService rolesService;
+    @Nonnull
     private final GroupsService groupsService;
+    @Nonnull
     private final PasswordEncoder passwordEncoder;
-
-    /**
-     * Create a new instance
-     * @param userRepository the repository for accessing users
-     * @param userRolesRepo the repository for accessing user roles
-     * @param userGroupsRepo the repository for user groups
-     * @param rolesService the roles service
-     * @param groupsService the groups service
-     * @param passwordEncoder the encoder to use to encode passwords
-     */
-    public UsersServiceImpl(UsersRepository userRepository, UserRolesRepository userRolesRepo,
-                            UserGroupsRepository userGroupsRepo, RolesService rolesService,
-                            GroupsService groupsService, PasswordEncoder passwordEncoder) {
-        this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
-        this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
-        this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
-        this.rolesService = Objects.requireNonNull(rolesService, "rolesService cannot be null");
-        this.groupsService = Objects.requireNonNull(groupsService, "groupsService cannot be null");
-        this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder cannot be null");
-    }
 
     @Override
     public Mono<User> get(String username) {
@@ -78,9 +67,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public Mono<Void> delete(long userId) {
-        return userRolesRepo.deleteUserRolesForUser(userId)
-                .then(userGroupsRepo.deleteUserGroupsForUser(userId))
-                .then(userRepo.delete(userId));
+        return userRepo.delete(userId);
     }
 
     @Override
