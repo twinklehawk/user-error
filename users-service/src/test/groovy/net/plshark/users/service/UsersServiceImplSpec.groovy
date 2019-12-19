@@ -95,37 +95,25 @@ class UsersServiceImplSpec extends Specification {
                 .verifyError(ObjectNotFoundException.class)
     }
 
-    def "all roles and groups for a user are removed when the user is deleted"() {
-        PublisherProbe rolesProbe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
+    def "the user is removed when the user is deleted"() {
         PublisherProbe userProbe = PublisherProbe.empty()
         userRepo.delete(100) >> userProbe.mono()
-        PublisherProbe groupsProbe = PublisherProbe.empty()
-        userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
         StepVerifier.create(service.delete(100))
             .verifyComplete()
-        rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()
-        groupsProbe.assertWasSubscribed()
     }
 
-    def 'deleting by username retrieves the user, deletes all associations, and deletes the user'() {
+    def 'deleting by username retrieves the user and deletes the user'() {
         userRepo.getForUsername('user') >> Mono.just(User.builder().id(100).username('user').build())
-        PublisherProbe rolesProbe = PublisherProbe.empty()
-        userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
         PublisherProbe userProbe = PublisherProbe.empty()
         userRepo.delete(100) >> userProbe.mono()
-        PublisherProbe groupsProbe = PublisherProbe.empty()
-        userGroupsRepo.deleteUserGroupsForUser(100) >> groupsProbe.mono()
 
         expect:
         StepVerifier.create(service.delete(100))
                 .verifyComplete()
-        rolesProbe.assertWasSubscribed()
         userProbe.assertWasSubscribed()
-        groupsProbe.assertWasSubscribed()
     }
 
     def "granting a role to a user should add the role to the user's roles"() {

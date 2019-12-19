@@ -1,12 +1,12 @@
 package net.plshark.users.service;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
 import net.plshark.errors.DuplicateException;
 import net.plshark.errors.ObjectNotFoundException;
 import net.plshark.users.model.Group;
 import net.plshark.users.repo.GroupRolesRepository;
 import net.plshark.users.repo.GroupsRepository;
-import net.plshark.users.repo.UserGroupsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -16,18 +16,13 @@ import reactor.core.publisher.Mono;
  * Group management service implementation
  */
 @Component
+@AllArgsConstructor
 public class GroupsServiceImpl implements GroupsService {
 
+    @Nonnull
     private final GroupsRepository groupsRepo;
-    private final UserGroupsRepository userGroupsRepo;
+    @Nonnull
     private final GroupRolesRepository groupRolesRepo;
-
-    public GroupsServiceImpl(GroupsRepository groupsRepo, UserGroupsRepository userGroupsRepo,
-                             GroupRolesRepository groupRolesRepo) {
-        this.groupsRepo = Objects.requireNonNull(groupsRepo, "groupsRepo cannot be null");
-        this.userGroupsRepo = Objects.requireNonNull(userGroupsRepo, "userGroupsRepo cannot be null");
-        this.groupRolesRepo = Objects.requireNonNull(groupRolesRepo, "groupRolesRepo cannot be null");
-    }
 
     @Override
     public Mono<Group> get(String name) {
@@ -53,9 +48,7 @@ public class GroupsServiceImpl implements GroupsService {
 
     @Override
     public Mono<Void> delete(long groupId) {
-        return userGroupsRepo.deleteUserGroupsForGroup(groupId)
-                .then(groupRolesRepo.deleteForGroup(groupId))
-                .then(groupsRepo.delete(groupId));
+        return groupsRepo.delete(groupId);
     }
 
     @Override

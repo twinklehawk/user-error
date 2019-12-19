@@ -15,9 +15,8 @@ import spock.lang.Specification
 class ApplicationsServiceImplSpec extends Specification {
 
     def appsRepo = Mock(ApplicationsRepository)
-    def rolesService = Mock(RolesService)
     def rolesRepo = Mock(RolesRepository)
-    def service = new ApplicationsServiceImpl(appsRepo, rolesService, rolesRepo)
+    def service = new ApplicationsServiceImpl(appsRepo, rolesRepo)
 
     def 'get should pass through the response from the repo'() {
         def app = Application.builder().id(1).name('app').build()
@@ -49,20 +48,15 @@ class ApplicationsServiceImplSpec extends Specification {
                 .verifyError(DuplicateException)
     }
 
-    def 'delete should delete all roles belonging to the app then delete the app'() {
+    def 'delete should delete the app'() {
         def app = Application.builder().id(1).name('app').build()
         appsRepo.get('app') >> Mono.just(app)
-        def role1 = Role.builder().id(1).name('role1').applicationId(100).build()
-        rolesRepo.getRolesForApplication(1) >> Flux.just(role1)
-        PublisherProbe deleteRoleProbe = PublisherProbe.empty()
-        rolesService.delete(1) >> deleteRoleProbe.mono()
         PublisherProbe deleteAppProbe = PublisherProbe.empty()
         appsRepo.delete(1) >> deleteAppProbe.mono()
 
         expect:
         StepVerifier.create(service.delete('app'))
                 .verifyComplete()
-        deleteRoleProbe.assertWasSubscribed()
         deleteAppProbe.assertWasSubscribed()
     }
 
