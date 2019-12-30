@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import net.plshark.users.auth.service.NoneAlgorithmBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -28,8 +29,8 @@ public class AuthProperties {
     @Valid
     private final Key key;
 
-    public static AuthProperties forNone(String algorithm, String issuer, long tokenExpiration) {
-        return new AuthProperties(algorithm, issuer, tokenExpiration, null, null, null);
+    public static AuthProperties forNone(String issuer, long tokenExpiration) {
+        return new AuthProperties(NoneAlgorithmBuilder.NONE, issuer, tokenExpiration, null, null, null);
     }
 
     public static AuthProperties forSecret(String algorithm, String issuer, long tokenExpiration, String secret) {

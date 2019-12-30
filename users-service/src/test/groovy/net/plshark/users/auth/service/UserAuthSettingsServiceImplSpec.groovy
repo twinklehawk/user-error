@@ -10,7 +10,7 @@ import spock.lang.Specification
 class UserAuthSettingsServiceImplSpec extends Specification {
 
     def userSettingsRepo = Mock(UserAuthSettingsRepository)
-    def props = AuthProperties.forNone('alg', 'issuer', 30)
+    def props = AuthProperties.forNone('issuer', 30)
     def service = new UserAuthSettingsServiceImpl(userSettingsRepo, props)
 
     def 'looking up settings for a user should return the matching settings when found'() {

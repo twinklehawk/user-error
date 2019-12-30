@@ -44,7 +44,7 @@ class Ecdsa256AlgorithmBuilderSpec extends Specification{
     }
 
     def 'should return null if the name is anything else'() {
-        def props = AuthProperties.forNone('bad', 'bad-users', 1000)
+        def props = AuthProperties.forNone('bad-users', 1000)
 
         expect:
         builder.build(props) == null
