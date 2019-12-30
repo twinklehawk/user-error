@@ -14,4 +14,9 @@ public interface UserAuthSettingsService {
      * @return the settings, never empty
      */
     Mono<UserAuthSettings> findByUsername(String username);
+
+    /**
+     * @return the default token expiration in milliseconds
+     */
+    long getDefaultTokenExpiration();
 }

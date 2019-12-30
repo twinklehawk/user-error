@@ -28,12 +28,18 @@ class SpringDataUserAuthSettingsRepositorySpec extends Specification {
     def 'inserting settings returns the inserted settings with the ID set'() {
         when:
         def user = usersRepo.insert(User.builder().username('test-user').password('test-pass').build()).block()
-        def inserted = repo.insert(UserAuthSettings.builder().userId(user.id).refreshTokenEnabled(false).build()).block()
+        def inserted = repo.insert(UserAuthSettings.builder()
+                .userId(user.id)
+                .refreshTokenEnabled(false)
+                .authTokenExpiration(40)
+                .build()).block()
 
         then:
         inserted.id != null
         inserted.userId == user.id
         !inserted.refreshTokenEnabled
+        inserted.authTokenExpiration == 40
+        inserted.refreshTokenExpiration == null
     }
 
     def 'cannot insert settings with an ID already set'() {

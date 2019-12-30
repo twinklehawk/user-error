@@ -19,14 +19,15 @@ class AuthServiceImplSpec extends Specification {
     def tokenVerifier = Mock(TokenVerifier)
     def tokenBuilder = Mock(TokenBuilder)
     def authSettingsService = Mock(UserAuthSettingsService)
-    def service = new AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder, authSettingsService, 1000L)
+    def service = new AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder, authSettingsService)
+    def settings = UserAuthSettings.builder().authTokenExpiration(1000).refreshTokenExpiration(1000).build()
 
     def 'authenticate should build access and refresh tokens with the correct expiration'() {
         userDetailsService.findByUsername('test-user') >> Mono.just(new User('test-user', 'encoded-password', Collections.emptyList()))
         passwordEncoder.matches('test-password', 'encoded-password') >> true
         tokenBuilder.buildAccessToken('test-user', 1000L, [] as String[]) >> 'test-token'
         tokenBuilder.buildRefreshToken('test-user', 1000L) >> 'refresh-token'
-        authSettingsService.findByUsername('test-user') >> Mono.just(UserAuthSettings.builder().build())
+        authSettingsService.findByUsername('test-user') >> Mono.just(settings)
 
         expect:
         StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
@@ -39,11 +40,29 @@ class AuthServiceImplSpec extends Specification {
         passwordEncoder.matches('test-password', 'encoded-password') >> true
         tokenBuilder.buildAccessToken('test-user', 1000L, [] as String[]) >> 'test-token'
         tokenBuilder.buildRefreshToken('test-user', 1000L) >> 'refresh-token'
-        authSettingsService.findByUsername('test-user') >> Mono.just(UserAuthSettings.builder().refreshTokenEnabled(false).build())
+        authSettingsService.findByUsername('test-user') >> Mono.just(settings.toBuilder().refreshTokenEnabled(false).build())
 
         expect:
         StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
                 .expectNext(AuthToken.builder().accessToken('test-token').expiresIn(1L).build())
+                .verifyComplete()
+    }
+
+    def 'should build a token with default expiration time if no expiration time settings are set'() {
+        userDetailsService.findByUsername('test-user') >> Mono.just(new User('test-user', 'encoded-password', Collections.emptyList()))
+        passwordEncoder.matches('test-password', 'encoded-password') >> true
+        tokenBuilder.buildAccessToken('test-user', 20000L, [] as String[]) >> 'test-token'
+        tokenBuilder.buildRefreshToken('test-user', 20000L) >> 'refresh-token'
+        authSettingsService.findByUsername('test-user') >> Mono.just(UserAuthSettings.builder().build())
+        authSettingsService.getDefaultTokenExpiration() >> 20000
+
+        expect:
+        StepVerifier.create(service.authenticate(AccountCredentials.create('test-user', 'test-password')))
+                .expectNext(AuthToken.builder()
+                        .accessToken('test-token')
+                        .refreshToken('refresh-token')
+                        .expiresIn(20L)
+                        .build())
                 .verifyComplete()
     }
 
@@ -69,7 +88,7 @@ class AuthServiceImplSpec extends Specification {
         userDetailsService.findByUsername('test-user') >> Mono.just(new User('test-user', 'encoded-password', Collections.emptyList()))
         tokenBuilder.buildAccessToken('test-user', 1000L, [] as String[]) >> 'test-token'
         tokenBuilder.buildRefreshToken('test-user', 1000L) >> 'refresh-token'
-        authSettingsService.findByUsername('test-user') >> Mono.just(UserAuthSettings.builder().build())
+        authSettingsService.findByUsername('test-user') >> Mono.just(settings)
 
         expect:
         StepVerifier.create(service.refresh('refresh-token'))
