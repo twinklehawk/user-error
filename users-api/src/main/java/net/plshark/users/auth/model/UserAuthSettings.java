@@ -21,6 +21,14 @@ public class UserAuthSettings {
     private final Long userId;
     @JsonProperty("refresh_token_enabled") @Builder.Default
     private final boolean refreshTokenEnabled = true;
+    /** auth token expiration time in milliseconds */
+    @JsonProperty("auth_token_expiration")
+    @Nullable
+    private final Long authTokenExpiration;
+    /** refresh token expiration time in milliseconds */
+    @JsonProperty("refresh_token_expiration")
+    @Nullable
+    private final Long refreshTokenExpiration;
 
     @JsonPOJOBuilder(withPrefix = "")
     @JsonIgnoreProperties(ignoreUnknown = true)

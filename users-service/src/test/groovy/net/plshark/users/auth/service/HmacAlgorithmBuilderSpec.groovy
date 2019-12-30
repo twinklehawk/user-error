@@ -28,7 +28,7 @@ class HmacAlgorithmBuilderSpec extends Specification{
     }
 
     def 'should fail if the secret is null'() {
-        def props = AuthProperties.forNone(HmacAlgorithmBuilder.HMAC256, 'bad-users', 1000)
+        def props = new AuthProperties(HmacAlgorithmBuilder.HMAC256, 'bad-users', 1000, null, null, null)
 
         when:
         builder.build(props)
@@ -38,7 +38,7 @@ class HmacAlgorithmBuilderSpec extends Specification{
     }
 
     def 'should return null if the name is anything else'() {
-        def props = AuthProperties.forNone('bad', 'bad-users', 1000)
+        def props = AuthProperties.forNone('bad-users', 1000)
 
         expect:
         builder.build(props) == null

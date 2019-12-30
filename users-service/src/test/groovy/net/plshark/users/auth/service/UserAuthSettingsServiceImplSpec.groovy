@@ -1,5 +1,6 @@
 package net.plshark.users.auth.service
 
+import net.plshark.users.auth.AuthProperties
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.auth.repo.UserAuthSettingsRepository
 import reactor.core.publisher.Mono
@@ -9,7 +10,8 @@ import spock.lang.Specification
 class UserAuthSettingsServiceImplSpec extends Specification {
 
     def userSettingsRepo = Mock(UserAuthSettingsRepository)
-    def service = new UserAuthSettingsServiceImpl(userSettingsRepo)
+    def props = AuthProperties.forNone('issuer', 30)
+    def service = new UserAuthSettingsServiceImpl(userSettingsRepo, props)
 
     def 'looking up settings for a user should return the matching settings when found'() {
         def settings = UserAuthSettings.builder().refreshTokenEnabled(false).build()
@@ -26,7 +28,10 @@ class UserAuthSettingsServiceImplSpec extends Specification {
 
         expect:
         StepVerifier.create(service.findByUsername('test-user'))
-                .expectNextCount(1)
+                .expectNext(UserAuthSettings.builder()
+                        .authTokenExpiration(30)
+                        .refreshTokenExpiration(30)
+                        .build())
                 .verifyComplete()
     }
 }

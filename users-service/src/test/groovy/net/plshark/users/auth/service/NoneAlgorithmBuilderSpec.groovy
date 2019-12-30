@@ -8,7 +8,7 @@ class NoneAlgorithmBuilderSpec extends Specification{
     def builder = new NoneAlgorithmBuilder()
 
     def 'none should load the none algorithm'() {
-        def props = AuthProperties.forNone(NoneAlgorithmBuilder.NONE, 'bad-users', 1000)
+        def props = AuthProperties.forNone('bad-users', 1000)
 
         when:
         def algorithm = builder.build(props)
@@ -18,7 +18,7 @@ class NoneAlgorithmBuilderSpec extends Specification{
     }
 
     def 'should return null if the name is not none'() {
-        def props = AuthProperties.forNone('bad', 'bad-users', 1000)
+        def props = new AuthProperties('bad', 'bad-users', 1000, null, null, null)
 
         expect:
         builder.build(props) == null

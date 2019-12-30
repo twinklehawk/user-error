@@ -1,48 +1,33 @@
 package net.plshark.users.auth.service;
 
-import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
 import net.plshark.users.auth.model.AccountCredentials;
 import net.plshark.users.auth.model.AuthToken;
 import net.plshark.users.auth.model.AuthenticatedUser;
+import net.plshark.users.auth.model.UserAuthSettings;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 /**
  * Default AuthService server side implementation
  */
+@Component
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final ReactiveUserDetailsService userDetailsService;
-    private final TokenVerifier tokenVerifier;
-    private final TokenBuilder tokenBuilder;
-    private final UserAuthSettingsService userAuthSettingsService;
-    private final long defaultExpirationMs;
-
-    /**
-     * Create a new instance
-     * @param passwordEncoder the encoder to use to encode passwords to validate against stored credentials
-     * @param userDetailsService the service to use to look up user information
-     * @param tokenVerifier the object to use to verify tokens
-     * @param tokenBuilder the object to use to build new tokens
-     * @param userAuthSettingsService the service to retrieve user authentication settings
-     * @param expirationMs the default number of milliseconds until a token expires
-     */
-    public AuthServiceImpl(PasswordEncoder passwordEncoder, ReactiveUserDetailsService userDetailsService,
-                           TokenVerifier tokenVerifier, TokenBuilder tokenBuilder,
-                           UserAuthSettingsService userAuthSettingsService, long expirationMs) {
-        this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
-        this.userDetailsService = Objects.requireNonNull(userDetailsService);
-        this.tokenVerifier = Objects.requireNonNull(tokenVerifier);
-        this.tokenBuilder = Objects.requireNonNull(tokenBuilder);
-        this.userAuthSettingsService = Objects.requireNonNull(userAuthSettingsService);
-        this.defaultExpirationMs = expirationMs;
-    }
+    @Nonnull private final PasswordEncoder passwordEncoder;
+    @Nonnull private final ReactiveUserDetailsService userDetailsService;
+    @Nonnull private final TokenVerifier tokenVerifier;
+    @Nonnull private final TokenBuilder tokenBuilder;
+    @Nonnull private final UserAuthSettingsService userAuthSettingsService;
 
     @Override
     public Mono<AuthToken> authenticate(AccountCredentials credentials) {
@@ -72,19 +57,25 @@ public class AuthServiceImpl implements AuthService {
                 .map(tokenVerifier::verifyToken);
     }
 
-    // TODO make expiration configurable
     private Mono<AuthToken> buildAuthToken(UserDetails user) {
         return userAuthSettingsService.findByUsername(user.getUsername())
-                .map(settings -> {
-                    long expirationMs = this.defaultExpirationMs;
-                    String accessToken = tokenBuilder.buildAccessToken(user.getUsername(), expirationMs,
-                            user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
-                    AuthToken.AuthTokenBuilder builder = AuthToken.builder()
-                            .expiresIn(expirationMs / 1000)
-                            .accessToken(accessToken);
-                    if (settings.isRefreshTokenEnabled())
-                        builder.refreshToken(tokenBuilder.buildRefreshToken(user.getUsername(), expirationMs));
-                    return builder.build();
-                });
+                .map(settings -> buildAuthToken(user, settings));
+    }
+
+    private AuthToken buildAuthToken(UserDetails user, UserAuthSettings settings) {
+        long tokenExpiration = Optional.ofNullable(settings.getAuthTokenExpiration())
+                .orElse(userAuthSettingsService.getDefaultTokenExpiration());
+        String[] authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
+        AuthToken.AuthTokenBuilder builder = AuthToken.builder()
+                .expiresIn(tokenExpiration / 1000)
+                .accessToken(tokenBuilder.buildAccessToken(user.getUsername(), tokenExpiration, authorities));
+
+        if (settings.isRefreshTokenEnabled()) {
+            long refreshExpiration = Optional.ofNullable(settings.getRefreshTokenExpiration())
+                    .orElse(userAuthSettingsService.getDefaultTokenExpiration());
+            builder.refreshToken(tokenBuilder.buildRefreshToken(user.getUsername(), refreshExpiration));
+        }
+
+        return builder.build();
     }
 }
