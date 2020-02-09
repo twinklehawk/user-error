@@ -4,5 +4,5 @@ allprojects {
         maven { url 'https://repo.spring.io/libs-snapshot' }
     }
     group = 'net.plshark.users'
-    version = '0.0.4'
+    version = '0.1.0'
 }
