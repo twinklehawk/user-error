@@ -1,9 +1,6 @@
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
-
 bintray {
     user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    key = System.getenv('BINTRAY_API_KEY')
     publish = true
     override = false
     publications = ['mavenJava']
@@ -16,21 +13,19 @@ bintray {
         vcsUrl = 'https://github.com/twinklehawk/bad-users.git'
         githubRepo = 'twinklehawk/bad-users'
         version {
-            name = '0.0.2'
+            name = project.version
         }
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    withSourcesJar()
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
         }
     }
 }
