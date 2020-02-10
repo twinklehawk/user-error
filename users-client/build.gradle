@@ -1,17 +1,4 @@
-plugins {
-    id 'java-library'
-    id 'groovy'
-    id 'jacoco'
-    id 'io.freefair.lombok' version '4.1.6'
-    id 'com.jfrog.bintray' version '1.8.4'
-    id 'maven-publish'
-}
-
-apply from: "$rootDir/build-scripts/java.gradle"
-apply from: "$rootDir/build-scripts/coverage.gradle"
-apply from: "$rootDir/build-scripts/bintray.gradle"
-
-generateLombokConfig.enabled = false
+apply plugin: 'java-library'
 
 dependencies {
     api platform(project(':platform'))

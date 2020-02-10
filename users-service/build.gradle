@@ -1,15 +1,5 @@
-plugins {
-    id 'java'
-    id 'groovy'
-    id 'jacoco'
-    id 'io.freefair.lombok' version '4.1.6'
-    id 'org.springframework.boot' version '2.2.4.RELEASE'
-}
-
-apply from: "$rootDir/build-scripts/java.gradle"
-apply from: "$rootDir/build-scripts/coverage.gradle"
-
-generateLombokConfig.enabled = false
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
 
 dependencies {
     annotationProcessor platform(project(':platform'))

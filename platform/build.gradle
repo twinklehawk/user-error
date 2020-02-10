@@ -21,3 +21,11 @@ dependencies {
         api 'com.google.guava:guava:28.2-jre'
     }
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
