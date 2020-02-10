@@ -52,30 +52,24 @@ configure(javaProjects) { project ->
 }
 
 configure(uploadProjects) { project ->
-    apply plugin: 'com.jfrog.bintray'
     apply plugin: 'maven-publish'
 
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_API_KEY')
-        publish = true
-        override = false
-        publications = ['maven']
-        pkg {
-            repo = 'maven'
-            name = 'net.plshark.users'
-            userOrg = 'twinklehawk'
-            licenses = ['Apache-2.0']
-            websiteUrl = 'https://github.com/twinklehawk/bad-users'
-            vcsUrl = 'https://github.com/twinklehawk/bad-users.git'
-            githubRepo = 'twinklehawk/bad-users'
-            version {
-                name = project.version
+    publishing {
+        repositories {
+            maven {
+                name = 'bintray'
+                def bintrayUsername = 'twinklehawk'
+                def bintrayRepoName = 'maven'
+                def bintrayPackageName = 'net.plshark.users'
+                url = "https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1"
+                credentials {
+                    username = System.getenv('BINTRAY_USER')
+                    password = System.getenv('BINTRAY_API_KEY')
+                }
             }
         }
     }
 }
-
 configure(uploadProjects - project(':platform')) { project ->
     publishing {
         publications {
