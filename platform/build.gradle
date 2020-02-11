@@ -11,7 +11,7 @@ dependencies {
     api enforcedPlatform('org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.BUILD-SNAPSHOT')
 
     constraints {
-        api 'org.codehaus.groovy:groovy-all:2.5.9'
+        api 'org.codehaus.groovy:groovy-all:3.0.0'
         api 'org.spockframework:spock-core:1.3-groovy-2.5'
         api 'org.spockframework:spock-spring:1.3-groovy-2.5'
         api 'org.objenesis:objenesis:3.1'
