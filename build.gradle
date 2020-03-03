@@ -12,7 +12,7 @@ ext {
 allprojects {
     repositories {
         jcenter()
-        maven { url 'https://repo.spring.io/libs-snapshot' }
+        maven { url 'https://repo.spring.io/milestone' }
     }
     group = 'net.plshark.users'
     version = '0.1.0'

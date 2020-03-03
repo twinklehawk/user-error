@@ -8,7 +8,7 @@ javaPlatform {
 
 dependencies {
     api enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE')
-    api enforcedPlatform('org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.BUILD-SNAPSHOT')
+    api enforcedPlatform('org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.M3')
 
     constraints {
         api 'org.codehaus.groovy:groovy-all:2.5.9'
