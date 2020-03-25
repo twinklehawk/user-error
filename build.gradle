@@ -15,7 +15,7 @@ allprojects {
         maven { url 'https://repo.spring.io/milestone' }
     }
     group = 'net.plshark.users'
-    version = '0.2.0'
+    version = '0.2.1'
 }
 
 configure(javaProjects) { project ->
