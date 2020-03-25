@@ -2,9 +2,9 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    annotationProcessor platform(project(':platform'))
+    annotationProcessor enforcedPlatform(project(':platform'))
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    implementation platform(project(':platform'))
+    implementation enforcedPlatform(project(':platform'))
     implementation project(':users-api')
     implementation project(':users-client')
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

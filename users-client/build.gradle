@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api platform(project(':platform'))
+    implementation enforcedPlatform(project(':platform'))
     implementation 'com.github.ben-manes.caffeine:caffeine'
     api project(':users-api')
     api 'org.springframework:spring-webflux'

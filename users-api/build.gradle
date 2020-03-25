@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api platform(project(':platform'))
+    implementation enforcedPlatform(project(':platform'))
     api 'org.slf4j:slf4j-api'
     api 'io.projectreactor:reactor-core'
     api 'com.fasterxml.jackson.core:jackson-annotations'
