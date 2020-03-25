@@ -9,8 +9,6 @@ services:
       - "5432:5432"
   users-service:
     build: ../../users-service/
-    environment:
-      INSIGHTS_ENV: local-docker
     depends_on:
       - db
     ports:
