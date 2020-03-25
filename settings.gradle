@@ -1,6 +1,0 @@
-rootProject.name = 'bad-users'
-
-include 'platform'
-include 'users-api'
-include 'users-service'
-include 'users-client'
