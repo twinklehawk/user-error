@@ -1,5 +1,9 @@
 plugins {
     `java-library`
+    groovy
+    jacoco
+    id("io.freefair.lombok")
+    `maven-publish`
 }
 
 dependencies {
@@ -17,4 +21,49 @@ dependencies {
     testRuntimeOnly("net.bytebuddy:byte-buddy")
     testRuntimeOnly("org.objenesis:objenesis")
     testRuntimeOnly("ch.qos.logback:logback-classic")
+}
+/*
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withSourcesJar()
+}
+
+tasks.generateLombokConfig {
+    enabled = false
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = false
+        csv.isEnabled = false
+    }
+}
+*/
+
+publishing {
+    repositories {
+        maven {
+            name = "bintray"
+            val bintrayUsername = "twinklehawk"
+            val bintrayRepoName = "maven"
+            val bintrayPackageName = "net.plshark.users"
+            url = uri("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1")
+            credentials {
+                username = System.getenv("BINTRAY_USER")
+                password = System.getenv("BINTRAY_API_KEY")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }

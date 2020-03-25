@@ -1,5 +1,6 @@
 plugins {
     `java-platform`
+    `maven-publish`
 }
 
 javaPlatform {
@@ -22,6 +23,19 @@ dependencies {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "bintray"
+            val bintrayUsername = "twinklehawk"
+            val bintrayRepoName = "maven"
+            val bintrayPackageName = "net.plshark.users"
+            url = uri("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1")
+            credentials {
+                username = System.getenv("BINTRAY_USER")
+                password = System.getenv("BINTRAY_API_KEY")
+            }
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
             from(components["javaPlatform"])
