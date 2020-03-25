@@ -4,8 +4,6 @@ plugins {
     id("com.jfrog.bintray") version "1.8.4" apply false
 }
 
-val javaProjects = listOf(project(":users-api"), project(":users-client"), project(":users-service"))
-
 allprojects {
     repositories {
         jcenter()
@@ -15,7 +13,19 @@ allprojects {
     version = "0.2.2"
 }
 
-configure(javaProjects) {
+subprojects {
+    plugins.withType<JavaLibraryPlugin> {
+        val internal by configurations.creating {
+            isVisible = false
+            isCanBeConsumed = false
+            isCanBeResolved = false
+        }
+        configurations["compileClasspath"].extendsFrom(internal)
+        configurations["runtimeClasspath"].extendsFrom(internal)
+        configurations["testCompileClasspath"].extendsFrom(internal)
+        configurations["testRuntimeClasspath"].extendsFrom(internal)
+    }
+
     tasks.withType<io.freefair.gradle.plugins.lombok.tasks.GenerateLombokConfig> {
         enabled = false
     }

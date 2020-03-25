@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(enforcedPlatform(project(":platform")))
+    internal(enforcedPlatform(project(":platform")))
     api("org.slf4j:slf4j-api")
     api("io.projectreactor:reactor-core")
     api("com.fasterxml.jackson.core:jackson-annotations")
@@ -22,30 +22,6 @@ dependencies {
     testRuntimeOnly("org.objenesis:objenesis")
     testRuntimeOnly("ch.qos.logback:logback-classic")
 }
-/*
-tasks.withType<JavaCompile> {
-    options.compilerArgs.add("-parameters")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    withSourcesJar()
-}
-
-tasks.generateLombokConfig {
-    enabled = false
-}
-
-tasks.jacocoTestReport {
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = false
-        csv.isEnabled = false
-    }
-}
-*/
 
 publishing {
     repositories {
@@ -64,6 +40,14 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionResult()
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
         }
     }
 }

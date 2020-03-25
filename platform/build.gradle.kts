@@ -1,6 +1,5 @@
 plugins {
     `java-platform`
-    `maven-publish`
 }
 
 javaPlatform {
@@ -19,26 +18,5 @@ dependencies {
         api("com.opentable.components:otj-pg-embedded:0.13.3")
         api("com.auth0:java-jwt:3.10.1")
         api("com.google.guava:guava:28.2-jre")
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "bintray"
-            val bintrayUsername = "twinklehawk"
-            val bintrayRepoName = "maven"
-            val bintrayPackageName = "net.plshark.users"
-            url = uri("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1")
-            credentials {
-                username = System.getenv("BINTRAY_USER")
-                password = System.getenv("BINTRAY_API_KEY")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["javaPlatform"])
-        }
     }
 }

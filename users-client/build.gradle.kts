@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(enforcedPlatform(project(":platform")))
+    internal(enforcedPlatform(project(":platform")))
     implementation("com.github.ben-manes.caffeine:caffeine")
     api(project(":users-api"))
     api("org.springframework:spring-webflux")
@@ -43,6 +43,14 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionResult()
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
         }
     }
 }
