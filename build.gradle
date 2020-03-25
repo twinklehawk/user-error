@@ -6,7 +6,7 @@ plugins {
 
 ext {
     javaProjects = [ project(':users-api'), project(':users-client'), project(':users-service') ]
-    uploadProjects = [ project(':platform'), project(':users-api'), project(':users-client') ]
+    uploadProjects = [ project(':users-api'), project(':users-client') ]
 }
 
 allprojects {
