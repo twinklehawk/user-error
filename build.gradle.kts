@@ -36,6 +36,10 @@ subprojects {
 
         options.compilerArgs.add("-parameters")
     }
+}
+
+configure(subprojects.filter{ it.name != "platform" }) {
+    apply(plugin = "jacoco")
 
     tasks.withType<JacocoReport> {
         reports {

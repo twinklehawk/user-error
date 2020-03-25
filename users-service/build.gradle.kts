@@ -2,7 +2,6 @@ plugins {
     java
     id("org.springframework.boot")
     groovy
-    jacoco
     id("io.freefair.lombok")
 }
 

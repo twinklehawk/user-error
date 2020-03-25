@@ -1,7 +1,6 @@
 plugins {
     `java-library`
     groovy
-    jacoco
     id("io.freefair.lombok")
     `maven-publish`
 }
