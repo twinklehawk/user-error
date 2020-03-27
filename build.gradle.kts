@@ -10,7 +10,7 @@ allprojects {
         maven { url = uri("https://repo.spring.io/milestone") }
     }
     group = "net.plshark.users"
-    version = "0.2.2"
+    version = "0.2.3"
 }
 
 subprojects {
@@ -31,9 +31,6 @@ subprojects {
     }
 
     tasks.withType<JavaCompile> {
-        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-        targetCompatibility = JavaVersion.VERSION_1_8.toString()
-
         options.compilerArgs.add("-parameters")
     }
 }
