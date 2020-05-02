@@ -1,8 +1,12 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
     id("org.springframework.boot")
     groovy
     id("io.freefair.lombok")
+    kotlin("jvm")
+    kotlin("plugin.spring")
 }
 
 dependencies {
@@ -17,6 +21,10 @@ dependencies {
     implementation("io.r2dbc:r2dbc-postgresql")
     implementation("com.auth0:java-jwt")
     implementation("org.flywaydb:flyway-core")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.codehaus.groovy:groovy-all")
     testImplementation("org.spockframework:spock-core")
@@ -32,4 +40,10 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "1.8"
+    }
 }

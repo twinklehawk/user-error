@@ -2,6 +2,8 @@ plugins {
     id("io.freefair.lombok") version "4.1.6" apply false
     id("org.springframework.boot") version "2.2.5.RELEASE" apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
+    kotlin("jvm") version "1.3.61" apply false
+    kotlin("plugin.spring") version "1.3.61" apply false
 }
 
 allprojects {
