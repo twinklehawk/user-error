@@ -1,38 +1,50 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    `java-library`
-    groovy
-    id("io.freefair.lombok")
-    `maven-publish`
     kotlin("jvm")
     kotlin("plugin.spring")
+    `maven-publish`
 }
+
+val internal by configurations.creating {
+    isVisible = false
+    isCanBeConsumed = false
+    isCanBeResolved = false
+}
+configurations["compileClasspath"].extendsFrom(internal)
+configurations["runtimeClasspath"].extendsFrom(internal)
+configurations["testCompileClasspath"].extendsFrom(internal)
+configurations["testRuntimeClasspath"].extendsFrom(internal)
 
 dependencies {
     internal(enforcedPlatform(project(":platform")))
     api("org.slf4j:slf4j-api")
     api("io.projectreactor:reactor-core")
     api("com.fasterxml.jackson.core:jackson-annotations")
-    api("com.google.guava:guava")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
+    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    runtimeOnly("com.fasterxml.jackson.module:jackson-module-parameter-names")
-    testImplementation("org.codehaus.groovy:groovy-all")
-    testImplementation("org.spockframework:spock-core")
-    testImplementation("org.hamcrest:hamcrest-core")
-    testRuntimeOnly("net.bytebuddy:byte-buddy")
-    testRuntimeOnly("org.objenesis:objenesis")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("io.mockk:mockk:1.9.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
     withSourcesJar()
+}
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "1.8"
+    }
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 publishing {

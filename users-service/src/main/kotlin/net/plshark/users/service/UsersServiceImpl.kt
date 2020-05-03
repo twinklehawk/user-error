@@ -1,6 +1,5 @@
 package net.plshark.users.service
 
-import lombok.AllArgsConstructor
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
@@ -20,7 +19,6 @@ import reactor.core.scheduler.Schedulers
  * [UsersService] implementation
  */
 @Component
-@AllArgsConstructor
 class UsersServiceImpl(
     private val userRepo: UsersRepository,
     private val userRolesRepo: UserRolesRepository,

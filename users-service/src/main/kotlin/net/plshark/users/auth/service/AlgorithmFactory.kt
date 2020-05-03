@@ -1,7 +1,6 @@
 package net.plshark.users.auth.service
 
 import com.auth0.jwt.algorithms.Algorithm
-import com.google.common.collect.ImmutableList
 import net.plshark.users.auth.AuthProperties
 import java.io.IOException
 import java.security.GeneralSecurityException

@@ -4,7 +4,6 @@ plugins {
     java
     id("org.springframework.boot")
     groovy
-    id("io.freefair.lombok")
     kotlin("jvm")
     kotlin("plugin.spring")
 }
@@ -26,12 +25,10 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.codehaus.groovy:groovy-all")
-    testImplementation("org.spockframework:spock-core")
-    testImplementation("org.hamcrest:hamcrest-core")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("com.opentable.components:otj-pg-embedded")
-    testRuntimeOnly("net.bytebuddy:byte-buddy")
-    testRuntimeOnly("org.objenesis:objenesis")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     // for flyway
     runtimeOnly("org.springframework:spring-jdbc")
     runtimeOnly("org.postgresql:postgresql")
@@ -39,11 +36,13 @@ dependencies {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "1.8"
     }
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

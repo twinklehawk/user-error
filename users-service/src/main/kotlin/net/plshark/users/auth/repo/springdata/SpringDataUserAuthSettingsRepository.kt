@@ -1,7 +1,6 @@
 package net.plshark.users.auth.repo.springdata
 
 import io.r2dbc.spi.Row
-import lombok.AllArgsConstructor
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.auth.repo.UserAuthSettingsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
@@ -11,7 +10,6 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 @Repository
-@AllArgsConstructor
 class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) : UserAuthSettingsRepository {
 
     override fun findByUserId(userId: Long): Mono<UserAuthSettings> {
