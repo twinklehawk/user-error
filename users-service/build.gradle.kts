@@ -28,9 +28,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:1.9.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    // for flyway
-    runtimeOnly("org.springframework:spring-jdbc")
-    runtimeOnly("org.postgresql:postgresql")
 }
 
 java {

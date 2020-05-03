@@ -1,3 +1,3 @@
 rootProject.name = "bad-users"
 
-include("platform", "users-api", "users-service", "users-client")
+include("platform", "db", "users-api", "users-service", "users-client")
