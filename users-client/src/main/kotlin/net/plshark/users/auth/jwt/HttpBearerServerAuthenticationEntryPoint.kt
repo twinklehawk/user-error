@@ -9,8 +9,10 @@ import reactor.core.publisher.Mono
 /**
  * Prompts a user for HTTP Bearer authentication.
  */
-class HttpBearerServerAuthenticationEntryPoint(private val headerValue: String = String.format(WWW_AUTHENTICATE_FORMAT, DEFAULT_REALM)) :
+class HttpBearerServerAuthenticationEntryPoint(private val realm: String = DEFAULT_REALM) :
     ServerAuthenticationEntryPoint {
+
+    private val headerValue: String = String.format(WWW_AUTHENTICATE_FORMAT, realm)
 
     override fun commence(exchange: ServerWebExchange, e: AuthenticationException): Mono<Void> {
         return Mono.fromRunnable {

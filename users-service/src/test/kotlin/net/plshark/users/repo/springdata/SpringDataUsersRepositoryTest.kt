@@ -11,13 +11,13 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
-class SpringDataUsersRepositoryTest {
+class SpringDataUsersRepositoryTest : IntTest() {
 
     private lateinit var repo: SpringDataUsersRepository
 
     @BeforeEach
     fun setup() {
-        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val connectionFactory = ConnectionFactories.get(DB_URL)
         val dbClient = DatabaseClient.create(connectionFactory)
         repo = SpringDataUsersRepository(dbClient)
     }

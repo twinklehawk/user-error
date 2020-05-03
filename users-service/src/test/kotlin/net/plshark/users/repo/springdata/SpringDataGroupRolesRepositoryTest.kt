@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
-class SpringDataGroupRolesRepositoryTest {
+class SpringDataGroupRolesRepositoryTest : IntTest() {
 
     private lateinit var repo: SpringDataGroupRolesRepository
     private lateinit var groupsRepo: SpringDataGroupsRepository
@@ -21,7 +21,7 @@ class SpringDataGroupRolesRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val connectionFactory = ConnectionFactories.get(DB_URL)
         val dbClient = DatabaseClient.create(connectionFactory)
         repo = SpringDataGroupRolesRepository(dbClient)
         groupsRepo = SpringDataGroupsRepository(dbClient)

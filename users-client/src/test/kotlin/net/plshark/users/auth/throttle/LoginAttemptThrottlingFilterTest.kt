@@ -43,6 +43,7 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.of("test-user")
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns false
+        every { response.statusCode } returns HttpStatus.OK
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasSubscribed()
@@ -57,6 +58,7 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.of("test-user")
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns false
+        every { response.statusCode } returns HttpStatus.OK
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasSubscribed()
@@ -70,6 +72,8 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.of("test-user")
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns true
+        every { headers.getFirst("X-Forwarded-For") } returns null
+        every { response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS) } returns true
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasNotSubscribed()
@@ -82,6 +86,8 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.of("test-user")
         every { service.isIpBlocked("192.168.1.2") } returns true
         every { service.isUsernameBlocked("test-user") } returns false
+        every { headers.getFirst("X-Forwarded-For") } returns null
+        every { response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS) } returns true
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasNotSubscribed()
@@ -94,6 +100,8 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.of("test-user")
         every { service.isUsernameBlocked("test-user") } returns false
         every { service.isIpBlocked("") } returns true
+        every { headers.getFirst("X-Forwarded-For") } returns null
+        every { response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS) } returns true
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasNotSubscribed()
@@ -106,6 +114,8 @@ class LoginAttemptThrottlingFilterTest {
         every { extractor.extractUsername(request) } returns Optional.empty()
         every { service.isUsernameBlocked("") } returns true
         every { service.isIpBlocked("192.168.1.2") } returns false
+        every { headers.getFirst("X-Forwarded-For") } returns null
+        every { response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS) } returns true
 
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
         probe.assertWasNotSubscribed()

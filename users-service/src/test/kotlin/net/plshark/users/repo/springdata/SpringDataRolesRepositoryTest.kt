@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
-class SpringDataRolesRepositoryTest {
+class SpringDataRolesRepositoryTest : IntTest() {
 
     private lateinit var repo: SpringDataRolesRepository
     private lateinit var appsRepo: SpringDataApplicationsRepository
 
     @BeforeEach
     fun setup() {
-        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val connectionFactory = ConnectionFactories.get(DB_URL)
         val db = DatabaseClient.create(connectionFactory)
         repo = SpringDataRolesRepository(db)
         appsRepo = SpringDataApplicationsRepository(db)

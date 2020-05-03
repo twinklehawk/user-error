@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 
 class HmacAlgorithmBuilderTest {
 
-    val builder = HmacAlgorithmBuilder()
+    private val builder = HmacAlgorithmBuilder()
 
     @Test
     fun `hmac256 should load the correct algorithm`() {

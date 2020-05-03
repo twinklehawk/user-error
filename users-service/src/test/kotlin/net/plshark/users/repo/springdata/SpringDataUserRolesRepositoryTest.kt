@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
 
-class SpringDataUserRolesRepositoryTest {
+class SpringDataUserRolesRepositoryTest : IntTest() {
 
     private lateinit var repo: SpringDataUserRolesRepository
     private lateinit var usersRepo: SpringDataUsersRepository
@@ -24,7 +24,7 @@ class SpringDataUserRolesRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val connectionFactory = ConnectionFactories.get(DB_URL)
         val client = DatabaseClient.create(connectionFactory)
         repo = SpringDataUserRolesRepository(client)
         usersRepo = SpringDataUsersRepository(client)

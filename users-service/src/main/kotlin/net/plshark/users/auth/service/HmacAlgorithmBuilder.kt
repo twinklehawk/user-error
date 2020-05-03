@@ -16,7 +16,7 @@ class HmacAlgorithmBuilder : AlgorithmBuilder {
         val name: String = authProperties.algorithm
 
         if (HMAC256 == name || HMAC512 == name) {
-            val secret: String = authProperties.secret!!
+            val secret: String? = authProperties.secret
             check(StringUtils.hasLength(secret)) { "Must set a secret when using the HMAC256 algorithm" }
             algorithm = if (HMAC256 == name) Algorithm.HMAC256(secret) else if (HMAC512 == name) Algorithm.HMAC512(secret) else null
         }

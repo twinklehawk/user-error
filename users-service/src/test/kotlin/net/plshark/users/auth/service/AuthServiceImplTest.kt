@@ -1,6 +1,5 @@
 package net.plshark.users.auth.service
 
-
 import io.mockk.every
 import io.mockk.mockk
 import net.plshark.users.auth.model.AccountCredentials
@@ -32,6 +31,7 @@ class AuthServiceImplTest {
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         every { authSettingsService.findByUsername("test-user") } returns Mono.just(settings)
+        every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
         StepVerifier.create(service.authenticate(AccountCredentials("test-user", "test-password")))
                 .expectNext(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null))
@@ -45,6 +45,7 @@ class AuthServiceImplTest {
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         every { authSettingsService.findByUsername("test-user") } returns Mono.just(settings.copy(refreshTokenEnabled = false))
+        every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
         StepVerifier.create(service.authenticate(AccountCredentials("test-user", "test-password")))
                 .expectNext(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = null, scope = null))
@@ -61,7 +62,7 @@ class AuthServiceImplTest {
         every { authSettingsService.getDefaultTokenExpiration() } returns 20000
 
         StepVerifier.create(service.authenticate(AccountCredentials("test-user", "test-password")))
-                .expectNext(AuthToken(accessToken = "test-token", expiresIn = 20, refreshToken = "refresh-token", scope = null))
+                .expectNext(AuthToken(accessToken = "test-token", expiresIn = 20, refreshToken = null, scope = null))
                 .verifyComplete()
     }
 
@@ -89,6 +90,7 @@ class AuthServiceImplTest {
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         every { authSettingsService.findByUsername("test-user") } returns Mono.just(settings)
+        every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
         StepVerifier.create(service.refresh("refresh-token"))
             .expectNext(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null))
