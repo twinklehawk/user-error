@@ -1,7 +1,7 @@
 package net.plshark.users.repo.springdata
 
-import com.opentable.db.postgres.junit.EmbeddedPostgresRules
-import net.plshark.testutils.PlsharkFlywayPreparer
+import io.r2dbc.spi.ConnectionFactories
+import net.plshark.testutils.IntTest
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
@@ -9,11 +9,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.r2dbc.core.DatabaseClient
 
 class SpringDataUserRolesRepositoryTest {
-
-    //@Rule
-    val dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
 
     private lateinit var repo: SpringDataUserRolesRepository
     private lateinit var usersRepo: SpringDataUsersRepository
@@ -26,7 +24,8 @@ class SpringDataUserRolesRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        val client = DatabaseClientHelper.buildTestClient(dbRule)
+        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val client = DatabaseClient.create(connectionFactory)
         repo = SpringDataUserRolesRepository(client)
         usersRepo = SpringDataUsersRepository(client)
         rolesRepo = SpringDataRolesRepository(client)

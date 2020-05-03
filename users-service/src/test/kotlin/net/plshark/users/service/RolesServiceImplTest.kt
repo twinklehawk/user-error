@@ -91,7 +91,7 @@ class RolesServiceImplTest {
     }
 
     @Test
-    fun `should return an error when a required role"s application does not exist`() {
+    fun `should return an error when a required role's application does not exist`() {
         every { appsRepo.get("app-name") } returns Mono.empty()
 
         StepVerifier.create(service.getRequired("app-name", "role-name"))

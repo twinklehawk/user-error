@@ -27,7 +27,6 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:1.9.3")
-    testImplementation("com.opentable.components:otj-pg-embedded")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     // for flyway
     runtimeOnly("org.springframework:spring-jdbc")
@@ -44,5 +43,9 @@ tasks.withType<KotlinCompile> {
     }
 }
 tasks.withType<Test> {
-    useJUnitPlatform()
+    val runIntTests = System.getProperties().getProperty("runIntTests") == "true"
+    useJUnitPlatform {
+        if (!runIntTests)
+            excludeTags("integrationTest")
+    }
 }

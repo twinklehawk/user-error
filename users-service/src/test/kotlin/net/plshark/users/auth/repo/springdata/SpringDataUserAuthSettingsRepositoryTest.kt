@@ -1,10 +1,8 @@
 package net.plshark.users.auth.repo.springdata
-
-import com.opentable.db.postgres.junit.EmbeddedPostgresRules
-import net.plshark.testutils.PlsharkFlywayPreparer
+import io.r2dbc.spi.ConnectionFactories
+import net.plshark.testutils.IntTest
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.model.User
-import net.plshark.users.repo.springdata.DatabaseClientHelper
 import net.plshark.users.repo.springdata.SpringDataUsersRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -13,19 +11,18 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
 class SpringDataUserAuthSettingsRepositoryTest {
-
-    //@Rule
-    var dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
 
     private lateinit var repo: SpringDataUserAuthSettingsRepository
     private lateinit var usersRepo: SpringDataUsersRepository
 
     @BeforeEach
     fun setup() {
-        val db = DatabaseClientHelper.buildTestClient(dbRule)
+        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val db = DatabaseClient.create(connectionFactory)
         repo = SpringDataUserAuthSettingsRepository(db)
         usersRepo = SpringDataUsersRepository(db)
     }

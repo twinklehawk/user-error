@@ -1,24 +1,24 @@
 package net.plshark.users.repo.springdata
 
-import com.opentable.db.postgres.junit.EmbeddedPostgresRules
-import net.plshark.testutils.PlsharkFlywayPreparer
+import io.r2dbc.spi.ConnectionFactories
+import net.plshark.testutils.IntTest
 import net.plshark.users.model.Group
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
 class SpringDataGroupsRepositoryTest {
-
-    //@Rule
-    val dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
 
     private lateinit var repo: SpringDataGroupsRepository
 
     @BeforeEach
     fun setup() {
-        repo = SpringDataGroupsRepository(DatabaseClientHelper.buildTestClient(dbRule))
+        val connectionFactory = ConnectionFactories.get(IntTest.DB_URL)
+        val dbClient = DatabaseClient.create(connectionFactory)
+        repo = SpringDataGroupsRepository(dbClient)
     }
 
     @Test
