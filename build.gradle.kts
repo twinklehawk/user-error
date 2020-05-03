@@ -12,7 +12,7 @@ allprojects {
         maven { url = uri("https://repo.spring.io/milestone") }
     }
     group = "net.plshark.users"
-    version = "0.2.3"
+    version = "0.3.0"
 }
 
 subprojects {

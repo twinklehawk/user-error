@@ -2,8 +2,6 @@ package net.plshark.users.service
 
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
-import net.plshark.users.model.Application
-import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
 import org.springframework.dao.DataIntegrityViolationException

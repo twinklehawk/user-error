@@ -3,6 +3,8 @@ plugins {
     groovy
     id("io.freefair.lombok")
     `maven-publish`
+    kotlin("jvm")
+    kotlin("plugin.spring")
 }
 
 dependencies {
@@ -12,6 +14,10 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.google.guava:guava")
     implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-parameter-names")
     testImplementation("org.codehaus.groovy:groovy-all")

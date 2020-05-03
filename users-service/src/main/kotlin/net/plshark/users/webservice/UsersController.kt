@@ -40,7 +40,7 @@ class UsersController(private val usersService: UsersService) {
      * @return the matching user
      */
     @GetMapping(path = ["/{username}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getUser(@PathVariable("username") username: String?): Mono<User> {
+    fun getUser(@PathVariable("username") username: String): Mono<User> {
         return usersService.get(username)
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for username") })
     }
@@ -62,7 +62,7 @@ class UsersController(private val usersService: UsersService) {
      * @return an empty result
      */
     @DeleteMapping("/{username}")
-    fun delete(@PathVariable("username") username: String?): Mono<Void> {
+    fun delete(@PathVariable("username") username: String): Mono<Void> {
         return usersService.delete(username)
     }
 
@@ -74,7 +74,7 @@ class UsersController(private val usersService: UsersService) {
      */
     @PostMapping(path = ["/{username}/password"])
     fun changePassword(
-        @PathVariable("username") username: String?,
+        @PathVariable("username") username: String,
         @RequestBody request: PasswordChangeRequest
     ): Mono<Void> {
         return usersService.updateUserPassword(username, request.currentPassword, request.newPassword)
@@ -87,7 +87,9 @@ class UsersController(private val usersService: UsersService) {
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
     @PostMapping(path = ["/{username}/roles"])
-    fun grantRole(@PathVariable("username") username: String?, @RequestBody roleGrant: RoleGrant): Mono<Void> {
+    fun grantRole(
+        @PathVariable("username") username: String,
+        @RequestBody roleGrant: RoleGrant): Mono<Void> {
         return usersService.grantRoleToUser(username, roleGrant.application, roleGrant.role)
     }
 
@@ -99,8 +101,9 @@ class UsersController(private val usersService: UsersService) {
      */
     @DeleteMapping(path = ["/{username}/roles/{application}/{role}"])
     fun removeRole(
-        @PathVariable("username") username: String?, @PathVariable("application") application: String?,
-        @PathVariable("role") role: String?
+        @PathVariable("username") username: String,
+        @PathVariable("application") application: String,
+        @PathVariable("role") role: String
     ): Mono<Void> {
         return usersService.removeRoleFromUser(username, application, role)
     }
@@ -112,7 +115,9 @@ class UsersController(private val usersService: UsersService) {
      * @return an empty result or ObjectNotFoundException if the user or group does not exist
      */
     @PostMapping(path = ["/{username}/groups/{group}"])
-    fun grantGroup(@PathVariable("username") username: String?, @PathVariable("group") group: String?): Mono<Void> {
+    fun grantGroup(
+        @PathVariable("username") username: String,
+        @PathVariable("group") group: String): Mono<Void> {
         return usersService.grantGroupToUser(username, group)
     }
 
@@ -123,7 +128,9 @@ class UsersController(private val usersService: UsersService) {
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
     @DeleteMapping(path = ["/{username}/groups/{group}"])
-    fun removeGroup(@PathVariable("username") username: String?, @PathVariable("group") group: String?): Mono<Void> {
+    fun removeGroup(
+        @PathVariable("username") username: String,
+        @PathVariable("group") group: String): Mono<Void> {
         return usersService.removeGroupFromUser(username, group)
     }
 

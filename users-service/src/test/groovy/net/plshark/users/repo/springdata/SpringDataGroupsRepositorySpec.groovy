@@ -3,7 +3,7 @@ package net.plshark.users.repo.springdata
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
 import net.plshark.testutils.PlsharkFlywayPreparer
-import net.plshark.users.model.Group
+
 import org.junit.Rule
 import reactor.test.StepVerifier
 import spock.lang.Specification

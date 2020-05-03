@@ -1,9 +1,6 @@
 package net.plshark.users.auth.webservice
 
-import net.plshark.users.auth.model.AccountCredentials
-import net.plshark.users.auth.model.AuthToken
-import net.plshark.users.auth.model.AuthenticatedUser
-import net.plshark.users.auth.service.AuthService
+
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import spock.lang.Specification

@@ -1,8 +1,6 @@
 package net.plshark.users.auth.service
 
-import net.plshark.users.auth.AuthProperties
-import net.plshark.users.auth.model.UserAuthSettings
-import net.plshark.users.auth.repo.UserAuthSettingsRepository
+
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import spock.lang.Specification

@@ -3,11 +3,17 @@ plugins {
     groovy
     id("io.freefair.lombok")
     `maven-publish`
+    kotlin("jvm")
+    kotlin("plugin.spring")
 }
 
 dependencies {
     internal(enforcedPlatform(project(":platform")))
     implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
     api(project(":users-api"))
     api("org.springframework:spring-webflux")
     api("com.auth0:java-jwt")

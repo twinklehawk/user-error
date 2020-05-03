@@ -1,7 +1,7 @@
 package net.plshark.users.auth.service
 
 import com.google.common.collect.ImmutableList
-import net.plshark.users.auth.AuthProperties
+
 import spock.lang.Specification
 
 class AlgorithmFactorySpec extends Specification {

@@ -1,7 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.errors.ObjectNotFoundException
-import net.plshark.users.model.Role
+
 import net.plshark.users.service.RolesService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

@@ -1,7 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.errors.ObjectNotFoundException
-import net.plshark.users.model.Group
+
 import net.plshark.users.service.GroupsService
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier

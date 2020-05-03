@@ -2,7 +2,7 @@ package net.plshark.users.auth.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import net.plshark.users.auth.model.AuthenticatedUser
+
 import org.springframework.security.authentication.BadCredentialsException
 import spock.lang.Specification
 

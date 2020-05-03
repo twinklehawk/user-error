@@ -1,9 +1,7 @@
 package net.plshark.users.webservice
 
 import net.plshark.errors.BadRequestException
-import net.plshark.users.model.PasswordChangeRequest
-import net.plshark.users.model.RoleGrant
-import net.plshark.users.model.User
+
 import net.plshark.users.service.UsersService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

@@ -3,8 +3,7 @@ package net.plshark.users.auth.repo.springdata
 import com.opentable.db.postgres.junit.EmbeddedPostgresRules
 import com.opentable.db.postgres.junit.PreparedDbRule
 import net.plshark.testutils.PlsharkFlywayPreparer
-import net.plshark.users.auth.model.UserAuthSettings
-import net.plshark.users.model.User
+
 import net.plshark.users.repo.springdata.DatabaseClientHelper
 import net.plshark.users.repo.springdata.SpringDataUsersRepository
 import org.junit.Rule
