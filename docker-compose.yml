@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:12.0
+    environment:
+      POSTGRES_PASSWORD: test-pass
+    ports:
+      - "5432:5432"
