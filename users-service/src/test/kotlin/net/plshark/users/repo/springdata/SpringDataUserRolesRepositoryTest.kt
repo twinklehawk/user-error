@@ -1,7 +1,7 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
-import net.plshark.testutils.IntTest
+import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
 
-class SpringDataUserRolesRepositoryTest : IntTest() {
+class SpringDataUserRolesRepositoryTest : DbIntTest() {
 
     private lateinit var repo: SpringDataUserRolesRepository
     private lateinit var usersRepo: SpringDataUsersRepository

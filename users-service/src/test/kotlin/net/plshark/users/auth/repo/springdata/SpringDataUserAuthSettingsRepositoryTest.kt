@@ -1,20 +1,18 @@
 package net.plshark.users.auth.repo.springdata
+
 import io.r2dbc.spi.ConnectionFactories
-import net.plshark.testutils.IntTest
+import net.plshark.testutils.DbIntTest
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.model.User
 import net.plshark.users.repo.springdata.SpringDataUsersRepository
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
-class SpringDataUserAuthSettingsRepositoryTest : IntTest() {
+class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
 
     private lateinit var repo: SpringDataUserAuthSettingsRepository
     private lateinit var usersRepo: SpringDataUsersRepository

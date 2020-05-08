@@ -1,17 +1,15 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
-import net.plshark.testutils.IntTest
+import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.Application
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
 
-class SpringDataApplicationsRepositoryTest : IntTest() {
+class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     lateinit var repo: SpringDataApplicationsRepository
 

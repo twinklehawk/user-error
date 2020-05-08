@@ -71,8 +71,8 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
     companion object {
         fun mapRow(row: Row): Role {
             return Role(
-                id = row["id", Long::class.java],
-                applicationId = row["application_id", Long::class.java],
+                id = row["id", java.lang.Long::class.java]?.toLong(),
+                applicationId = row["application_id", java.lang.Long::class.java]?.toLong(),
                 name = row["name", String::class.java]!!
             )
         }

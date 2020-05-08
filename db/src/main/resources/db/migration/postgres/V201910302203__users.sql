@@ -1,5 +1,6 @@
 SET search_path TO ${schema};
 
+DROP USER ${username};
 CREATE USER ${username} PASSWORD '${password}';
 GRANT USAGE ON SCHEMA ${schema} TO ${username};
 

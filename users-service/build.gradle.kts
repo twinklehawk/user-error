@@ -19,7 +19,6 @@ dependencies {
     implementation("org.springframework.boot.experimental:spring-boot-starter-data-r2dbc")
     implementation("io.r2dbc:r2dbc-postgresql")
     implementation("com.auth0:java-jwt")
-    implementation("org.flywaydb:flyway-core")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation(kotlin("reflect"))
@@ -28,6 +27,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:1.9.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.flywaydb:flyway-core")
+    //testRuntimeOnly("org.springframework:spring-jdbc")
+    testRuntimeOnly("org.postgresql:postgresql")
+    testRuntimeOnly(project(":db"))
 }
 
 java {

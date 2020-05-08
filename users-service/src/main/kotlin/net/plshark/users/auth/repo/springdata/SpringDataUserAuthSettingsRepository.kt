@@ -34,7 +34,7 @@ class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) :
         return client.insert()
             .into(UserAuthSettings::class.java)
             .using(userAuthSettings)
-            .map { row: Row -> row.get("id", Long::class.java)!! }
+            .map { row: Row -> row.get("id", java.lang.Long::class.java)!!.toLong() }
             .one()
             .map { id: Long -> userAuthSettings.copy(id = id) }
     }

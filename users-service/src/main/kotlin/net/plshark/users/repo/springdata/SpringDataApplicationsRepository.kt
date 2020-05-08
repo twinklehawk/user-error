@@ -57,7 +57,7 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
     companion object {
         fun mapRow(row: Row): Application {
             return Application(
-                id = row["id", Long::class.java],
+                id = row["id", java.lang.Long::class.java]?.toLong(),
                 name = row["name", String::class.java]!!
             )
         }

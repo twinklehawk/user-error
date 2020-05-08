@@ -30,8 +30,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
-    - name: Run DB migrations
-      run: ./gradlew flywayMigrate
     - name: Build and test
       run: ./gradlew build jacocoTestReport -DrunIntTests=true
     - name: Upload test coverage

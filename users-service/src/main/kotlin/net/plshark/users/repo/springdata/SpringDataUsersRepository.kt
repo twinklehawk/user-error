@@ -87,7 +87,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
     companion object {
         fun mapRow(row: Row): User {
             return User(
-                id = row["id", Long::class.java],
+                id = row["id", java.lang.Long::class.java]?.toLong(),
                 username = row["username", String::class.java]!!,
                 password = null
             )
@@ -95,7 +95,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
 
         private fun mapRowWithPassword(row: Row): User {
             return User(
-                id = row["id", Long::class.java],
+                id = row["id", java.lang.Long::class.java]?.toLong(),
                 username = row["username", String::class.java]!!,
                 password = row["password", String::class.java]
             )

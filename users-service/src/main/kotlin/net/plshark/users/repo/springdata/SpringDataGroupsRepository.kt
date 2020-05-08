@@ -66,7 +66,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
          */
         fun mapRow(row: Row): Group {
             return Group(
-                id = row["id", Long::class.java],
+                id = row["id", java.lang.Long::class.java]?.toLong(),
                 name = row["name", String::class.java]!!
             )
         }
