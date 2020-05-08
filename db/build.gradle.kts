@@ -9,6 +9,10 @@ plugins {
     java
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 flyway {
     // url, user, and password should be overridden with system properties for a real environment:
     // ./gradlew -Dflyway.url=jdbc:postgresql://localhost:5432/postgres -Dflyway.user=postgres -Dflyway.password=test-pass \
