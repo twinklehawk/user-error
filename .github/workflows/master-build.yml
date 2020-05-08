@@ -44,7 +44,7 @@ jobs:
         for f in */build/reports/jacoco/test/jacocoTestReport.xml
         do
           PROJECT=${f%/build/reports/jacoco/test/jacocoTestReport.xml}
-          JACOCO_SOURCE_PATH=$PROJECT/src/main/java ./cc-test-reporter format-coverage -t jacoco -o build/coverage/codeclimate-$PROJECT.json $f
+          JACOCO_SOURCE_PATH=$PROJECT/src/main/kotlin ./cc-test-reporter format-coverage -t jacoco -o build/coverage/codeclimate-$PROJECT.json $f
         done
         ./cc-test-reporter sum-coverage build/coverage/codeclimate-*.json -o build/coverage/codeclimate-total.json
         ./cc-test-reporter upload-coverage -i build/coverage/codeclimate-total.json
