@@ -5,10 +5,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        java_version: ['1.8', '1.11']
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: test-pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
     - uses: actions/checkout@v2
     - name: Restore cache
@@ -21,11 +29,10 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.java_version }}
+        java-version: 1.11
     - name: Build and test
-      run: ./gradlew build jacocoTestReport
+      run: ./gradlew build jacocoTestReport -DrunIntTests=true
     - name: Upload test coverage
-      if: matrix.java_version == '1.11'
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
         GIT_COMMIT_SHA: ${{ github.sha }}
