@@ -1,7 +1,12 @@
 SET search_path TO ${schema};
 
-DROP USER ${username};
-CREATE USER ${username} PASSWORD '${password}';
+DO $$
+    BEGIN
+        CREATE USER ${username} PASSWORD '${password}';
+    EXCEPTION WHEN DUPLICATE_OBJECT THEN
+        RAISE NOTICE 'not creating already-existing user';
+    END
+$$;
 GRANT USAGE ON SCHEMA ${schema} TO ${username};
 
 -- data tables
