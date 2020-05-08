@@ -27,7 +27,7 @@ class GroupsController(private val groupsService: GroupsService) {
      */
     @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     operator fun get(@PathVariable("name") name: String): Mono<Group> {
-        return groupsService.get(name)
+        return groupsService[name]
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $name") })
     }
 

@@ -32,14 +32,14 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted application by ID`() {
         val inserted = repo.insert(Application(null, "test-app")).block()!!
 
-        val app = repo.get(inserted.id!!).block()
+        val app = repo[inserted.id!!].block()
 
         assertEquals(inserted, app)
     }
 
     @Test
     fun `retrieving an application by ID when no application matches returns empty`() {
-        StepVerifier.create(repo.get(1000))
+        StepVerifier.create(repo[1000])
                 .verifyComplete()
     }
 
@@ -47,14 +47,14 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted application by name`() {
         val inserted = repo.insert(Application(null, "test-app")).block()!!
 
-        val app = repo.get(inserted.name).block()
+        val app = repo[inserted.name].block()
 
         assertEquals(inserted, app)
     }
 
     @Test
     fun `retrieving an application by name when no application matches returns empty`() {
-        StepVerifier.create(repo.get("app"))
+        StepVerifier.create(repo["app"])
                 .verifyComplete()
     }
 
@@ -63,7 +63,7 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
         val inserted = repo.insert(Application(null, "test-app")).block()!!
 
         repo.delete(inserted.id!!).block()
-        val retrieved = repo.get(inserted.id!!).block()
+        val retrieved = repo[inserted.id!!].block()
 
         assertNull(retrieved)
     }
@@ -78,7 +78,7 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
         val inserted = repo.insert(Application(null, "test-app")).block()!!
 
         repo.delete(inserted.name).block()
-        val retrieved = repo.get(inserted.id!!).block()
+        val retrieved = repo[inserted.id!!].block()
 
         assertNull(retrieved)
     }

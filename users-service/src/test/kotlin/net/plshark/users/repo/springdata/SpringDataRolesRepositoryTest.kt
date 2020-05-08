@@ -39,14 +39,14 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val app = appsRepo.insert(Application(null, "app")).block()!!
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
-        val role = repo.get(inserted.id!!).block()
+        val role = repo[inserted.id!!].block()
 
         assertEquals(inserted, role)
     }
 
     @Test
     fun `retrieving a role by ID when no role matches returns empty`() {
-        StepVerifier.create(repo.get(1000))
+        StepVerifier.create(repo[1000])
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -57,14 +57,14 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val app = appsRepo.insert(Application(null, "app")).block()!!
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
-        val role = repo.get(app.id!!, "test-role").block()
+        val role = repo[app.id!!, "test-role"].block()
 
         assertEquals(inserted, role)
     }
 
     @Test
     fun `retrieving a role by name when no role matches returns empty`() {
-        StepVerifier.create(repo.get(1, "test-role"))
+        StepVerifier.create(repo[1, "test-role"])
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -76,7 +76,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
         repo.delete(inserted.id!!).block()
-        val retrieved = repo.get(inserted.id!!).block()
+        val retrieved = repo[inserted.id!!].block()
         
         assertNull(retrieved)
     }
@@ -96,10 +96,10 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
         assertEquals(4, roles.size)
         // these are inserted by the migration scripts
-        assertEquals("users-user", roles.get(0).name)
-        assertEquals("users-admin", roles.get(1).name)
-        assertEquals("name", roles.get(2).name)
-        assertEquals("name2", roles.get(3).name)
+        assertEquals("users-user", roles[0].name)
+        assertEquals("users-admin", roles[1].name)
+        assertEquals("name", roles[2].name)
+        assertEquals("name2", roles[3].name)
     }
 
     @Test
@@ -112,8 +112,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val roles = repo.getRoles(2, 0).collectList().block()!!
 
         assertEquals(2, roles.size)
-        assertEquals("users-user", roles.get(0).name)
-        assertEquals("users-admin", roles.get(1).name)
+        assertEquals("users-user", roles[0].name)
+        assertEquals("users-admin", roles[1].name)
     }
 
     @Test
@@ -126,8 +126,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val roles = repo.getRoles(2, 2).collectList().block()!!
 
         assertEquals(2, roles.size)
-        assertEquals("name", roles.get(0).name)
-        assertEquals("name2", roles.get(1).name)
+        assertEquals("name", roles[0].name)
+        assertEquals("name2", roles[1].name)
     }
 
     @Test

@@ -44,7 +44,7 @@ class ApplicationsController(private val applicationsService: ApplicationsServic
      */
     @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     operator fun get(@PathVariable("name") name: String): Mono<Application> {
-        return applicationsService.get(name)
+        return applicationsService[name]
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No application found for $name") })
     }
 

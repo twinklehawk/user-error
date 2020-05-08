@@ -41,7 +41,7 @@ class UsersController(private val usersService: UsersService) {
      */
     @GetMapping(path = ["/{username}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUser(@PathVariable("username") username: String): Mono<User> {
-        return usersService.get(username)
+        return usersService[username]
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for username") })
     }
 

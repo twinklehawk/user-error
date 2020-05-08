@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 /**
  * Prompts a user for HTTP Bearer authentication.
  */
-class HttpBearerServerAuthenticationEntryPoint(private val realm: String = DEFAULT_REALM) :
+class HttpBearerServerAuthenticationEntryPoint(realm: String = DEFAULT_REALM) :
     ServerAuthenticationEntryPoint {
 
     private val headerValue: String = String.format(WWW_AUTHENTICATE_FORMAT, realm)

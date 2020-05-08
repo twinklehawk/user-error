@@ -18,18 +18,18 @@ class ApplicationsControllerTest {
     @Test
     fun `getting an application should pass through whatever the service returns`() {
         val app = Application(123, "test-app")
-        every { applicationsService.get("test-app") } returns Mono.just(app)
+        every { applicationsService["test-app"] } returns Mono.just(app)
 
-        StepVerifier.create(controller.get("test-app"))
+        StepVerifier.create(controller["test-app"])
                 .expectNext(app)
                 .verifyComplete()
     }
 
     @Test
     fun `getting an application should throw an exception when the application does not exist`() {
-        every { applicationsService.get("test-app") } returns Mono.empty()
+        every { applicationsService["test-app"] } returns Mono.empty()
 
-        StepVerifier.create(controller.get("test-app"))
+        StepVerifier.create(controller["test-app"])
                 .verifyError(ObjectNotFoundException::class.java)
     }
 

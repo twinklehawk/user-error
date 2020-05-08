@@ -30,9 +30,9 @@ class RolesControllerTest {
 
     @Test
     fun `getting a role should throw an exception when the role does not exist`() {
-        every { service.get("test-app", "test-role") } returns Mono.empty()
+        every { service["test-app", "test-role"] } returns Mono.empty()
 
-        StepVerifier.create(controller.get("test-app", "test-role"))
+        StepVerifier.create(controller["test-app", "test-role"])
                 .verifyError(ObjectNotFoundException::class.java)
     }
 
@@ -60,9 +60,9 @@ class RolesControllerTest {
     @Test
     fun `get passes the role name through`() {
         val role1 = Role(null, 1, "role")
-        every { service.get("app", "role") } returns Mono.just(role1)
+        every { service["app", "role"] } returns Mono.just(role1)
 
-        StepVerifier.create(controller.get("app", "role"))
+        StepVerifier.create(controller["app", "role"])
                 .expectNext(role1)
                 .verifyComplete()
     }

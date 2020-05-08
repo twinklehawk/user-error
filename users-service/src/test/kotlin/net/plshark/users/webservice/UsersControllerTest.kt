@@ -105,7 +105,7 @@ class UsersControllerTest {
     @Test
     fun `getUser passes the username through`() {
         val user1 = User(1, "user", null)
-        every { service.get("user") } returns Mono.just(user1)
+        every { service["user"] } returns Mono.just(user1)
 
         StepVerifier.create(controller.getUser("user"))
                 .expectNext(user1)

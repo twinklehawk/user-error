@@ -114,9 +114,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
         assertEquals(3, users.size)
         // admin is inserted by the migration scripts
-        assertEquals("admin", users.get(0).username)
-        assertEquals("name", users.get(1).username)
-        assertEquals("name2", users.get(2).username)
+        assertEquals("admin", users[0].username)
+        assertEquals("name", users[1].username)
+        assertEquals("name2", users[2].username)
     }
 
     @Test
@@ -128,8 +128,8 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         val users = repo.getAll(2, 0).collectList().block()!!
 
         assertEquals(2, users.size)
-        assertEquals("admin", users.get(0).username)
-        assertEquals("name", users.get(1).username)
+        assertEquals("admin", users[0].username)
+        assertEquals("name", users[1].username)
     }
 
     @Test
@@ -141,7 +141,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         val users = repo.getAll(2, 2).collectList().block()!!
 
         assertEquals(2, users.size)
-        assertEquals("name2", users.get(0).username)
-        assertEquals("name3", users.get(1).username)
+        assertEquals("name2", users[0].username)
+        assertEquals("name3", users[1].username)
     }
 }

@@ -23,9 +23,9 @@ class ApplicationsServiceImplTest {
     @Test
     fun `get should pass through the response from the repo`() {
         val app = Application(1, "app")
-        every { appsRepo.get("app") } returns Mono.just(app)
+        every { appsRepo["app"] } returns Mono.just(app)
 
-        StepVerifier.create(service.get("app"))
+        StepVerifier.create(service["app"])
                 .expectNext(app)
                 .verifyComplete()
     }
@@ -53,7 +53,7 @@ class ApplicationsServiceImplTest {
     @Test
     fun `delete should delete the app`() {
         val app = Application(1, "app")
-        every { appsRepo.get("app") } returns Mono.just(app)
+        every { appsRepo["app"] } returns Mono.just(app)
         val deleteAppProbe = PublisherProbe.empty<Void>()
         every { appsRepo.delete(1) } returns deleteAppProbe.mono()
 

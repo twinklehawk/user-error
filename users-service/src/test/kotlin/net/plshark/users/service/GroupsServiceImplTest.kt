@@ -24,7 +24,7 @@ class GroupsServiceImplTest {
     fun `should be able to retrieve groups by name`() {
         every { groupsRepo.getForName("group-name") } returns Mono.just(Group(123, "group-name"))
 
-        StepVerifier.create(service.get("group-name"))
+        StepVerifier.create(service["group-name"])
                 .expectNext(Group(123, "group-name"))
                 .verifyComplete()
         StepVerifier.create(service.getRequired("group-name"))

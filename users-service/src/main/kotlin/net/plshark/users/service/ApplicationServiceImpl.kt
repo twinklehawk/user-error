@@ -18,7 +18,7 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
     ApplicationsService {
 
     override fun get(name: String): Mono<Application> {
-        return appsRepo.get(name)
+        return appsRepo[name]
     }
 
     override fun getApplications(limit: Int, offset: Long): Flux<Application> {

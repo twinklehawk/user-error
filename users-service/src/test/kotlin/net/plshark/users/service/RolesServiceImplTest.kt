@@ -35,7 +35,7 @@ class RolesServiceImplTest {
     @Test
     fun `creating with an application name should look up the application and set the ID before inserting`() {
         val inserted = Role(1, 321, "role")
-        every { appsRepo.get("app") } returns Mono.just(Application(321, "app"))
+        every { appsRepo["app"] } returns Mono.just(Application(321, "app"))
         every { rolesRepo.insert(Role(null, 321, "role")) } returns Mono.just(inserted)
 
         StepVerifier.create(service.create("app", Role(null, null, "role")))
@@ -46,7 +46,7 @@ class RolesServiceImplTest {
     @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
         val request = Role(null, null, "app")
-        every { appsRepo.get("app") } returns Mono.just(Application(321, "app"))
+        every { appsRepo["app"] } returns Mono.just(Application(321, "app"))
         every { rolesRepo.insert(request.copy(applicationId = 321)) } returns
                 Mono.error(DataIntegrityViolationException("test error"))
 
@@ -66,8 +66,8 @@ class RolesServiceImplTest {
 
     @Test
     fun `deleting a role by name should look up the role then delete the role`() {
-        every { appsRepo.get("app") } returns Mono.just(Application(123, "app"))
-        every { rolesRepo.get(123, "role") } returns Mono.just(Role(456, 123, "role"))
+        every { appsRepo["app"] } returns Mono.just(Application(123, "app"))
+        every { rolesRepo[123, "role"] } returns Mono.just(Role(456, 123, "role"))
         val rolesProbe = PublisherProbe.empty<Void>()
         every { rolesRepo.delete(456) } returns rolesProbe.mono()
 
@@ -78,11 +78,11 @@ class RolesServiceImplTest {
 
     @Test
     fun `should be able to retrieve a role by name`() {
-        every { appsRepo.get("app-name") } returns Mono.just(Application(132, "app-name"))
+        every { appsRepo["app-name"] } returns Mono.just(Application(132, "app-name"))
         val role = Role(123, 132, "role-name")
-        every { rolesRepo.get(132, "role-name") } returns Mono.just(role)
+        every { rolesRepo[132, "role-name"] } returns Mono.just(role)
 
-        StepVerifier.create(service.get("app-name", "role-name"))
+        StepVerifier.create(service["app-name", "role-name"])
                 .expectNext(role)
                 .verifyComplete()
         StepVerifier.create(service.getRequired("app-name", "role-name"))
@@ -92,7 +92,7 @@ class RolesServiceImplTest {
 
     @Test
     fun `should return an error when a required role's application does not exist`() {
-        every { appsRepo.get("app-name") } returns Mono.empty()
+        every { appsRepo["app-name"] } returns Mono.empty()
 
         StepVerifier.create(service.getRequired("app-name", "role-name"))
                 .verifyError(ObjectNotFoundException::class.java)
@@ -100,8 +100,8 @@ class RolesServiceImplTest {
 
     @Test
     fun `should return an error when a required role does not exist`() {
-        every { appsRepo.get("app-name") } returns Mono.just(Application(132, "app-name"))
-        every { rolesRepo.get(132, "role-name") } returns Mono.empty()
+        every { appsRepo["app-name"] } returns Mono.just(Application(132, "app-name"))
+        every { rolesRepo[132, "role-name"] } returns Mono.empty()
 
         StepVerifier.create(service.getRequired("app-name", "role-name"))
                 .verifyError(ObjectNotFoundException::class.java)
