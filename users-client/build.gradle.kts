@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `java-library`
-    groovy
     `maven-publish`
     kotlin("jvm")
     kotlin("plugin.spring")

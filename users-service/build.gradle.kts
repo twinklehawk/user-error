@@ -1,9 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    java
     id("org.springframework.boot")
-    groovy
     kotlin("jvm")
     kotlin("plugin.spring")
 }
