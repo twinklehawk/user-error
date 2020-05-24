@@ -2,6 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.service.ApplicationsService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -57,7 +58,7 @@ class ApplicationsController(private val applicationsService: ApplicationsServic
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun create(@RequestBody application: Application): Mono<Application> {
+    fun create(@RequestBody application: ApplicationCreate): Mono<Application> {
         return applicationsService.create(application)
     }
 

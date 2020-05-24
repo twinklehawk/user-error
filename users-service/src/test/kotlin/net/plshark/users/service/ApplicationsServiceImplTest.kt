@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
@@ -32,8 +33,8 @@ class ApplicationsServiceImplTest {
 
     @Test
     fun `create should pass through the response from the repo`() {
-        val request = Application(null, "app")
-        val inserted = request.copy(id = 1)
+        val request = ApplicationCreate("app")
+        val inserted = Application(1, "app")
         every { appsRepo.insert(request) } returns Mono.just(inserted)
 
         StepVerifier.create(service.create(request))
@@ -43,7 +44,7 @@ class ApplicationsServiceImplTest {
 
     @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
-        val request = Application(null, "app")
+        val request = ApplicationCreate("app")
         every { appsRepo.insert(request) } returns Mono.error(DataIntegrityViolationException("test error"))
 
         StepVerifier.create(service.create(request))

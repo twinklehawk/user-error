@@ -2,7 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.Role
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `inserting a role returns the inserted role with the ID set`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
 
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
@@ -36,7 +36,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted role by ID`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
         val role = repo[inserted.id!!].block()
@@ -54,10 +54,10 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted role by name`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
-        val role = repo[app.id!!, "test-role"].block()
+        val role = repo[app.id, "test-role"].block()
 
         assertEquals(inserted, role)
     }
@@ -72,7 +72,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `can delete a previously inserted role by ID`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(Role(null, app.id, "test-role")).block()!!
 
         repo.delete(inserted.id!!).block()
@@ -88,7 +88,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `getRoles should return all results when there are less than max results`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         repo.insert(Role(null, app.id, "name"))
                 .then(repo.insert(Role(null, app.id, "name2"))).block()
 
@@ -104,7 +104,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `getRoles should return up to max results when there are more results`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         repo.insert(Role(null, app.id, "name")).block()
         repo.insert(Role(null, app.id, "name2")).block()
         repo.insert(Role(null, app.id, "name3")).block()
@@ -118,7 +118,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `getRoles should start at the correct offset`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         repo.insert(Role(null, app.id, "name"))
                 .then(repo.insert(Role(null, app.id, "name2")))
                 .then(repo.insert(Role(null, app.id, "name3"))).block()
@@ -132,13 +132,13 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `getRolesForApplication should return all rows with a matching application ID`() {
-        val app = appsRepo.insert(Application(null, "app")).block()!!
-        val app2 = appsRepo.insert(Application(null, "app2")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+        val app2 = appsRepo.insert(ApplicationCreate("app2")).block()!!
         repo.insert(Role(null, app.id, "r1")).block()
         repo.insert(Role(null, app.id, "r2")).block()
         repo.insert(Role(null, app2.id, "r3")).block()
 
-        StepVerifier.create(repo.getRolesForApplication(app.id!!))
+        StepVerifier.create(repo.getRolesForApplication(app.id))
             .expectNextMatches { r -> r.name == "r1" }
             .expectNextMatches { r -> r.name == "r2" }
             .verifyComplete()

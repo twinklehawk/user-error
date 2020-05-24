@@ -26,7 +26,7 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsR
     override fun create(application: String, role: Role): Mono<Role> {
         return appsRepo[application]
             // TODO handle no application found
-            .flatMap { app -> create(role.copy( applicationId = app.id!!))}
+            .flatMap { app -> create(role.copy( applicationId = app.id))}
     }
 
     override fun delete(roleId: Long): Mono<Void> {
@@ -40,7 +40,7 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsR
 
     override fun get(application: String, name: String): Mono<Role> {
         return appsRepo[application]
-            .flatMap { app -> rolesRepo[app.id!!, name] }
+            .flatMap { app -> rolesRepo[app.id, name] }
     }
 
     override fun getRequired(application: String, name: String): Mono<Role> {

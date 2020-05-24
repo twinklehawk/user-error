@@ -2,7 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,7 +31,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         rolesRepo = SpringDataRolesRepository(client)
         appsRepo = SpringDataApplicationsRepository(client)
 
-        val app = appsRepo.insert(Application(null, "app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         testRole1 = rolesRepo.insert(Role(null, app.id, "testRole1")).block()!!
         testRole2 = rolesRepo.insert(Role(null, app.id, "testRole2")).block()!!
         user1 = usersRepo.insert(User(null, "test-user", "test-pass")).block()!!

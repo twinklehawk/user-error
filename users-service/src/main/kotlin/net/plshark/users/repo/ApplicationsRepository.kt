@@ -1,6 +1,7 @@
 package net.plshark.users.repo
 
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import reactor.core.publisher.Mono
 
 /**
@@ -26,7 +27,7 @@ interface ApplicationsRepository {
      * @param application the application to insert
      * @return the inserted application, will have the ID set
      */
-    fun insert(application: Application): Mono<Application>
+    fun insert(application: ApplicationCreate): Mono<Application>
 
     /**
      * Delete an application by ID

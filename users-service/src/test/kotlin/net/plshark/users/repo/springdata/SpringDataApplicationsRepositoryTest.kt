@@ -2,7 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     @Test
     fun `inserting an application returns the inserted application with the ID set`() {
-        val inserted = repo.insert(Application(null, "app")).block()
+        val inserted = repo.insert(ApplicationCreate("app")).block()
 
         assertNotNull(inserted?.id)
         assertEquals("app", inserted?.name)
@@ -30,9 +30,9 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted application by ID`() {
-        val inserted = repo.insert(Application(null, "test-app")).block()!!
+        val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
-        val app = repo[inserted.id!!].block()
+        val app = repo[inserted.id].block()
 
         assertEquals(inserted, app)
     }
@@ -45,7 +45,7 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted application by name`() {
-        val inserted = repo.insert(Application(null, "test-app")).block()!!
+        val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
         val app = repo[inserted.name].block()
 
@@ -60,10 +60,10 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can delete a previously inserted application by ID`() {
-        val inserted = repo.insert(Application(null, "test-app")).block()!!
+        val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
-        repo.delete(inserted.id!!).block()
-        val retrieved = repo[inserted.id!!].block()
+        repo.delete(inserted.id).block()
+        val retrieved = repo[inserted.id].block()
 
         assertNull(retrieved)
     }
@@ -75,10 +75,10 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can delete a previously inserted application by name`() {
-        val inserted = repo.insert(Application(null, "test-app")).block()!!
+        val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
         repo.delete(inserted.name).block()
-        val retrieved = repo[inserted.id!!].block()
+        val retrieved = repo[inserted.id].block()
 
         assertNull(retrieved)
     }

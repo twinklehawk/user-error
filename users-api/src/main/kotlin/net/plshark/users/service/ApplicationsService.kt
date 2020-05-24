@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -29,7 +30,7 @@ interface ApplicationsService {
      * @return the saved application or a [net.plshark.errors.DuplicateException] if an application with the same
      * name already exists
      */
-    fun create(application: Application): Mono<Application>
+    fun create(application: ApplicationCreate): Mono<Application>
 
     /**
      * Delete an application

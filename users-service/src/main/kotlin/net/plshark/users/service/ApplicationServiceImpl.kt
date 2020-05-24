@@ -2,6 +2,7 @@ package net.plshark.users.service
 
 import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
@@ -26,7 +27,7 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
         return Flux.empty()
     }
 
-    override fun create(application: Application): Mono<Application> {
+    override fun create(application: ApplicationCreate): Mono<Application> {
         return appsRepo.insert(application)
             .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException ->
                 DuplicateException("An application with name ${application.name} already exists", e)
@@ -35,7 +36,7 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
 
     override fun delete(name: String): Mono<Void> {
         return get(name)
-            .map { application -> application.id!! }
+            .map { application -> application.id }
             .flatMap { id -> appsRepo.delete(id) }
     }
 

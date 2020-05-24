@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.service.ApplicationsService
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
@@ -47,7 +48,7 @@ class ApplicationsControllerTest {
 
     @Test
     fun `inserting should pass through whatever the service returns`() {
-        val request = Application(null, "name")
+        val request = ApplicationCreate("name")
         val created = Application(1, "name")
         every { applicationsService.create(request) } returns Mono.just(created)
 

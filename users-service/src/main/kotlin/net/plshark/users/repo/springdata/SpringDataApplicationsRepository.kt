@@ -2,6 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
 import net.plshark.users.model.Application
+import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.repo.ApplicationsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
@@ -28,8 +29,7 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
             .one()
     }
 
-    override fun insert(application: Application): Mono<Application> {
-        require(application.id == null) { "Cannot insert application with ID already set" }
+    override fun insert(application: ApplicationCreate): Mono<Application> {
         return client.execute("INSERT INTO applications (name) VALUES (:name) RETURNING id")
             .bind("name", application.name)
             .fetch().one()
@@ -39,7 +39,7 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
                     .orElse(Mono.empty())
             }
             .switchIfEmpty(Mono.error { IllegalStateException("No ID returned from insert") })
-            .map { id -> application.copy(id = id) }
+            .map { id -> Application(id = id, name = application.name) }
     }
 
     override fun delete(id: Long): Mono<Void> {
@@ -57,7 +57,7 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
     companion object {
         fun mapRow(row: Row): Application {
             return Application(
-                id = row["id", java.lang.Long::class.java]?.toLong(),
+                id = row["id", java.lang.Long::class.java]!!.toLong(),
                 name = row["name", String::class.java]!!
             )
         }

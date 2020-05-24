@@ -2,10 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.Application
-import net.plshark.users.model.Group
-import net.plshark.users.model.Role
-import net.plshark.users.model.User
+import net.plshark.users.model.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -104,7 +101,7 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `retrieving roles should return each role in each group the user belongs to`() {
-        val app1 = appsRepo.insert(Application(null, "test-app")).block()!!
+        val app1 = appsRepo.insert(ApplicationCreate("test-app")).block()!!
         val role1 = rolesRepo.insert(Role(null, app1.id, "role1")).block()!!
         val role2 = rolesRepo.insert(Role(null, app1.id, "role2")).block()!!
         rolesRepo.insert(Role(null, app1.id, "role3")).block()
