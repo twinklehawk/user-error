@@ -94,13 +94,14 @@ class UsersServiceImpl(
     }
 
     override fun updateUserPassword(username: String, currentPassword: String, newPassword: String): Mono<Void> {
-        require(StringUtils.hasLength(newPassword)) { "New password cannot be empty" }
+        require(newPassword.isNotEmpty()) { "New password cannot be empty" }
         val newPasswordEncoded = passwordEncoder.encode(newPassword)
         val currentPasswordEncoded = passwordEncoder.encode(currentPassword)
         return getRequired(username)
             .flatMap { user: User ->
                 userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
                     .onErrorResume(EmptyResultDataAccessException::class.java) { e: EmptyResultDataAccessException? ->
+                        // TODO seems like the wrong exception
                         Mono.error(ObjectNotFoundException("Incorrect current password", e))
                     }
             }

@@ -3,6 +3,7 @@ package net.plshark.users.repo.springdata
 import io.r2dbc.spi.Row
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
+import net.plshark.users.model.PrivateUser
 import net.plshark.users.repo.UsersRepository
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.r2dbc.core.DatabaseClient
@@ -25,7 +26,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .one()
     }
 
-    override fun getForUsernameWithPassword(username: String): Mono<User> {
+    override fun getForUsernameWithPassword(username: String): Mono<PrivateUser> {
         Objects.requireNonNull(username, "username cannot be null")
         return client.execute("SELECT * FROM users WHERE username = :username")
             .bind("username", username)
@@ -45,7 +46,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
                     .orElse(Mono.empty())
             }
             .switchIfEmpty(Mono.error { IllegalStateException("No ID returned from insert") })
-            .map { id -> User(id = id, username = user.username, password = null) }
+            .map { id -> User(id = id, username = user.username) }
     }
 
     override fun delete(userId: Long): Mono<Void> {
@@ -88,16 +89,15 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
         fun mapRow(row: Row): User {
             return User(
                 id = row["id", java.lang.Long::class.java]!!.toLong(),
-                username = row["username", String::class.java]!!,
-                password = null
+                username = row["username", String::class.java]!!
             )
         }
 
-        private fun mapRowWithPassword(row: Row): User {
-            return User(
+        private fun mapRowWithPassword(row: Row): PrivateUser {
+            return PrivateUser(
                 id = row["id", java.lang.Long::class.java]!!.toLong(),
                 username = row["username", String::class.java]!!,
-                password = row["password", String::class.java]
+                password = row["password", String::class.java]!!
             )
         }
     }

@@ -1,7 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.users.model.Role
-import net.plshark.users.model.User
+import net.plshark.users.model.PrivateUser
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -40,10 +40,10 @@ class UserDetailsServiceImpl(
      * @param roles the user's roles
      * @return the UserDetails
      */
-    private fun buildUserDetails(user: User, roles: List<Role>): UserDetails {
+    private fun buildUserDetails(user: PrivateUser, roles: List<Role>): UserDetails {
         return org.springframework.security.core.userdetails.User.builder()
             .username(user.username)
-            .password(user.password!!)
+            .password(user.password)
             .authorities(roles.map { buildGrantedAuthority(it) })
             .build()
     }

@@ -3,6 +3,7 @@ package net.plshark.users.repo.springdata
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.UserCreate
+import net.plshark.users.model.PrivateUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -28,7 +29,6 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
         assertNotNull(inserted.id)
         assertEquals("name", inserted.username)
-        assertEquals(null, inserted.password)
     }
 
     @Test
@@ -37,7 +37,6 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
         val user = repo.getForId(inserted.id).block()!!
 
-        assertEquals(null, user.password)
         assertEquals(inserted, user)
     }
 
@@ -47,7 +46,6 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
         val user = repo.getForUsername("name").block()!!
 
-        assertEquals(null, user.password)
         assertEquals(inserted, user)
     }
 
@@ -58,7 +56,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         val user = repo.getForUsernameWithPassword("name").block()!!
 
         assertNotNull(user.password)
-        assertEquals(inserted.copy(password = "pass"), user)
+        assertEquals(PrivateUser(inserted.id, inserted.username, "pass"), user)
     }
 
     @Test

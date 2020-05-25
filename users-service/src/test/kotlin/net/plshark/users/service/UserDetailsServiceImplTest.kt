@@ -3,7 +3,7 @@ package net.plshark.users.service
 import io.mockk.every
 import io.mockk.mockk
 import net.plshark.users.model.Role
-import net.plshark.users.model.User
+import net.plshark.users.model.PrivateUser
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -23,7 +23,7 @@ class UserDetailsServiceImplTest {
 
     @Test
     fun `a user and its roles are mapped to the correct UserDetails`() {
-        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(User(25, "user", "pass"))
+        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
         every { userRolesRepo.getRolesForUser(25) } returns Flux.just(
                 Role(3, 1, "normal-user"),
                 Role(5, 1, "admin"))
@@ -54,7 +54,7 @@ class UserDetailsServiceImplTest {
 
     @Test
     fun `empty roles returns no granted authorities`() {
-        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(User(25, "user", "pass"))
+        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
         every { userRolesRepo.getRolesForUser(25) } returns Flux.empty()
         every { userGroupsRepo.getGroupRolesForUser(25) } returns Flux.empty()
 

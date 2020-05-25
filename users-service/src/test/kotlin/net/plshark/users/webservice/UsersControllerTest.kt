@@ -94,8 +94,8 @@ class UsersControllerTest {
 
     @Test
     fun `getUsers passes the max results and offset through`() {
-        val user1 = User(1, "user", null)
-        val user2 = User(2, "user2", null)
+        val user1 = User(1, "user")
+        val user2 = User(2, "user2")
         every { service.getUsers(3, 2) } returns Flux.just(user1, user2)
 
         StepVerifier.create(controller.getUsers(3, 2))
@@ -105,7 +105,7 @@ class UsersControllerTest {
 
     @Test
     fun `getUser passes the username through`() {
-        val user1 = User(1, "user", null)
+        val user1 = User(1, "user")
         every { service["user"] } returns Mono.just(user1)
 
         StepVerifier.create(controller.getUser("user"))
@@ -116,7 +116,7 @@ class UsersControllerTest {
     @Test
     fun `insert passes through the response from the service`() {
         val request = UserCreate("user", "test-pass")
-        val created = User(1, "user", null)
+        val created = User(1, "user")
         every { service.create(request) } returns Mono.just(created)
 
         StepVerifier.create(controller.create(request))

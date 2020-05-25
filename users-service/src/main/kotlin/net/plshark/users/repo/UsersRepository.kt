@@ -2,6 +2,7 @@ package net.plshark.users.repo
 
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
+import net.plshark.users.model.PrivateUser
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -30,7 +31,7 @@ interface UsersRepository {
      * @param username the username
      * @return the matching user
      */
-    fun getForUsernameWithPassword(username: String): Mono<User>
+    fun getForUsernameWithPassword(username: String): Mono<PrivateUser>
 
     /**
      * Get all users up to the maximum result count
