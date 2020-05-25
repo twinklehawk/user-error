@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import javax.validation.constraints.Min
 
 /**
@@ -40,7 +41,7 @@ class RolesController(private val rolesService: RolesService, private val appSer
         @RequestBody role: String
     ): Mono<Role> {
         return appService[application]
-            // TODO handle no application found
+            .switchIfEmpty { Mono.error(ObjectNotFoundException("Application $application not found")) }
             .map { RoleCreate(it.id, role) }
             .flatMap { rolesService.create(it) }
     }

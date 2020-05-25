@@ -33,6 +33,14 @@ class RolesControllerTest {
     }
 
     @Test
+    fun `insert returns an ObjectNotFoundException if the application is not found`() {
+        every { appService["app"] } returns Mono.empty()
+
+        StepVerifier.create(controller.create("app", "admin"))
+            .verifyError(ObjectNotFoundException::class.java)
+    }
+
+    @Test
     fun `getting a role should throw an exception when the role does not exist`() {
         every { service["test-app", "test-role"] } returns Mono.empty()
 

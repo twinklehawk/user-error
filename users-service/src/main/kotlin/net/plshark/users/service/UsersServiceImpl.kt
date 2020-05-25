@@ -65,7 +65,7 @@ class UsersServiceImpl(
         return getRequired(username)
             .flatMap { user: User ->
                 rolesService.getRequired(applicationName, roleName)
-                    .flatMap { role -> userRolesRepo.insert(user.id, role.id!!) }
+                    .flatMap { role -> userRolesRepo.insert(user.id, role.id) }
             }
     }
 
@@ -73,7 +73,7 @@ class UsersServiceImpl(
         return getRequired(username)
             .flatMap { user: User ->
                 rolesService.getRequired(applicationName, roleName)
-                    .flatMap { role -> userRolesRepo.delete(user.id, role.id!!) }
+                    .flatMap { role -> userRolesRepo.delete(user.id, role.id) }
             }
     }
 
