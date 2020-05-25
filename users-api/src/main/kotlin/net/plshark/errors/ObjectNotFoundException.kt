@@ -3,8 +3,7 @@ package net.plshark.errors
 /**
  * Exception that indicates an object was not found
  */
-// TODO RuntimeException to make consistent?
-class ObjectNotFoundException : Exception {
+class ObjectNotFoundException : RuntimeException {
     /**
      * Create a new instance
      * @param message the detail message
