@@ -3,6 +3,7 @@ package net.plshark.users.service
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.GroupsRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -28,7 +29,7 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
         return groupsRepo.getGroups(maxResults, offset)
     }
 
-    override fun create(group: Group): Mono<Group> {
+    override fun create(group: GroupCreate): Mono<Group> {
         return groupsRepo.insert(group)
             .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException? ->
                 DuplicateException("A group with name ${group.name} already exists", e)
@@ -41,7 +42,7 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
 
     override fun delete(name: String): Mono<Void> {
         return get(name)
-            .flatMap { group: Group -> delete(group.id!!) }
+            .flatMap { group: Group -> delete(group.id) }
     }
 
     override fun addRoleToGroup(groupId: Long, roleId: Long): Mono<Void> {

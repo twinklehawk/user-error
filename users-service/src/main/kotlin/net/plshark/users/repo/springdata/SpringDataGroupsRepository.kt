@@ -2,6 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import net.plshark.users.repo.GroupsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
@@ -38,8 +39,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
             .all()
     }
 
-    override fun insert(group: Group): Mono<Group> {
-        require(group.id == null) { "Cannot insert group with ID already set" }
+    override fun insert(group: GroupCreate): Mono<Group> {
         return client.execute("INSERT INTO groups (name) VALUES (:name) RETURNING id")
             .bind("name", group.name)
             .fetch().one()
@@ -49,7 +49,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
                     .orElse(Mono.empty())
             }
             .switchIfEmpty(Mono.error { IllegalStateException("No ID returned from insert") })
-            .map { id: Long? -> group.copy(id = id) }
+            .map { id: Long -> Group(id = id, name = group.name) }
     }
 
     override fun delete(groupId: Long): Mono<Void> {
@@ -66,7 +66,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
          */
         fun mapRow(row: Row): Group {
             return Group(
-                id = row["id", java.lang.Long::class.java]?.toLong(),
+                id = row["id", java.lang.Long::class.java]!!.toLong(),
                 name = row["name", String::class.java]!!
             )
         }

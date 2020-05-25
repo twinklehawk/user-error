@@ -5,6 +5,7 @@ import io.mockk.mockk
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import net.plshark.users.repo.GroupRolesRepository
 import net.plshark.users.repo.GroupsRepository
 import org.junit.jupiter.api.Test
@@ -53,7 +54,7 @@ class GroupsServiceImplTest {
 
     @Test
     fun `creating should save and return the saved group`() {
-        val request = Group(null, "group")
+        val request = GroupCreate("group")
         val inserted = Group(1, "group")
         every { groupsRepo.insert(request) } returns Mono.just(inserted)
 
@@ -64,7 +65,7 @@ class GroupsServiceImplTest {
 
     @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
-        val request = Group(null, "app")
+        val request = GroupCreate("app")
         every { groupsRepo.insert(request) } returns Mono.error(DataIntegrityViolationException("test error"))
 
         StepVerifier.create(service.create(request))

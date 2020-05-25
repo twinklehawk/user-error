@@ -1,6 +1,7 @@
 package net.plshark.users.repo
 
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -35,7 +36,7 @@ interface GroupsRepository {
      * @param group the group to save
      * @return the saved group
      */
-    fun insert(group: Group): Mono<Group>
+    fun insert(group: GroupCreate): Mono<Group>
 
     /**
      * Delete a group by ID

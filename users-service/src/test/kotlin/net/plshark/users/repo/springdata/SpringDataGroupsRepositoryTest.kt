@@ -2,7 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +23,7 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `inserting a group returns the inserted group with the ID set`() {
-        val group = repo.insert(Group(null, "test-group")).block()!!
+        val group = repo.insert(GroupCreate("test-group")).block()!!
 
         assertNotNull(group.id)
         assertEquals("test-group", group.name)
@@ -31,9 +31,9 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted group by ID`() {
-        val group = repo.insert(Group(null, "group")).block()!!
+        val group = repo.insert(GroupCreate("group")).block()!!
 
-        StepVerifier.create(repo.getForId(group.id!!))
+        StepVerifier.create(repo.getForId(group.id))
                 .expectNext(group)
                 .verifyComplete()
     }
@@ -47,7 +47,7 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted group by name`() {
-        val group = repo.insert(Group(null, "group")).block()!!
+        val group = repo.insert(GroupCreate("group")).block()!!
 
         StepVerifier.create(repo.getForName("group"))
                 .expectNext(group)
@@ -63,8 +63,8 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can delete a previously inserted group by ID`() {
-        val group = repo.insert(Group(null, "group")).block()!!
-        repo.delete(group.id!!).block()
+        val group = repo.insert(GroupCreate("group")).block()!!
+        repo.delete(group.id).block()
 
         StepVerifier.create(repo.getForName("name"))
                 .expectNextCount(0)
@@ -79,9 +79,9 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `getGroups should return all results when there are less than max results`() {
-        repo.insert(Group(null, "group1"))
-                .then(repo.insert(Group(null, "group2")))
-                .then(repo.insert(Group(null, "group3")))
+        repo.insert(GroupCreate("group1"))
+                .then(repo.insert(GroupCreate("group2")))
+                .then(repo.insert(GroupCreate("group3")))
                 .block()
 
         StepVerifier.create(repo.getGroups(50, 0))
@@ -92,9 +92,9 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `getGroups should return up to max results when there are more results`() {
-        repo.insert(Group(null, "group1"))
-            .then(repo.insert(Group(null, "group2")))
-            .then(repo.insert(Group(null, "group3")))
+        repo.insert(GroupCreate("group1"))
+            .then(repo.insert(GroupCreate("group2")))
+            .then(repo.insert(GroupCreate("group3")))
             .block()
 
         StepVerifier.create(repo.getGroups(2, 0))
@@ -104,9 +104,9 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `getGroups should start at the correct offset`() {
-        repo.insert(Group(null, "group1"))
-            .then(repo.insert(Group(null, "group2")))
-            .then(repo.insert(Group(null, "group3")))
+        repo.insert(GroupCreate("group1"))
+            .then(repo.insert(GroupCreate("group2")))
+            .then(repo.insert(GroupCreate("group3")))
             .block()
 
         StepVerifier.create(repo.getGroups(2, 2))

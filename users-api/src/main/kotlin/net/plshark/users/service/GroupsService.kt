@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -36,7 +37,7 @@ interface GroupsService {
      * @return the saved group or a [net.plshark.errors.DuplicateException] if a group with the same name already
      * exists
      */
-    fun create(group: Group): Mono<Group>
+    fun create(group: GroupCreate): Mono<Group>
 
     /**
      * Delete a group

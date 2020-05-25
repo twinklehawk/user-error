@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import net.plshark.users.service.GroupsService
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
@@ -35,7 +36,7 @@ class GroupsControllerTest {
 
     @Test
     fun `insert should pass through the response from the service`() {
-        val request = Group(null, "group")
+        val request = GroupCreate("group")
         val inserted = Group(1, "group")
         every { groupsService.create(request) } returns Mono.just(inserted)
 

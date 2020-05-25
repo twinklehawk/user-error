@@ -32,10 +32,10 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `insert should save a group and user association and should be retrievable`() {
-        val group = groupsRepo.insert(Group(null, "test-name")).block()!!
+        val group = groupsRepo.insert(GroupCreate("test-name")).block()!!
         val user = usersRepo.insert(User(null, "test-user", "pass")).block()!!
 
-        repo.insert(user.id!!, group.id!!).block()
+        repo.insert(user.id!!, group.id).block()
 
         assertEquals(listOf(group), repo.getGroupsForUser(user.id!!).collectList().block())
     }
@@ -47,11 +47,11 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `delete should delete a group-user association`() {
-        val group = groupsRepo.insert(Group(null, "test-group")).block()!!
+        val group = groupsRepo.insert(GroupCreate("test-group")).block()!!
         val user = usersRepo.insert(User(null, "test-user", "pass")).block()!!
-        repo.insert(user.id!!, group.id!!).block()
+        repo.insert(user.id!!, group.id).block()
 
-        repo.delete(user.id!!, group.id!!).block()
+        repo.delete(user.id!!, group.id).block()
 
         assertEquals(0, repo.getGroupsForUser(user.id!!).count().block())
     }
@@ -63,18 +63,18 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `deleting a group ID should delete all associations for that group`() {
-        val group1 = groupsRepo.insert(Group(null, "group1")).block()!!
-        val group2 = groupsRepo.insert(Group(null, "group2")).block()!!
+        val group1 = groupsRepo.insert(GroupCreate("group1")).block()!!
+        val group2 = groupsRepo.insert(GroupCreate("group2")).block()!!
         val user1 = usersRepo.insert(User(null, "user1", "pass")).block()!!
         val user2 = usersRepo.insert(User(null, "user2", "pass")).block()!!
         val user3 = usersRepo.insert(User(null, "user3", "pass")).block()!!
-        repo.insert(user1.id!!, group1.id!!)
-            .then(repo.insert(user2.id!!, group1.id!!))
-            .then(repo.insert(user2.id!!, group2.id!!))
-            .then(repo.insert(user3.id!!, group2.id!!))
+        repo.insert(user1.id!!, group1.id)
+            .then(repo.insert(user2.id!!, group1.id))
+            .then(repo.insert(user2.id!!, group2.id))
+            .then(repo.insert(user3.id!!, group2.id))
             .block()
 
-        repo.deleteUserGroupsForGroup(group1.id!!).block()
+        repo.deleteUserGroupsForGroup(group1.id).block()
 
         assertEquals(0, repo.getGroupsForUser(user1.id!!).count().block())
         assertEquals(listOf(group2), repo.getGroupsForUser(user2.id!!).collectList().block())
@@ -83,14 +83,14 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `deleting a user ID should delete all associations for that user`() {
-        val group1 = groupsRepo.insert(Group(null, "group1")).block()!!
-        val group2 = groupsRepo.insert(Group(null, "group2")).block()!!
+        val group1 = groupsRepo.insert(GroupCreate("group1")).block()!!
+        val group2 = groupsRepo.insert(GroupCreate("group2")).block()!!
         val user1 = usersRepo.insert(User(null, "user1", "pass")).block()!!
         val user2 = usersRepo.insert(User(null, "user2", "pass")).block()!!
-        repo.insert(user1.id!!, group1.id!!)
-                .then(repo.insert(user1.id!!, group2.id!!))
-                .then(repo.insert(user2.id!!, group1.id!!))
-                .then(repo.insert(user2.id!!, group2.id!!))
+        repo.insert(user1.id!!, group1.id)
+                .then(repo.insert(user1.id!!, group2.id))
+                .then(repo.insert(user2.id!!, group1.id))
+                .then(repo.insert(user2.id!!, group2.id))
                 .block()
 
         repo.deleteUserGroupsForUser(user1.id!!).block()
@@ -105,11 +105,11 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
         val role1 = rolesRepo.insert(Role(null, app1.id, "role1")).block()!!
         val role2 = rolesRepo.insert(Role(null, app1.id, "role2")).block()!!
         rolesRepo.insert(Role(null, app1.id, "role3")).block()
-        val group = groupsRepo.insert(Group(null, "test-group")).block()!!
+        val group = groupsRepo.insert(GroupCreate("test-group")).block()!!
         val user = usersRepo.insert(User(null, "user", "pass")).block()!!
-        groupRolesRepo.insert(group.id!!, role1.id!!)
-                .then(groupRolesRepo.insert(group.id!!, role2.id!!))
-                .then(repo.insert(user.id!!, group.id!!)).block()
+        groupRolesRepo.insert(group.id, role1.id!!)
+                .then(groupRolesRepo.insert(group.id, role2.id!!))
+                .then(repo.insert(user.id!!, group.id)).block()
 
         StepVerifier.create(repo.getGroupRolesForUser(user.id!!).collectList())
             .expectNextMatches { list -> list.size == 2 && list.contains(role1) && list.contains(role2) }

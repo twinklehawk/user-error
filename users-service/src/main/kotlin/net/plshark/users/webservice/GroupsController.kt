@@ -2,6 +2,7 @@ package net.plshark.users.webservice
 
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
+import net.plshark.users.model.GroupCreate
 import net.plshark.users.service.GroupsService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -40,7 +41,7 @@ class GroupsController(private val groupsService: GroupsService) {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun create(@RequestBody group: Group): Mono<Group> {
+    fun create(@RequestBody group: GroupCreate): Mono<Group> {
         return groupsService.create(group)
     }
 
