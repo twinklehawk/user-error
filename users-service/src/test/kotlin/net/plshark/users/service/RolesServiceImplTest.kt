@@ -6,6 +6,7 @@ import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
 import org.junit.jupiter.api.Test
@@ -23,8 +24,8 @@ class RolesServiceImplTest {
 
     @Test
     fun `creating should save a role and return the saved role`() {
-        val role = Role(null, 123, "role")
-        val inserted = role.copy(id = 1)
+        val role = RoleCreate(123, "role")
+        val inserted = Role(1, 123, "role")
         every { rolesRepo.insert(role) } returns Mono.just(inserted)
 
         StepVerifier.create(service.create(role))
@@ -33,24 +34,12 @@ class RolesServiceImplTest {
     }
 
     @Test
-    fun `creating with an application name should look up the application and set the ID before inserting`() {
-        val inserted = Role(1, 321, "role")
-        every { appsRepo["app"] } returns Mono.just(Application(321, "app"))
-        every { rolesRepo.insert(Role(null, 321, "role")) } returns Mono.just(inserted)
-
-        StepVerifier.create(service.create("app", Role(null, null, "role")))
-                .expectNext(inserted)
-                .verifyComplete()
-    }
-
-    @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
-        val request = Role(null, null, "app")
-        every { appsRepo["app"] } returns Mono.just(Application(321, "app"))
+        val request = RoleCreate(321, "app")
         every { rolesRepo.insert(request.copy(applicationId = 321)) } returns
                 Mono.error(DataIntegrityViolationException("test error"))
 
-        StepVerifier.create(service.create("app", request))
+        StepVerifier.create(service.create(request))
                 .verifyError(DuplicateException::class.java)
     }
 

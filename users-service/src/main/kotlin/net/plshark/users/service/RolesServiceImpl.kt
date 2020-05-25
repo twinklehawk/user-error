@@ -3,6 +3,7 @@ package net.plshark.users.service
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
 import net.plshark.users.repo.ApplicationsRepository
 import net.plshark.users.repo.RolesRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -16,17 +17,11 @@ import reactor.core.publisher.Mono
 @Component
 class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsRepo: ApplicationsRepository) : RolesService {
 
-    override fun create(role: Role): Mono<Role> {
+    override fun create(role: RoleCreate): Mono<Role> {
         return rolesRepo.insert(role)
             .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException? ->
                 DuplicateException("A role with name ${role.name} already exists", e)
             }
-    }
-
-    override fun create(application: String, role: Role): Mono<Role> {
-        return appsRepo[application]
-            // TODO handle no application found
-            .flatMap { app -> create(role.copy( applicationId = app.id))}
     }
 
     override fun delete(roleId: Long): Mono<Void> {
@@ -35,7 +30,7 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsR
 
     override fun delete(application: String, name: String): Mono<Void> {
         return get(application, name)
-            .flatMap{ role: Role -> delete(role.id!!) }
+            .flatMap{ role: Role -> delete(role.id) }
     }
 
     override fun get(application: String, name: String): Mono<Role> {

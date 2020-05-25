@@ -2,6 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
 import net.plshark.users.repo.RolesRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
@@ -39,11 +40,9 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
             .all()
     }
 
-    override fun insert(role: Role): Mono<Role> {
-        require(role.id == null) { "Cannot insert role with ID already set" }
-        requireNotNull(role.applicationId) { "Role application ID cannot be null" }
+    override fun insert(role: RoleCreate): Mono<Role> {
         return client.execute("INSERT INTO roles (application_id, name) VALUES (:applicationId, :name) RETURNING id")
-            .bind("applicationId", role.applicationId!!)
+            .bind("applicationId", role.applicationId)
             .bind("name", role.name)
             .fetch().one()
             .flatMap { map ->
@@ -52,7 +51,7 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
                     .orElse(Mono.empty())
             }
             .switchIfEmpty(Mono.error { IllegalStateException("No ID returned from insert") })
-            .map { id -> role.copy(id = id) }
+            .map { id -> Role(id = id, applicationId = role.applicationId, name = role.name) }
     }
 
     override fun delete(id: Long): Mono<Void> {
@@ -71,8 +70,8 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
     companion object {
         fun mapRow(row: Row): Role {
             return Role(
-                id = row["id", java.lang.Long::class.java]?.toLong(),
-                applicationId = row["application_id", java.lang.Long::class.java]?.toLong(),
+                id = row["id", java.lang.Long::class.java]!!.toLong(),
+                applicationId = row["application_id", java.lang.Long::class.java]!!.toLong(),
                 name = row["name", String::class.java]!!
             )
         }

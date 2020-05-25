@@ -1,6 +1,7 @@
 package net.plshark.users.repo
 
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -36,7 +37,7 @@ interface RolesRepository {
      * @param role the role to insert
      * @return the inserted role, will have the ID set
      */
-    fun insert(role: Role): Mono<Role>
+    fun insert(role: RoleCreate): Mono<Role>
 
     /**
      * Delete a role by ID

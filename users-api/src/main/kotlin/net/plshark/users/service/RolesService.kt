@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -38,18 +39,7 @@ interface RolesService {
      * @return the saved role or a [net.plshark.errors.DuplicateException] if a role with the same name already
      * exists in the same application
      */
-    fun create(role: Role): Mono<Role>
-
-    /**
-     * Save a new role
-     * @param application the application the role should belong to
-     * @param role the role
-     * @return the saved role
-     */
-    fun create(
-        application: String,
-        role: Role
-    ): Mono<Role>
+    fun create(role: RoleCreate): Mono<Role>
 
     /**
      * Delete a role

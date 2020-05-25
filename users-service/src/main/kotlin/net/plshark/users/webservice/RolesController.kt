@@ -2,6 +2,8 @@ package net.plshark.users.webservice
 
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
+import net.plshark.users.service.ApplicationsService
 import net.plshark.users.service.RolesService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -21,7 +23,7 @@ import javax.validation.constraints.Min
  */
 @RestController
 @RequestMapping("/applications/{application}/roles")
-class RolesController(private val rolesService: RolesService) {
+class RolesController(private val rolesService: RolesService, private val appService: ApplicationsService) {
 
     /**
      * Insert a new role
@@ -30,14 +32,17 @@ class RolesController(private val rolesService: RolesService) {
      * @return the inserted role
      */
     @PostMapping(
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.TEXT_PLAIN_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun create(
         @PathVariable("application") application: String,
-        @RequestBody role: Role
+        @RequestBody role: String
     ): Mono<Role> {
-        return rolesService.create(application, role)
+        return appService[application]
+            // TODO handle no application found
+            .map { RoleCreate(it.id, role) }
+            .flatMap { rolesService.create(it) }
     }
 
     /**
