@@ -5,9 +5,9 @@ import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.model.RoleGrant
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.service.UsersService
 import org.springframework.http.MediaType
-import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -51,8 +51,8 @@ class UsersController(private val usersService: UsersService) {
      * @return the inserted user
      */
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun create(@RequestBody user: User): Mono<User> {
-        if (!StringUtils.hasLength(user.password)) throw BadRequestException("Password cannot be empty")
+    fun create(@RequestBody user: UserCreate): Mono<User> {
+        if (user.password.isEmpty()) throw BadRequestException("Password cannot be empty")
         return usersService.create(user)
     }
 

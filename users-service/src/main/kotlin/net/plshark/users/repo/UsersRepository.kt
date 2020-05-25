@@ -1,6 +1,7 @@
 package net.plshark.users.repo
 
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -44,7 +45,7 @@ interface UsersRepository {
      * @param user the user to insert
      * @return the inserted user, will have the ID set
      */
-    fun insert(user: User): Mono<User>
+    fun insert(user: UserCreate): Mono<User>
 
     /**
      * Update an existing user's password

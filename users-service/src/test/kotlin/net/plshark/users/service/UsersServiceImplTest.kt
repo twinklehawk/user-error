@@ -7,6 +7,7 @@ import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
 import net.plshark.users.model.Role
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -34,17 +35,17 @@ class UsersServiceImplTest {
     @Test
     fun `new users have password encoded`() {
         every { encoder.encode("pass") } returns "pass-encoded"
-        every { userRepo.insert(User(null, "user", "pass-encoded")) } returns
+        every { userRepo.insert(UserCreate("user", "pass-encoded")) } returns
                 Mono.just(User(1, "user", null))
 
-        StepVerifier.create(service.create(User(null, "user", "pass")))
+        StepVerifier.create(service.create(UserCreate("user", "pass")))
                 .expectNext(User(1, "user", null))
                 .verifyComplete()
     }
 
     @Test
     fun `create should map the exception for a duplicate username to a DuplicateException`() {
-        val request = User(null, "app", "pass")
+        val request = UserCreate("app", "pass")
         every { encoder.encode("pass") } returns "pass"
         every { userRepo.insert(request) } returns Mono.error(DataIntegrityViolationException("test error"))
 

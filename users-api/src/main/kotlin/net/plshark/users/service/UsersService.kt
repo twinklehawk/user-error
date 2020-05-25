@@ -1,6 +1,7 @@
 package net.plshark.users.service
 
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -36,7 +37,7 @@ interface UsersService {
      * @return the saved useror a [net.plshark.errors.DuplicateException] if a user with the same username already
      * exists
      */
-    fun create(user: User): Mono<User>
+    fun create(user: UserCreate): Mono<User>
 
     /**
      * Delete a user by ID

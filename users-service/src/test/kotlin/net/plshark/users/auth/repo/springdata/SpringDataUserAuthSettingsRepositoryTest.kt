@@ -3,7 +3,7 @@ package net.plshark.users.auth.repo.springdata
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.auth.model.UserAuthSettings
-import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.springdata.SpringDataUsersRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +27,7 @@ class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
 
     @Test
     fun `inserting settings returns the inserted settings with the ID set`() {
-        val user = usersRepo.insert(User(id = null, username = "test-user", password = "test-pass")).block()!!
+        val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass")).block()!!
         val inserted = repo.insert(
                 UserAuthSettings(
                     id = null,
@@ -73,7 +73,7 @@ class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve previously inserted settings by user ID`() {
-        val user = usersRepo.insert(User(id = null, username = "test-user", password = "test-pass")).block()!!
+        val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass")).block()!!
         val inserted = repo.insert(UserAuthSettings(
             id = null,
             userId = user.id,
@@ -82,7 +82,7 @@ class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
             authTokenExpiration = null
         )).block()
 
-        assertEquals(inserted, repo.findByUserId(user.id!!).block())
+        assertEquals(inserted, repo.findByUserId(user.id).block())
     }
 
     @Test
@@ -93,7 +93,7 @@ class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve previously inserted settings by username`() {
-        val user = usersRepo.insert(User(id = null, username = "test-user", password = "test-pass")).block()!!
+        val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass")).block()!!
         val inserted = repo.insert(UserAuthSettings(
             id = null,
             userId = user.id,

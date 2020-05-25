@@ -3,6 +3,7 @@ package net.plshark.users.service
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -40,7 +41,7 @@ class UsersServiceImpl(
         return userRepo.getAll(maxResults, offset)
     }
 
-    override fun create(user: User): Mono<User> {
+    override fun create(user: UserCreate): Mono<User> {
         require(StringUtils.hasLength(user.password)) { "Password cannot be empty" }
         return Mono.just(user)
             .subscribeOn(Schedulers.parallel())
@@ -57,14 +58,14 @@ class UsersServiceImpl(
 
     override fun delete(username: String): Mono<Void> {
         return get(username)
-            .flatMap { delete(it.id!!) }
+            .flatMap { delete(it.id) }
     }
 
     override fun grantRoleToUser(username: String, applicationName: String, roleName: String): Mono<Void> {
         return getRequired(username)
             .flatMap { user: User ->
                 rolesService.getRequired(applicationName, roleName)
-                    .flatMap { role -> userRolesRepo.insert(user.id!!, role.id!!) }
+                    .flatMap { role -> userRolesRepo.insert(user.id, role.id!!) }
             }
     }
 
@@ -72,7 +73,7 @@ class UsersServiceImpl(
         return getRequired(username)
             .flatMap { user: User ->
                 rolesService.getRequired(applicationName, roleName)
-                    .flatMap { role -> userRolesRepo.delete(user.id!!, role.id!!) }
+                    .flatMap { role -> userRolesRepo.delete(user.id, role.id!!) }
             }
     }
 
@@ -80,7 +81,7 @@ class UsersServiceImpl(
         return getRequired(username)
             .flatMap { user: User ->
                 groupsService.getRequired(groupName)
-                    .flatMap { group -> userGroupsRepo.insert(user.id!!, group.id) }
+                    .flatMap { group -> userGroupsRepo.insert(user.id, group.id) }
             }
     }
 
@@ -88,7 +89,7 @@ class UsersServiceImpl(
         return getRequired(username)
             .flatMap { user: User ->
                 groupsService.getRequired(groupName)
-                    .flatMap { group -> userGroupsRepo.delete(user.id!!, group.id) }
+                    .flatMap { group -> userGroupsRepo.delete(user.id, group.id) }
             }
     }
 
@@ -98,7 +99,7 @@ class UsersServiceImpl(
         val currentPasswordEncoded = passwordEncoder.encode(currentPassword)
         return getRequired(username)
             .flatMap { user: User ->
-                userRepo.updatePassword(user.id!!, currentPasswordEncoded, newPasswordEncoded)
+                userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
                     .onErrorResume(EmptyResultDataAccessException::class.java) { e: EmptyResultDataAccessException? ->
                         Mono.error(ObjectNotFoundException("Incorrect current password", e))
                     }

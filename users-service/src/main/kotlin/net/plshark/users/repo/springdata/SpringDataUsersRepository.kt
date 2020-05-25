@@ -2,6 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UsersRepository
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.r2dbc.core.DatabaseClient
@@ -32,12 +33,11 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .one()
     }
 
-    override fun insert(user: User): Mono<User> {
-        require(user.id == null) { "Cannot insert user with ID already set" }
-        requireNotNull(user.password) { "Cannot insert user with null password" }
+    override fun insert(user: UserCreate): Mono<User> {
+        require(user.password.isNotEmpty()) { "Cannot insert user with blank password" }
         return client.execute("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
             .bind("username", user.username)
-            .bind("password", user.password!!)
+            .bind("password", user.password)
             .fetch().one()
             .flatMap { map: Map<String?, Any?> ->
                 Optional.ofNullable(map["id"] as Long?)
@@ -87,7 +87,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
     companion object {
         fun mapRow(row: Row): User {
             return User(
-                id = row["id", java.lang.Long::class.java]?.toLong(),
+                id = row["id", java.lang.Long::class.java]!!.toLong(),
                 username = row["username", String::class.java]!!,
                 password = null
             )
@@ -95,7 +95,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
 
         private fun mapRowWithPassword(row: Row): User {
             return User(
-                id = row["id", java.lang.Long::class.java]?.toLong(),
+                id = row["id", java.lang.Long::class.java]!!.toLong(),
                 username = row["username", String::class.java]!!,
                 password = row["password", String::class.java]
             )

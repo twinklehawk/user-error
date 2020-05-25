@@ -2,7 +2,7 @@ package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `inserting a user returns the inserted user with the ID set`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
         assertNotNull(inserted.id)
         assertEquals("name", inserted.username)
@@ -33,9 +33,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted user by ID`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        val user = repo.getForId(inserted.id!!).block()!!
+        val user = repo.getForId(inserted.id).block()!!
 
         assertEquals(null, user.password)
         assertEquals(inserted, user)
@@ -43,7 +43,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `can retrieve a previously inserted user by username`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
         val user = repo.getForUsername("name").block()!!
 
@@ -53,7 +53,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `the user password is returned when specifically fetching the password`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
         val user = repo.getForUsernameWithPassword("name").block()!!
 
@@ -63,10 +63,10 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `can delete a previously inserted user by ID`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        repo.delete(inserted.id!!).block()
-        val retrieved = repo.getForId(inserted.id!!).block()
+        repo.delete(inserted.id).block()
+        val retrieved = repo.getForId(inserted.id).block()
 
         assertEquals(null, retrieved)
     }
@@ -78,9 +78,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `update password should change the password if the current password is correct`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        repo.updatePassword(inserted.id!!, "pass", "new-pass").block()
+        repo.updatePassword(inserted.id, "pass", "new-pass").block()
         val user = repo.getForUsernameWithPassword("name").block()!!
 
         assertEquals("new-pass", user.password)
@@ -88,9 +88,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `update password should throw an EmptyResultDataAccessException if the current password is wrong`() {
-        val inserted = repo.insert(User(null, "name", "pass")).block()!!
+        val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        StepVerifier.create(repo.updatePassword(inserted.id!!, "wrong-pass", "new-pass"))
+        StepVerifier.create(repo.updatePassword(inserted.id, "wrong-pass", "new-pass"))
                 .expectError(EmptyResultDataAccessException::class.java)
                 .verify()
         val user = repo.getForUsernameWithPassword("name").block()!!
@@ -107,8 +107,8 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `getAll should return all results when there are less than max results`() {
-        repo.insert(User(null, "name", "pass")).block()
-        repo.insert(User(null, "name2", "pass")).block()
+        repo.insert(UserCreate("name", "pass")).block()
+        repo.insert(UserCreate("name2", "pass")).block()
 
         val users = repo.getAll(5, 0).collectList().block()!!
 
@@ -121,9 +121,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `getAll should return up to max results when there are more results`() {
-        repo.insert(User(null, "name", "pass")).block()
-        repo.insert(User(null, "name2", "pass")).block()
-        repo.insert(User(null, "name3", "pass")).block()
+        repo.insert(UserCreate("name", "pass")).block()
+        repo.insert(UserCreate("name2", "pass")).block()
+        repo.insert(UserCreate("name3", "pass")).block()
 
         val users = repo.getAll(2, 0).collectList().block()!!
 
@@ -134,9 +134,9 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `getAll should start at the correct offset`() {
-        repo.insert(User(null, "name", "pass")).block()
-        repo.insert(User(null, "name2", "pass")).block()
-        repo.insert(User(null, "name3", "pass")).block()
+        repo.insert(UserCreate("name", "pass")).block()
+        repo.insert(UserCreate("name2", "pass")).block()
+        repo.insert(UserCreate("name3", "pass")).block()
 
         val users = repo.getAll(2, 2).collectList().block()!!
 

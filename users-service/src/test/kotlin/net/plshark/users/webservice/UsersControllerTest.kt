@@ -6,6 +6,7 @@ import net.plshark.errors.BadRequestException
 import net.plshark.users.model.PasswordChangeRequest
 import net.plshark.users.model.RoleGrant
 import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import net.plshark.users.service.UsersService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -114,7 +115,7 @@ class UsersControllerTest {
 
     @Test
     fun `insert passes through the response from the service`() {
-        val request = User(null, "user", "test-pass")
+        val request = UserCreate("user", "test-pass")
         val created = User(1, "user", null)
         every { service.create(request) } returns Mono.just(created)
 
@@ -125,7 +126,7 @@ class UsersControllerTest {
 
     @Test
     fun `an insert request is rejected if the password is empty`() {
-        val request = User(null, "user", null)
+        val request = UserCreate("user", "")
 
         assertThrows<BadRequestException> { controller.create(request) }
     }

@@ -27,8 +27,8 @@ class UserDetailsServiceImpl(
         return userRepo.getForUsernameWithPassword(username)
             .switchIfEmpty(Mono.error { UsernameNotFoundException("No matching user for $username") })
             .flatMap { user ->
-                userRolesRepo.getRolesForUser(user.id!!)
-                    .mergeWith(userGroupsRepo.getGroupRolesForUser(user.id!!))
+                userRolesRepo.getRolesForUser(user.id)
+                    .mergeWith(userGroupsRepo.getGroupRolesForUser(user.id))
                     .collectList()
                     .map { roles -> buildUserDetails(user, roles) }
             }
