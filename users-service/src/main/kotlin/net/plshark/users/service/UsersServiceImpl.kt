@@ -1,5 +1,6 @@
 package net.plshark.users.service
 
+import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.User
@@ -101,8 +102,7 @@ class UsersServiceImpl(
             .flatMap { user: User ->
                 userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
                     .onErrorResume(EmptyResultDataAccessException::class.java) { e: EmptyResultDataAccessException? ->
-                        // TODO seems like the wrong exception
-                        Mono.error(ObjectNotFoundException("Incorrect current password", e))
+                        Mono.error(BadRequestException("Incorrect current password", e))
                     }
             }
     }

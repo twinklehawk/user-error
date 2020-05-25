@@ -2,6 +2,7 @@ package net.plshark.users.service
 
 import io.mockk.every
 import io.mockk.mockk
+import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
@@ -91,7 +92,7 @@ class UsersServiceImplTest {
         every { userRepo.updatePassword(100, "current-encoded", "new-encoded") } returns Mono.error(EmptyResultDataAccessException(1))
 
         StepVerifier.create(service.updateUserPassword("ted", "current", "new"))
-                .verifyError(ObjectNotFoundException::class.java)
+                .verifyError(BadRequestException::class.java)
     }
 
     @Test
