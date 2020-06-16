@@ -4,7 +4,7 @@ import io.r2dbc.spi.Row
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.auth.repo.UserAuthSettingsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
-import org.springframework.data.r2dbc.query.Criteria
+import org.springframework.data.relational.core.query.Criteria
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 import java.util.*

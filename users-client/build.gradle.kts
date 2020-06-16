@@ -32,7 +32,7 @@ dependencies {
     testImplementation("org.springframework:spring-context")
     testImplementation("org.springframework:spring-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic")
 }

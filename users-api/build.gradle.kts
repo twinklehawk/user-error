@@ -28,7 +28,7 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic")
 }
