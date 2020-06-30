@@ -1,6 +1,6 @@
-FROM openjdk:11
+FROM adoptopenjdk:11-jre-hotspot
 
-ENV BAD_USERS_VERSION 0.0.3
+ENV BAD_USERS_VERSION 0.3.0
 
 RUN mkdir /app
 WORKDIR /app
