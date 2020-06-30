@@ -10,7 +10,7 @@ allprojects {
         jcenter()
     }
     group = "net.plshark.users"
-    version = "0.3.0"
+    version = "0.3.1"
 }
 
 configure(subprojects.filter{ it.name != "platform" }) {
