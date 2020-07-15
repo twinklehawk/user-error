@@ -46,8 +46,8 @@ class LoginAttemptThrottlingFilter(
      */
     private fun getClientIp(request: ServerHttpRequest): String {
         // get the first entry if it was forwarded multiple times
-        return request.headers.getFirst("X-Forwarded-For")?.split(",")?.get(0) ?:
-            request.remoteAddress?.hostString ?: ""
+        return request.headers.getFirst("X-Forwarded-For")?.split(",")?.get(0)
+            ?: request.remoteAddress?.hostString ?: ""
     }
 
     /**

@@ -60,8 +60,8 @@ class AuthServiceImpl(
         val authorities = user.authorities.map { obj: GrantedAuthority -> obj.authority }.toTypedArray()
         var refreshToken: String? = null
         if (settings.refreshTokenEnabled) {
-            val refreshExpiration = settings.refreshTokenExpiration ?:
-                userAuthSettingsService.getDefaultTokenExpiration()
+            val refreshExpiration = settings.refreshTokenExpiration
+                ?: userAuthSettingsService.getDefaultTokenExpiration()
             refreshToken = tokenBuilder.buildRefreshToken(user.username, refreshExpiration)
         }
 
