@@ -36,5 +36,4 @@ class DefaultTokenBuilder(private val algorithm: Algorithm, private val issuer: 
             .withIssuedAt(now)
             .withExpiresAt(Date(now.time + expirationMs))
     }
-
 }
