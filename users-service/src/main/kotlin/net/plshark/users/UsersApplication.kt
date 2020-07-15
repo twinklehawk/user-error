@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class UsersApplication
 
 fun main(args: Array<String>) {
+    @Suppress("SpreadOperator")
     runApplication<UsersApplication>(*args)
 }
