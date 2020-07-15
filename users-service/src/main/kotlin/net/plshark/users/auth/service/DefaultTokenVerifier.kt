@@ -23,8 +23,7 @@ class DefaultTokenVerifier(private val verifier: JWTVerifier) : TokenVerifier {
     override fun verifyRefreshToken(token: String): String {
         val jwt = decodeToken(token)
         val refresh = jwt.getClaim(PlsharkClaim.REFRESH).asBoolean()
-        if (refresh == null || !refresh)
-            throw BadCredentialsException("Token is not a refresh token")
+        if (refresh == null || !refresh) throw BadCredentialsException("Token is not a refresh token")
         return jwt.subject
     }
 

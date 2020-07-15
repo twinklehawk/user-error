@@ -19,24 +19,30 @@ class LoginAttemptThrottlingFilter(
 ) : WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val httpRequest = exchange.request
-        var blocked = false
+        val result: Mono<Void>
         val clientIp = getClientIp(httpRequest)
         val username = getUsername(httpRequest)
-        if (service.isIpBlocked(clientIp)) {
-            blocked = true
-            log.debug("blocked request from {}", clientIp)
-        } else if (service.isUsernameBlocked(username)) {
-            blocked = true
-            log.debug("blocked request for username {}", username)
+
+        if (service.isIpBlocked(clientIp) || service.isUsernameBlocked(username)) {
+            log.debug("blocked request from {} for username {}", clientIp, username)
+            result = Mono.fromRunnable { exchange.response.statusCode = HttpStatus.TOO_MANY_REQUESTS }
+        } else {
+            result = chain.filter(exchange)
+                .doOnError(AccessDeniedException::class.java) { service.onLoginFailed(username, clientIp) }
+                .then(Mono.fromRunnable {
+                    val status = exchange.response.statusCode
+                    if (isLoginFailedStatus(status)) service.onLoginFailed(username, clientIp)
+                })
         }
-        return if (blocked) Mono.fromRunnable { exchange.response.statusCode = HttpStatus.TOO_MANY_REQUESTS }
-        else chain.filter(exchange)
-            .doOnError(AccessDeniedException::class.java) { service.onLoginFailed(username, clientIp) }
-            .then(Mono.fromRunnable {
-                val status = exchange.response.statusCode
-                if (HttpStatus.UNAUTHORIZED == status || HttpStatus.FORBIDDEN == status)
-                    service.onLoginFailed(username, clientIp)
-            })
+
+        return result
+    }
+
+    /**
+     * @return if the status indicates a login failed
+     */
+    private fun isLoginFailedStatus(status: HttpStatus?): Boolean {
+        return HttpStatus.UNAUTHORIZED == status || HttpStatus.FORBIDDEN == status
     }
 
     /**

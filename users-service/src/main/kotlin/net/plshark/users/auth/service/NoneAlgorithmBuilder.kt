@@ -13,8 +13,7 @@ class NoneAlgorithmBuilder : AlgorithmBuilder {
     override fun build(authProperties: AuthProperties): Algorithm? {
         var algorithm: Algorithm? = null
         val name: String = authProperties.algorithm
-        if (NONE == name)
-            algorithm = Algorithm.none()
+        if (NONE == name) algorithm = Algorithm.none()
         return algorithm
     }
 

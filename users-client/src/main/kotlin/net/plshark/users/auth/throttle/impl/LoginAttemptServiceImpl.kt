@@ -40,8 +40,7 @@ class LoginAttemptServiceImpl(
      */
     private fun incrementAttempts(key: String) {
         val attempts = cache[key]!!.incrementAndGet()
-        if (attempts > maxAttempts)
-            log.warn("login attempts for {} blocked for {} minutes", key, timeFrameMinutes)
+        if (attempts > maxAttempts) log.warn("login attempts for {} blocked for {} minutes", key, timeFrameMinutes)
     }
 
     companion object {
