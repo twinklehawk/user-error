@@ -31,7 +31,7 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsR
 
     override fun delete(application: String, name: String): Mono<Void> {
         return get(application, name)
-            .flatMap{ role: Role -> delete(role.id) }
+            .flatMap { role: Role -> delete(role.id) }
     }
 
     override fun get(application: String, name: String): Mono<Role> {
