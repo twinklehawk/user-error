@@ -69,9 +69,11 @@ class AuthServiceImpl(
 
         return AuthToken(
             accessToken = tokenBuilder.buildAccessToken(user.username, tokenExpiration, authorities),
-            expiresIn = tokenExpiration / 1000,
+            expiresIn = tokenExpiration / MILLISECONDS_IN_SECONDS,
             refreshToken = refreshToken,
             scope = null
         )
     }
 }
+
+private const val MILLISECONDS_IN_SECONDS = 1000

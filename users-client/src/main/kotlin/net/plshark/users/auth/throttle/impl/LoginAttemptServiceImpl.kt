@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger
  * Default LoginAttemptService implementation
  */
 class LoginAttemptServiceImpl(
-    private val maxAttempts: Int = 10,
-    timeFrame: Long = 8 * 60,
+    private val maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
+    timeFrame: Long = DEFAULT_TIME_FRAME,
     timeFrameUnit: TimeUnit = TimeUnit.MINUTES
 ) : LoginAttemptService {
 
@@ -49,3 +49,6 @@ class LoginAttemptServiceImpl(
     }
 
 }
+
+private const val DEFAULT_TIME_FRAME = 8L * 60L
+private const val DEFAULT_MAX_ATTEMPTS = 10

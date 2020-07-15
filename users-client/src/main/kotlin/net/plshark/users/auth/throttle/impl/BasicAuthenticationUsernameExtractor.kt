@@ -23,9 +23,10 @@ class BasicAuthenticationUsernameExtractor : UsernameExtractor {
      */
     private fun extractUsername(header: String): Optional<String> {
         var username: Optional<String> = Optional.empty()
-        if (header.startsWith("Basic ")) {
+        val prefix = "Basic "
+        if (header.startsWith(prefix)) {
             try {
-                val base64Auth = header.substring(6).toByteArray(StandardCharsets.UTF_8)
+                val base64Auth = header.substring(prefix.length).toByteArray(StandardCharsets.UTF_8)
                 val decoded = Base64.getDecoder().decode(base64Auth)
                 val auth = String(decoded, StandardCharsets.UTF_8)
                 val colonIndex = auth.indexOf(':')
