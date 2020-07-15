@@ -51,5 +51,4 @@ class HttpBearerBuilder(
         restMatcher.setIgnoredMediaTypes(setOf(MediaType.ALL))
         return DelegatingServerAuthenticationEntryPoint.DelegateEntry(restMatcher, entryPoint)
     }
-
 }

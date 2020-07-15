@@ -62,5 +62,4 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
             )
         }
     }
-
 }

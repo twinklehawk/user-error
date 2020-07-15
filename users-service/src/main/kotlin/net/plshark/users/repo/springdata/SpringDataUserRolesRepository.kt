@@ -46,5 +46,4 @@ class SpringDataUserRolesRepository(private val client: DatabaseClient) : UserRo
             .bind("roleId", roleId)
             .then()
     }
-
 }

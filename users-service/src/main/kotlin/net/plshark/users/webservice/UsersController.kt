@@ -144,5 +144,4 @@ class UsersController(private val usersService: UsersService) {
     ): Mono<Void> {
         return usersService.removeGroupFromUser(username, group)
     }
-
 }

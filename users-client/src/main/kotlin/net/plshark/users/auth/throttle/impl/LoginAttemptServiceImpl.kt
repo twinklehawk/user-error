@@ -47,7 +47,6 @@ class LoginAttemptServiceImpl(
     companion object {
         private val log = LoggerFactory.getLogger(LoginAttemptServiceImpl::class.java)
     }
-
 }
 
 private const val DEFAULT_TIME_FRAME = 8L * 60L

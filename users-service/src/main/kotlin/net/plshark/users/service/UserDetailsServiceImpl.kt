@@ -56,5 +56,4 @@ class UserDetailsServiceImpl(
     private fun buildGrantedAuthority(role: Role): GrantedAuthority {
         return SimpleGrantedAuthority("ROLE_${role.name}")
     }
-
 }

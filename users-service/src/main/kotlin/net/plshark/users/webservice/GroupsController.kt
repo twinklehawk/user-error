@@ -56,5 +56,4 @@ class GroupsController(private val groupsService: GroupsService) {
     }
 
     // TODO methods for adding/removing roles from group, viewing roles in group
-
 }

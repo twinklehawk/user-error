@@ -103,5 +103,4 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             )
         }
     }
-
 }

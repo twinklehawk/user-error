@@ -35,7 +35,6 @@ class JwtUsernameExtractor(private val verifier: JWTVerifier) : UsernameExtracto
     companion object {
         private val log = LoggerFactory.getLogger(JwtUsernameExtractor::class.java)
     }
-
 }
 
 private const val AUTHORIZATION_TYPE = "Bearer "

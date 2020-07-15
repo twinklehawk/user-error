@@ -71,5 +71,4 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
             )
         }
     }
-
 }

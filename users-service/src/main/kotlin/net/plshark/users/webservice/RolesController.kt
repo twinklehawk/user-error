@@ -89,5 +89,4 @@ class RolesController(private val rolesService: RolesService, private val appSer
         return rolesService[application, name]
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $application:$name") })
     }
-
 }

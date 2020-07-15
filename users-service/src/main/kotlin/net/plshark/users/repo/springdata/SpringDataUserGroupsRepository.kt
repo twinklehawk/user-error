@@ -55,5 +55,4 @@ class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserG
             .bind("groupId", groupId)
             .then()
     }
-
 }
