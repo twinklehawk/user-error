@@ -7,7 +7,7 @@ import net.plshark.users.repo.ApplicationsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Optional
 
 /**
  * Role repository that uses spring data and r2dbc

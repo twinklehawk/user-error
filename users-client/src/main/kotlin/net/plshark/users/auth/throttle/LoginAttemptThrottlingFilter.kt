@@ -7,9 +7,7 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import java.net.InetSocketAddress
 import java.nio.file.AccessDeniedException
-import java.util.*
 
 /**
  * Filter that blocks requests from an IP address or for a user if too many requests have been made
@@ -47,14 +45,9 @@ class LoginAttemptThrottlingFilter(
      * @return the IP address
      */
     private fun getClientIp(request: ServerHttpRequest): String {
-        return Optional.ofNullable(request.headers.getFirst("X-Forwarded-For"))
-            // get the first entry if it was forwarded multiple times
-            .map { header: String -> header.split(",")[0] }
-            .orElse(
-                Optional.ofNullable(request.remoteAddress)
-                    .map { obj: InetSocketAddress -> obj.hostString }
-                    .orElse("")
-            )
+        // get the first entry if it was forwarded multiple times
+        return request.headers.getFirst("X-Forwarded-For")?.split(",")?.get(0) ?:
+            request.remoteAddress?.hostString ?: ""
     }
 
     /**

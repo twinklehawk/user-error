@@ -7,7 +7,7 @@ import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Objects
 
 @Repository
 class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) : UserAuthSettingsRepository {

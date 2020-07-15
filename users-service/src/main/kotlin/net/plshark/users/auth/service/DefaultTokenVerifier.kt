@@ -5,7 +5,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
 import net.plshark.users.auth.model.AuthenticatedUser
 import org.springframework.security.authentication.BadCredentialsException
-import java.util.*
+import java.util.Optional
 
 /**
  * Verifies JWTs

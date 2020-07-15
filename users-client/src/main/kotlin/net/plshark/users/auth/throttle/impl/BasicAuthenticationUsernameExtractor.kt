@@ -4,7 +4,7 @@ import net.plshark.users.auth.throttle.UsernameExtractor
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.reactive.ServerHttpRequest
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Base64
 
 /**
  * Username extractor for requests using basic authentication

@@ -3,7 +3,7 @@ package net.plshark.users.auth.service
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTCreator
 import com.auth0.jwt.algorithms.Algorithm
-import java.util.*
+import java.util.Date
 
 /**
  * Creates auth and refresh JWTs

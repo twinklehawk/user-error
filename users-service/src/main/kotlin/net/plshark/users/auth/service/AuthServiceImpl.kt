@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.util.*
 
 /**
  * Default AuthService server side implementation
@@ -57,13 +56,12 @@ class AuthServiceImpl(
     }
 
     private fun buildAuthToken(user: UserDetails, settings: UserAuthSettings): AuthToken {
-        val tokenExpiration = Optional.ofNullable(settings.authTokenExpiration)
-            .orElse(userAuthSettingsService.getDefaultTokenExpiration())
+        val tokenExpiration = settings.authTokenExpiration ?: userAuthSettingsService.getDefaultTokenExpiration()
         val authorities = user.authorities.map { obj: GrantedAuthority -> obj.authority }.toTypedArray()
         var refreshToken: String? = null
         if (settings.refreshTokenEnabled) {
-            val refreshExpiration = Optional.ofNullable(settings.refreshTokenExpiration)
-                .orElse(userAuthSettingsService.getDefaultTokenExpiration())
+            val refreshExpiration = settings.refreshTokenExpiration ?:
+                userAuthSettingsService.getDefaultTokenExpiration()
             refreshToken = tokenBuilder.buildRefreshToken(user.username, refreshExpiration)
         }
 

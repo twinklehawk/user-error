@@ -1,16 +1,16 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
+import net.plshark.users.model.PrivateUser
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
-import net.plshark.users.model.PrivateUser
 import net.plshark.users.repo.UsersRepository
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Optional
 
 /**
  * User repository that uses spring data and r2dbc
@@ -19,7 +19,6 @@ import java.util.*
 class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepository {
 
     override fun getForUsername(username: String): Mono<User> {
-        Objects.requireNonNull(username, "username cannot be null")
         return client.execute("SELECT id, username FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRow(row) }
@@ -27,7 +26,6 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
     }
 
     override fun getForUsernameWithPassword(username: String): Mono<PrivateUser> {
-        Objects.requireNonNull(username, "username cannot be null")
         return client.execute("SELECT * FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRowWithPassword(row) }
