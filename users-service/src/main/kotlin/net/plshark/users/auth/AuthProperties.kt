@@ -39,7 +39,8 @@ class AuthProperties(
         /** the alias of the key in the keystore */
         @NotEmpty val alias: String,
         /** the password to access the key */
-        @NotEmpty val password: String)
+        @NotEmpty val password: String
+    )
 
     companion object {
         fun forNone(issuer: String, tokenExpiration: Long): AuthProperties {
@@ -57,7 +58,8 @@ class AuthProperties(
             return AuthProperties(algorithm, issuer, tokenExpiration, secret, null, null)
         }
 
-        fun forKeystore(algorithm: String, issuer: String, tokenExpiration: Long, keystore: Keystore, key: Key): AuthProperties {
+        fun forKeystore(algorithm: String, issuer: String, tokenExpiration: Long, keystore: Keystore, key: Key):
+                AuthProperties {
             return AuthProperties(algorithm, issuer, tokenExpiration, null, keystore, key)
         }
     }

@@ -70,7 +70,8 @@ class UsersController(private val usersService: UsersService) {
      * Change a user's password
      * @param username the username of the user
      * @param request the password change request
-     * @return an empty result or ObjectNotFoundException if the user was not found or the current password was incorrect
+     * @return an empty result or ObjectNotFoundException if the user was not found or the current password was
+     * incorrect
      */
     @PostMapping(path = ["/{username}/password"])
     fun changePassword(
@@ -89,7 +90,8 @@ class UsersController(private val usersService: UsersService) {
     @PostMapping(path = ["/{username}/roles"])
     fun grantRole(
         @PathVariable("username") username: String,
-        @RequestBody roleGrant: RoleGrant): Mono<Void> {
+        @RequestBody roleGrant: RoleGrant
+    ): Mono<Void> {
         return usersService.grantRoleToUser(username, roleGrant.application, roleGrant.role)
     }
 
@@ -117,7 +119,8 @@ class UsersController(private val usersService: UsersService) {
     @PostMapping(path = ["/{username}/groups/{group}"])
     fun grantGroup(
         @PathVariable("username") username: String,
-        @PathVariable("group") group: String): Mono<Void> {
+        @PathVariable("group") group: String
+    ): Mono<Void> {
         return usersService.grantGroupToUser(username, group)
     }
 
@@ -130,7 +133,8 @@ class UsersController(private val usersService: UsersService) {
     @DeleteMapping(path = ["/{username}/groups/{group}"])
     fun removeGroup(
         @PathVariable("username") username: String,
-        @PathVariable("group") group: String): Mono<Void> {
+        @PathVariable("group") group: String
+    ): Mono<Void> {
         return usersService.removeGroupFromUser(username, group)
     }
 

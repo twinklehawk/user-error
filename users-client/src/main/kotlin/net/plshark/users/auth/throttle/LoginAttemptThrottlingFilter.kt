@@ -15,9 +15,10 @@ import java.util.*
  * Filter that blocks requests from an IP address or for a user if too many requests have been made
  * in a time frame
  */
-class LoginAttemptThrottlingFilter(private val service: LoginAttemptService, private val usernameExtractor: UsernameExtractor) :
-    WebFilter {
-
+class LoginAttemptThrottlingFilter(
+    private val service: LoginAttemptService,
+    private val usernameExtractor: UsernameExtractor
+) : WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val httpRequest = exchange.request
         var blocked = false
@@ -69,5 +70,4 @@ class LoginAttemptThrottlingFilter(private val service: LoginAttemptService, pri
     companion object {
         private val log = LoggerFactory.getLogger(LoginAttemptThrottlingFilter::class.java)
     }
-
 }

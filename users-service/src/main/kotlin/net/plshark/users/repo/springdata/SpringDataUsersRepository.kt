@@ -69,7 +69,9 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .bind("oldPassword", currentPassword)
             .fetch().rowsUpdated()
             .flatMap { updates: Int ->
-                if (updates == 0) Mono.error { EmptyResultDataAccessException("No matching user for password update", 1) }
+                if (updates == 0) Mono.error {
+                    EmptyResultDataAccessException("No matching user for password update", 1)
+                }
                 else Mono.just(updates)
             }
             .then()

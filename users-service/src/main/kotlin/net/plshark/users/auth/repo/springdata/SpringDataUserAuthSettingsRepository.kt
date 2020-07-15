@@ -21,7 +21,8 @@ class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) :
     }
 
     override fun findByUsername(username: String): Mono<UserAuthSettings> {
-        return client.execute("SELECT * FROM user_auth_settings uas, users u WHERE uas.user_id = u.id AND u.username = :username")
+        return client.execute("SELECT * FROM user_auth_settings uas, users u WHERE uas.user_id = u.id AND " +
+                "u.username = :username")
             .bind("username", username)
             .`as`(UserAuthSettings::class.java)
             .fetch()

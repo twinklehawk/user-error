@@ -14,7 +14,8 @@ import reactor.core.publisher.Mono
 class SpringDataUserRolesRepository(private val client: DatabaseClient) : UserRolesRepository {
 
     override fun getRolesForUser(userId: Long): Flux<Role> {
-        return client.execute("SELECT r.* FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = :id")
+        return client.execute("SELECT r.* FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE " +
+                "ur.user_id = :id")
             .bind("id", userId)
             .map { row -> SpringDataRolesRepository.mapRow(row) }
             .all()

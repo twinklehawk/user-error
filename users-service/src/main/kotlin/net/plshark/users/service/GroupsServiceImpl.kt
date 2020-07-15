@@ -15,7 +15,8 @@ import reactor.core.publisher.Mono
  * Group management service implementation
  */
 @Component
-class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val groupRolesRepo: GroupRolesRepository) : GroupsService {
+class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val groupRolesRepo: GroupRolesRepository) :
+    GroupsService {
 
     override fun get(name: String): Mono<Group> {
         return groupsRepo.getForName(name)

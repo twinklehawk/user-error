@@ -15,7 +15,8 @@ import reactor.core.publisher.Mono
  * Role management service implementation
  */
 @Component
-class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsRepo: ApplicationsRepository) : RolesService {
+class RolesServiceImpl(private val rolesRepo: RolesRepository, private val appsRepo: ApplicationsRepository) :
+    RolesService {
 
     override fun create(role: RoleCreate): Mono<Role> {
         return rolesRepo.insert(role)
