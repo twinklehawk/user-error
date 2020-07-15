@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.3.70" apply false
     id("org.springframework.boot") version "2.3.1.RELEASE" apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
+    id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 allprojects {
@@ -11,6 +12,11 @@ allprojects {
     }
     group = "net.plshark.users"
     version = "0.3.1"
+}
+
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
+    checkConstraints = true
+    gradleReleaseChannel = "current"
 }
 
 configure(subprojects.filter{ it.name != "platform" }) {
