@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
@@ -29,7 +29,7 @@ class JwtUsernameExtractorTest {
         val token = JWT.create().withSubject("test-user").sign(algorithm)
         every { headers.getFirst("Authorization") } returns "Bearer $token"
 
-        assertEquals("test-user", extractor.extractUsername(request).get())
+        assertEquals("test-user", extractor.extractUsername(request))
     }
 
     @Test
@@ -37,7 +37,7 @@ class JwtUsernameExtractorTest {
         val token = JWT.create().sign(algorithm)
         every { headers.getFirst("Authorization") } returns "Bearer $token"
 
-        assertFalse(extractor.extractUsername(request).isPresent)
+        assertNull(extractor.extractUsername(request))
     }
 
     @Test
@@ -45,20 +45,20 @@ class JwtUsernameExtractorTest {
         val token = JWT.create().withSubject("test-user").sign(algorithm)
         every { headers.getFirst("Authorization") } returns token
 
-        assertFalse(extractor.extractUsername(request).isPresent)
+        assertNull(extractor.extractUsername(request))
     }
 
     @Test
     fun `should return an empty optional if the JWT is invalid`() {
         every { headers.getFirst("Authorization") } returns "Bearer abc123"
 
-        assertFalse(extractor.extractUsername(request).isPresent)
+        assertNull(extractor.extractUsername(request))
     }
 
     @Test
     fun `should return an empty optional if the auth header is not present`() {
         every { headers.getFirst("Authorization") } returns null
 
-        assertFalse(extractor.extractUsername(request).isPresent)
+        assertNull(extractor.extractUsername(request))
     }
 }

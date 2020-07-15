@@ -11,9 +11,8 @@ import java.util.*
  */
 class BasicAuthenticationUsernameExtractor : UsernameExtractor {
 
-    override fun extractUsername(request: ServerHttpRequest): Optional<String> {
-        return Optional.ofNullable(request.headers.getFirst("Authorization"))
-            .flatMap { header: String -> this.extractUsername(header) }
+    override fun extractUsername(request: ServerHttpRequest): String? {
+        return request.headers.getFirst("Authorization")?.let { extractUsername(it) }
     }
 
     /**
@@ -21,8 +20,8 @@ class BasicAuthenticationUsernameExtractor : UsernameExtractor {
      * @param header the header value
      * @return the username or empty if not found
      */
-    private fun extractUsername(header: String): Optional<String> {
-        var username: Optional<String> = Optional.empty()
+    private fun extractUsername(header: String): String? {
+        var username: String? = null
         val prefix = "Basic "
         if (header.startsWith(prefix)) {
             try {
@@ -30,10 +29,9 @@ class BasicAuthenticationUsernameExtractor : UsernameExtractor {
                 val decoded = Base64.getDecoder().decode(base64Auth)
                 val auth = String(decoded, StandardCharsets.UTF_8)
                 val colonIndex = auth.indexOf(':')
-                if (colonIndex != -1) username = Optional.of(auth.substring(0, colonIndex))
+                if (colonIndex != -1) username = auth.substring(0, colonIndex)
             } catch (e: IllegalArgumentException) {
                 log.debug("invalid base64 encoding in Authorization header", e)
-                username = Optional.empty()
             }
         }
         return username

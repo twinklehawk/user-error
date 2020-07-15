@@ -2,20 +2,17 @@ package net.plshark.users.auth.throttle.impl
 
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.auth0.jwt.interfaces.DecodedJWT
 import net.plshark.users.auth.throttle.UsernameExtractor
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.reactive.ServerHttpRequest
-import java.util.*
 
 /**
  * Username extractor for requests using bearer authentication with JWT
  */
 class JwtUsernameExtractor(private val verifier: JWTVerifier) : UsernameExtractor {
 
-    override fun extractUsername(request: ServerHttpRequest): Optional<String> {
-        return Optional.ofNullable(request.headers.getFirst("Authorization"))
-            .flatMap { header: String -> this.extractUsername(header) }
+    override fun extractUsername(request: ServerHttpRequest): String? {
+        return request.headers.getFirst("Authorization")?.let { this.extractUsername(it) }
     }
 
     /**
@@ -23,16 +20,16 @@ class JwtUsernameExtractor(private val verifier: JWTVerifier) : UsernameExtracto
      * @param header the header value, preferably a valid JWT
      * @return the username
      */
-    private fun extractUsername(header: String): Optional<String> {
-        return try {
-            Optional.of(header)
-                .filter { str: String -> str.startsWith(AUTHORIZATION_TYPE) }
-                .map { str: String -> verifier.verify(str.substring(AUTHORIZATION_TYPE.length)) }
-                .map { obj: DecodedJWT -> obj.subject }
-        } catch (e: JWTVerificationException) {
-            log.debug("Invalid JWT token", e)
-            Optional.empty()
+    private fun extractUsername(header: String): String? {
+        var username: String? = null
+        if (header.startsWith(AUTHORIZATION_TYPE)) {
+            try {
+                username = verifier.verify(header.substring(AUTHORIZATION_TYPE.length)).subject
+            } catch (e: JWTVerificationException) {
+                log.debug("Invalid JWT token", e)
+            }
         }
+        return username
     }
 
     companion object {

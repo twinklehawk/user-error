@@ -14,7 +14,6 @@ import org.springframework.web.server.WebFilterChain
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import java.net.InetSocketAddress
-import java.util.*
 
 class LoginAttemptThrottlingFilterTest {
 
@@ -40,7 +39,7 @@ class LoginAttemptThrottlingFilterTest {
     fun `should pull the correct IP and username when the forwarded header is not set and continue execution if they are not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns null
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
-        every { extractor.extractUsername(request) } returns Optional.of("test-user")
+        every { extractor.extractUsername(request) } returns "test-user"
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns false
         every { response.statusCode } returns HttpStatus.OK
@@ -55,7 +54,7 @@ class LoginAttemptThrottlingFilterTest {
     fun `should pull the correct IP and username when the forwarded header is set and continue execution if they are not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns "192.168.1.2"
         every { request.remoteAddress } returns null
-        every { extractor.extractUsername(request) } returns Optional.of("test-user")
+        every { extractor.extractUsername(request) } returns "test-user"
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns false
         every { response.statusCode } returns HttpStatus.OK
@@ -69,7 +68,7 @@ class LoginAttemptThrottlingFilterTest {
     @Test
     fun `should block the request if the username is blocked`() {
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
-        every { extractor.extractUsername(request) } returns Optional.of("test-user")
+        every { extractor.extractUsername(request) } returns "test-user"
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { service.isUsernameBlocked("test-user") } returns true
         every { headers.getFirst("X-Forwarded-For") } returns null
@@ -83,7 +82,7 @@ class LoginAttemptThrottlingFilterTest {
     @Test
     fun `should block the request if the IP is blocked`() {
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
-        every { extractor.extractUsername(request) } returns Optional.of("test-user")
+        every { extractor.extractUsername(request) } returns "test-user"
         every { service.isIpBlocked("192.168.1.2") } returns true
         every { service.isUsernameBlocked("test-user") } returns false
         every { headers.getFirst("X-Forwarded-For") } returns null
@@ -97,7 +96,7 @@ class LoginAttemptThrottlingFilterTest {
     @Test
     fun `should use a blank IP address if the host cannot be found`() {
         every { request.remoteAddress } returns null
-        every { extractor.extractUsername(request) } returns Optional.of("test-user")
+        every { extractor.extractUsername(request) } returns "test-user"
         every { service.isUsernameBlocked("test-user") } returns false
         every { service.isIpBlocked("") } returns true
         every { headers.getFirst("X-Forwarded-For") } returns null
@@ -111,7 +110,7 @@ class LoginAttemptThrottlingFilterTest {
     @Test
     fun `should use a blank username if the request does not include a username`() {
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
-        every { extractor.extractUsername(request) } returns Optional.empty()
+        every { extractor.extractUsername(request) } returns null
         every { service.isUsernameBlocked("") } returns true
         every { service.isIpBlocked("192.168.1.2") } returns false
         every { headers.getFirst("X-Forwarded-For") } returns null

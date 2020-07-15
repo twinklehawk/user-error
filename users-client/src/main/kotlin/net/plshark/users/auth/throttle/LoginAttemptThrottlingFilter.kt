@@ -63,8 +63,7 @@ class LoginAttemptThrottlingFilter(
      * @return the username
      */
     private fun getUsername(request: ServerHttpRequest): String {
-        return usernameExtractor.extractUsername(request)
-            .orElse("")
+        return usernameExtractor.extractUsername(request) ?: ""
     }
 
     companion object {
