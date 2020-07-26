@@ -42,3 +42,9 @@ configure(subprojects.filter{ it.name != "platform" }) {
         "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.10.0")
     }
 }
+
+task("printVersion") {
+    doFirst {
+        println("$version")
+    }
+}
