@@ -1,3 +1,3 @@
 rootProject.name = "user-error"
 
-include("platform", "db", "user-error-api", "user-error", "user-error-client")
+include("platform", "db", "user-error-api", "user-error-server", "user-error-client")

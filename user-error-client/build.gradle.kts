@@ -56,8 +56,8 @@ publishing {
         maven {
             name = "bintray"
             val bintrayUsername = "twinklehawk"
-            val bintrayRepoName = "maven"
-            val bintrayPackageName = "net.plshark.users"
+            val bintrayRepoName = "user-error"
+            val bintrayPackageName = "net.plshark"
             url = uri("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1")
             credentials {
                 username = System.getenv("BINTRAY_USER")
