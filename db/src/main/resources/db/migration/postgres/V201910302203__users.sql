@@ -82,11 +82,11 @@ CREATE INDEX user_groups_group_id_idx ON user_groups (group_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON user_groups TO ${username};
 
 -- add initial roles
-INSERT INTO applications (name) VALUES ('bad-users');
+INSERT INTO applications (name) VALUES ('user-error');
 INSERT INTO roles (application_id, name) VALUES ((select id from applications), 'users-user');
 INSERT INTO roles (application_id, name) VALUES ((select id from applications), 'users-admin');
-INSERT INTO groups (name) VALUES ('bad-users-admin');
-INSERT INTO group_roles (group_id, role_id) SELECT groups.id, roles.id FROM groups, roles WHERE groups.name = 'bad-users-admin';
+INSERT INTO groups (name) VALUES ('user-error-admin');
+INSERT INTO group_roles (group_id, role_id) SELECT groups.id, roles.id FROM groups, roles WHERE groups.name = 'user-error-admin';
 
 -- add initial user
 INSERT INTO users (username, password) VALUES ('admin', '$2a$10$BOTzy5.IGWm2Y./TTQ9jm.nDwGhyP0aryzBJGK9ODD96pUEAVYZu.');

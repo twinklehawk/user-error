@@ -31,7 +31,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        path: ./users-service
-        repository: plshark/bad-users
+        path: ./user-error
+        repository: plshark/user-error
         tags: ${{ steps.set-project-version.outputs.project_version }},latest
         add_git_labels: true

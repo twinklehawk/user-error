@@ -18,7 +18,7 @@ configurations["testRuntimeClasspath"].extendsFrom(internal)
 
 dependencies {
     internal(enforcedPlatform(project(":platform")))
-    api(project(":users-api"))
+    api(project(":user-error-api"))
     api("org.springframework:spring-webflux")
     api("com.auth0:java-jwt")
     api("org.springframework.security:spring-security-web")

@@ -1,3 +1,3 @@
-rootProject.name = "bad-users"
+rootProject.name = "user-error"
 
-include("platform", "db", "users-api", "users-service", "users-client")
+include("platform", "db", "user-error-api", "user-error", "user-error-client")

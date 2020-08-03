@@ -11,8 +11,8 @@ allprojects {
     repositories {
         jcenter()
     }
-    group = "net.plshark.users"
-    version = "0.3.1"
+    group = "net.plshark"
+    version = "0.4.0"
 }
 
 tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
