@@ -12,7 +12,7 @@ allprojects {
         jcenter()
     }
     group = "net.plshark"
-    version = "0.4.0"
+    version = "0.4.1"
 }
 
 tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
