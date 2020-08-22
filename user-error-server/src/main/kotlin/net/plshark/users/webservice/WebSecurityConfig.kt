@@ -5,6 +5,7 @@ import net.plshark.users.auth.jwt.JwtReactiveAuthenticationManager
 import net.plshark.users.auth.service.AuthService
 import net.plshark.users.auth.throttle.IpThrottlingFilter
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
@@ -27,10 +28,18 @@ class WebSecurityConfig(private val authService: AuthService) {
         val builder = HttpBearerBuilder(authenticationManager())
         return http
             .authorizeExchange()
-            // auth controller handles its own authentication
+            .pathMatchers("/auth/validate").hasRole("validate-tokens")
             .pathMatchers("/auth/**").permitAll()
-            .pathMatchers("/users/**", "/groups/**", "/applications/**").hasRole("users-admin")
-            .anyExchange().hasRole("users-user")
+            .pathMatchers(HttpMethod.GET, "/applications/**").hasRole("view-applications")
+            .pathMatchers("/applications/**").hasRole("edit-applications")
+            .pathMatchers(HttpMethod.GET, "/roles/**").hasRole("view-roles")
+            .pathMatchers("/roles/**").hasRole("edit-roles")
+            .pathMatchers(HttpMethod.GET, "/groups/**").hasRole("view-groups")
+            .pathMatchers("/groups/**").hasRole("edit-groups")
+            .pathMatchers(HttpMethod.GET, "/users/**").hasRole("view-users")
+            .pathMatchers("/users/**").hasRole("edit-users")
+            // reject anything else in case something was missed above
+            .anyExchange().denyAll()
             .and()
             .authenticationManager(authenticationManager())
             .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
