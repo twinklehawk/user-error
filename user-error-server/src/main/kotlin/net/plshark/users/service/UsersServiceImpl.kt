@@ -63,18 +63,18 @@ class UsersServiceImpl(
             .flatMap { delete(it.id) }
     }
 
-    override fun grantRoleToUser(username: String, applicationName: String, roleName: String): Mono<Void> {
+    override fun grantRoleToUser(username: String, applicationId: Long, roleName: String): Mono<Void> {
         return getRequired(username)
             .flatMap { user: User ->
-                rolesService.getRequired(applicationName, roleName)
+                rolesService.getRequired(applicationId, roleName)
                     .flatMap { role -> userRolesRepo.insert(user.id, role.id) }
             }
     }
 
-    override fun removeRoleFromUser(username: String, applicationName: String, roleName: String): Mono<Void> {
+    override fun removeRoleFromUser(username: String, applicationId: Long, roleName: String): Mono<Void> {
         return getRequired(username)
             .flatMap { user: User ->
-                rolesService.getRequired(applicationName, roleName)
+                rolesService.getRequired(applicationId, roleName)
                     .flatMap { role -> userRolesRepo.delete(user.id, role.id) }
             }
     }

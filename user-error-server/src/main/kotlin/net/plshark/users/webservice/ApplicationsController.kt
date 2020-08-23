@@ -24,12 +24,6 @@ import javax.validation.constraints.Min
 @RequestMapping("/applications")
 class ApplicationsController(private val applicationsService: ApplicationsService) {
 
-    /**
-     * Get all applications up to the maximum result count and starting at an offset
-     * @param limit the maximum number of results to return
-     * @param offset the offset to start the list at
-     * @return the users
-     */
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getApplications(
         @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
@@ -38,22 +32,12 @@ class ApplicationsController(private val applicationsService: ApplicationsServic
         return applicationsService.getApplications(limit, offset)
     }
 
-    /**
-     * Retrieve an application
-     * @param name the application name
-     * @return the application
-     */
-    @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    operator fun get(@PathVariable("name") name: String): Mono<Application> {
-        return applicationsService[name]
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No application found for $name") })
+    @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findById(@PathVariable("id") id: Long): Mono<Application> {
+        return applicationsService.findById(id)
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No application found for $id") })
     }
 
-    /**
-     * Insert a new application
-     * @param application the application
-     * @return the inserted application
-     */
     @PostMapping(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
@@ -62,13 +46,8 @@ class ApplicationsController(private val applicationsService: ApplicationsServic
         return applicationsService.create(application)
     }
 
-    /**
-     * Delete an application
-     * @param name the application name
-     * @return when complete
-     */
-    @DeleteMapping("/{name}")
-    fun delete(@PathVariable("name") name: String): Mono<Void> {
-        return applicationsService.delete(name)
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable("id") id: Long): Mono<Void> {
+        return applicationsService.deleteById(id)
     }
 }

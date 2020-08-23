@@ -19,18 +19,18 @@ class ApplicationsControllerTest {
     @Test
     fun `getting an application should pass through whatever the service returns`() {
         val app = Application(123, "test-app")
-        every { applicationsService["test-app"] } returns Mono.just(app)
+        every { applicationsService.findById(123) } returns Mono.just(app)
 
-        StepVerifier.create(controller["test-app"])
+        StepVerifier.create(controller.findById(123))
                 .expectNext(app)
                 .verifyComplete()
     }
 
     @Test
     fun `getting an application should throw an exception when the application does not exist`() {
-        every { applicationsService["test-app"] } returns Mono.empty()
+        every { applicationsService.findById(456) } returns Mono.empty()
 
-        StepVerifier.create(controller["test-app"])
+        StepVerifier.create(controller.findById(456))
                 .verifyError(ObjectNotFoundException::class.java)
     }
 
@@ -59,9 +59,9 @@ class ApplicationsControllerTest {
 
     @Test
     fun `deleting should complete when the service completes`() {
-        every { applicationsService.delete("test-app") } returns Mono.empty()
+        every { applicationsService.deleteById(789) } returns Mono.empty()
 
-        StepVerifier.create(controller.delete("test-app"))
+        StepVerifier.create(controller.delete(789))
                 .verifyComplete()
     }
 }

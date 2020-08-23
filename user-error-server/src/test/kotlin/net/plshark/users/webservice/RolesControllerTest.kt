@@ -24,36 +24,36 @@ class RolesControllerTest {
     @Test
     fun `insert passes role through to service`() {
         val inserted = Role(100, 12, "app")
-        every { appService["app"] } returns Mono.just(Application(12, "app"))
+        every { appService.findById(12) } returns Mono.just(Application(12, "app"))
         every { service.create(RoleCreate(12, "admin")) } returns Mono.just(inserted)
 
-        StepVerifier.create(controller.create("app", "admin"))
+        StepVerifier.create(controller.create(12, "admin"))
             .expectNext(inserted)
             .verifyComplete()
     }
 
     @Test
     fun `insert returns an ObjectNotFoundException if the application is not found`() {
-        every { appService["app"] } returns Mono.empty()
+        every { appService.findById(4) } returns Mono.empty()
 
-        StepVerifier.create(controller.create("app", "admin"))
+        StepVerifier.create(controller.create(4, "admin"))
             .verifyError(ObjectNotFoundException::class.java)
     }
 
     @Test
     fun `getting a role should throw an exception when the role does not exist`() {
-        every { service["test-app", "test-role"] } returns Mono.empty()
+        every { service[5, "test-role"] } returns Mono.empty()
 
-        StepVerifier.create(controller["test-app", "test-role"])
+        StepVerifier.create(controller[5, "test-role"])
                 .verifyError(ObjectNotFoundException::class.java)
     }
 
     @Test
     fun `delete passes ID through to service`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.delete("app", "role") } returns probe.mono()
+        every { service.delete(6, "role") } returns probe.mono()
 
-        StepVerifier.create(controller.delete("app", "role"))
+        StepVerifier.create(controller.delete(6, "role"))
             .verifyComplete()
         probe.assertWasSubscribed()
     }
@@ -72,9 +72,9 @@ class RolesControllerTest {
     @Test
     fun `get passes the role name through`() {
         val role1 = Role(1, 1, "role")
-        every { service["app", "role"] } returns Mono.just(role1)
+        every { service[1, "role"] } returns Mono.just(role1)
 
-        StepVerifier.create(controller["app", "role"])
+        StepVerifier.create(controller[1, "role"])
                 .expectNext(role1)
                 .verifyComplete()
     }

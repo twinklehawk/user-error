@@ -66,20 +66,20 @@ interface UsersService {
     /**
      * Grant a role to a user
      * @param username the name of the user to grant the role to
-     * @param applicationName the name of the role's application
+     * @param applicationId the ID of the role's application
      * @param roleName the name of the role to grant
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
-    fun grantRoleToUser(username: String, applicationName: String, roleName: String): Mono<Void>
+    fun grantRoleToUser(username: String, applicationId: Long, roleName: String): Mono<Void>
 
     /**
      * Remove a role from a user
      * @param username the name of the user to remove the role from
-     * @param applicationName the name of the role's application
+     * @param applicationId the ID of the role's application
      * @param roleName the name of the role to remove
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
-    fun removeRoleFromUser(username: String, applicationName: String, roleName: String): Mono<Void>
+    fun removeRoleFromUser(username: String, applicationId: Long, roleName: String): Mono<Void>
 
     /**
      * Add a user to a group

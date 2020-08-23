@@ -23,12 +23,12 @@ import javax.validation.constraints.Min
  * Controller to provide web service methods for roles
  */
 @RestController
-@RequestMapping("/applications/{application}/roles")
+@RequestMapping("/applications/{applicationId}/roles")
 class RolesController(private val rolesService: RolesService, private val appService: ApplicationsService) {
 
     /**
      * Insert a new role
-     * @param application the application the role will belong to
+     * @param applicationId the ID of the parent application
      * @param role the role to insert
      * @return the inserted role
      */
@@ -37,27 +37,27 @@ class RolesController(private val rolesService: RolesService, private val appSer
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun create(
-        @PathVariable("application") application: String,
+        @PathVariable("applicationId") applicationId: Long,
         @RequestBody role: String
     ): Mono<Role> {
-        return appService[application]
-            .switchIfEmpty { Mono.error(ObjectNotFoundException("Application $application not found")) }
+        return appService.findById(applicationId)
+            .switchIfEmpty { Mono.error(ObjectNotFoundException("Application $applicationId not found")) }
             .map { RoleCreate(it.id, role) }
             .flatMap { rolesService.create(it) }
     }
 
     /**
      * Delete a role
-     * @param application the name of the parent application
+     * @param applicationId the ID of the parent application
      * @param name the role name
      * @return an empty result
      */
     @DeleteMapping(path = ["/{name}"])
     fun delete(
-        @PathVariable("application") application: String,
+        @PathVariable("applicationId") applicationId: Long,
         @PathVariable("name") name: String
     ): Mono<Void> {
-        return rolesService.delete(application, name)
+        return rolesService.delete(applicationId, name)
     }
 
     /**
@@ -77,16 +77,16 @@ class RolesController(private val rolesService: RolesService, private val appSer
 
     /**
      * Get a role
-     * @param application the parent application name
+     * @param applicationId the ID of the parent application name
      * @param name the name of the role
      * @return the matching role if found
      */
     @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     operator fun get(
-        @PathVariable("application") application: String,
+        @PathVariable("applicationId") applicationId: Long,
         @PathVariable("name") name: String
     ): Mono<Role> {
-        return rolesService[application, name]
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $application:$name") })
+        return rolesService[applicationId, name]
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $applicationId:$name") })
     }
 }

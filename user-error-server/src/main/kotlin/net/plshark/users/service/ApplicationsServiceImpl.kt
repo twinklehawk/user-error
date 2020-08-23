@@ -18,8 +18,8 @@ import reactor.core.publisher.Mono
 class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, private val rolesRepo: RolesRepository) :
     ApplicationsService {
 
-    override fun get(name: String): Mono<Application> {
-        return appsRepo[name]
+    override fun findById(id: Long): Mono<Application> {
+        return appsRepo[id]
     }
 
     override fun getApplications(limit: Int, offset: Long): Flux<Application> {
@@ -34,10 +34,8 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
             }
     }
 
-    override fun delete(name: String): Mono<Void> {
-        return get(name)
-            .map { application -> application.id }
-            .flatMap { id -> appsRepo.delete(id) }
+    override fun deleteById(id: Long): Mono<Void> {
+        return appsRepo.delete(id)
     }
 
     fun getApplicationRoles(id: Long): Flux<Role> {

@@ -119,11 +119,11 @@ class UsersServiceImplTest {
     @Test
     fun `granting a role to a user should add the role to the user's roles`() {
         every { userRepo.getForUsername("bill") } returns Mono.just(User(12, "bill"))
-        every { rolesService.getRequired("app", "role") } returns Mono.just(Role(34, 1, "role"))
+        every { rolesService.getRequired(1, "role") } returns Mono.just(Role(34, 1, "role"))
         val probe = PublisherProbe.empty<Void>()
         every { userRolesRepo.insert(12, 34) } returns probe.mono()
 
-        StepVerifier.create(service.grantRoleToUser("bill", "app", "role"))
+        StepVerifier.create(service.grantRoleToUser("bill", 1, "role"))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -133,11 +133,11 @@ class UsersServiceImplTest {
     @Test
     fun `removing a role from a user should remove the role from the user's roles`() {
         every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "bill"))
-        every { rolesService.getRequired("app", "role") } returns Mono.just(Role(200, 1, "role"))
+        every { rolesService.getRequired(1, "role") } returns Mono.just(Role(200, 1, "role"))
         val probe = PublisherProbe.empty<Void>()
         every { userRolesRepo.delete(100, 200) } returns probe.mono()
 
-        StepVerifier.create(service.removeRoleFromUser("ted", "app", "role"))
+        StepVerifier.create(service.removeRoleFromUser("ted", 1, "role"))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()

@@ -11,19 +11,19 @@ import reactor.core.publisher.Mono
 interface RolesService {
     /**
      * Retrieve a role by name
-     * @param application the application the role belongs to
+     * @param applicationId the ID of the application the role belongs to
      * @param name the role name
      * @return the matching role or empty if not found
      */
-    operator fun get(application: String, name: String): Mono<Role>
+    operator fun get(applicationId: Long, name: String): Mono<Role>
 
     /**
      * Retrieve a role by name
-     * @param application the application the role belongs to
+     * @param applicationId the ID of the parent application
      * @param name the role name
      * @return the matching role or an [net.plshark.errors.ObjectNotFoundException] if not found
      */
-    fun getRequired(application: String, name: String): Mono<Role>
+    fun getRequired(applicationId: Long, name: String): Mono<Role>
 
     /**
      * Get all roles up to the maximum result count and starting at an offset
@@ -43,11 +43,11 @@ interface RolesService {
 
     /**
      * Delete a role
-     * @param application the parent application name
+     * @param applicationId the parent application ID
      * @param name the role name
      * @return an empty result
      */
-    fun delete(application: String, name: String): Mono<Void>
+    fun delete(applicationId: Long, name: String): Mono<Void>
 
     /**
      * Delete a role
