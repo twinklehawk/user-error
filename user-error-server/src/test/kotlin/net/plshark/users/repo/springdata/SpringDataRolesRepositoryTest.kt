@@ -89,22 +89,21 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     @Test
     fun `getRoles should return all results when there are less than max results`() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+        repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name"))
                 .then(repo.insert(RoleCreate(app.id, "name2"))).block()
 
         val roles = repo.getRoles(5, 0).collectList().block()!!
 
-        assertEquals(4, roles.size)
-        // these are inserted by the migration scripts
-        assertEquals("users-user", roles[0].name)
-        assertEquals("users-admin", roles[1].name)
-        assertEquals("name", roles[2].name)
-        assertEquals("name2", roles[3].name)
+        assertEquals(2, roles.size)
+        assertEquals("name", roles[0].name)
+        assertEquals("name2", roles[1].name)
     }
 
     @Test
     fun `getRoles should return up to max results when there are more results`() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+        repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name")).block()
         repo.insert(RoleCreate(app.id, "name2")).block()
         repo.insert(RoleCreate(app.id, "name3")).block()
@@ -112,22 +111,23 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val roles = repo.getRoles(2, 0).collectList().block()!!
 
         assertEquals(2, roles.size)
-        assertEquals("users-user", roles[0].name)
-        assertEquals("users-admin", roles[1].name)
+        assertEquals("name", roles[0].name)
+        assertEquals("name2", roles[1].name)
     }
 
     @Test
     fun `getRoles should start at the correct offset`() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+        repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name"))
                 .then(repo.insert(RoleCreate(app.id, "name2")))
                 .then(repo.insert(RoleCreate(app.id, "name3"))).block()
 
-        val roles = repo.getRoles(2, 2).collectList().block()!!
+        val roles = repo.getRoles(2, 1).collectList().block()!!
 
         assertEquals(2, roles.size)
-        assertEquals("name", roles[0].name)
-        assertEquals("name2", roles[1].name)
+        assertEquals("name2", roles[0].name)
+        assertEquals("name3", roles[1].name)
     }
 
     @Test

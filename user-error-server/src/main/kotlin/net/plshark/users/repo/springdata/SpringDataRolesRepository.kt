@@ -60,6 +60,11 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
             .then()
     }
 
+    fun deleteAll(): Mono<Void> {
+        return client.execute("DELETE FROM roles")
+            .then()
+    }
+
     override fun getRolesForApplication(applicationId: Long): Flux<Role> {
         return client.execute("SELECT * FROM roles WHERE application_id = :applicationId ORDER BY id")
             .bind("applicationId", applicationId)
