@@ -14,8 +14,7 @@ import reactor.core.publisher.Mono
  * Role management service implementation
  */
 @Component
-class RolesServiceImpl(private val rolesRepo: RolesRepository) :
-    RolesService {
+class RolesServiceImpl(private val rolesRepo: RolesRepository) : RolesService {
 
     override fun create(role: RoleCreate): Mono<Role> {
         return rolesRepo.insert(role)
@@ -28,18 +27,13 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository) :
         return rolesRepo.delete(roleId)
     }
 
-    override fun delete(applicationId: Long, name: String): Mono<Void> {
-        return get(applicationId, name)
-            .flatMap { role: Role -> delete(role.id) }
+    override fun findById(roleId: Long): Mono<Role> {
+        return rolesRepo.findById(roleId)
     }
 
-    override fun get(applicationId: Long, name: String): Mono<Role> {
-        return rolesRepo[applicationId, name]
-    }
-
-    override fun getRequired(applicationId: Long, name: String): Mono<Role> {
-        return get(applicationId, name)
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $applicationId:$name") })
+    override fun findRequiredById(roleId: Long): Mono<Role> {
+        return findById(roleId)
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $roleId") })
     }
 
     override fun getRoles(maxResults: Int, offset: Long): Flux<Role> {

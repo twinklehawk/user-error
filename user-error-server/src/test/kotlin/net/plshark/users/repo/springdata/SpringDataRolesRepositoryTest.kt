@@ -39,14 +39,14 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
-        val role = repo[inserted.id].block()
+        val role = repo.findById(inserted.id).block()
 
         assertEquals(inserted, role)
     }
 
     @Test
     fun `retrieving a role by ID when no role matches returns empty`() {
-        StepVerifier.create(repo[1000])
+        StepVerifier.create(repo.findById(1000))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -57,14 +57,14 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
-        val role = repo[app.id, "test-role"].block()
+        val role = repo.findByApplicationIdAndName(app.id, "test-role").block()
 
         assertEquals(inserted, role)
     }
 
     @Test
     fun `retrieving a role by name when no role matches returns empty`() {
-        StepVerifier.create(repo[1, "test-role"])
+        StepVerifier.create(repo.findByApplicationIdAndName(1, "test-role"))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -76,7 +76,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
         repo.delete(inserted.id).block()
-        val retrieved = repo[inserted.id].block()
+        val retrieved = repo.findById(inserted.id).block()
         
         assertNull(retrieved)
     }

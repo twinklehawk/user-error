@@ -42,18 +42,18 @@ class RolesControllerTest {
 
     @Test
     fun `getting a role should throw an exception when the role does not exist`() {
-        every { service[5, "test-role"] } returns Mono.empty()
+        every { service.findById(5) } returns Mono.empty()
 
-        StepVerifier.create(controller[5, "test-role"])
+        StepVerifier.create(controller.findById(4, 5))
                 .verifyError(ObjectNotFoundException::class.java)
     }
 
     @Test
     fun `delete passes ID through to service`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.delete(6, "role") } returns probe.mono()
+        every { service.delete(6) } returns probe.mono()
 
-        StepVerifier.create(controller.delete(6, "role"))
+        StepVerifier.create(controller.delete(5, 6))
             .verifyComplete()
         probe.assertWasSubscribed()
     }
@@ -72,9 +72,9 @@ class RolesControllerTest {
     @Test
     fun `get passes the role name through`() {
         val role1 = Role(1, 1, "role")
-        every { service[1, "role"] } returns Mono.just(role1)
+        every { service.findById(1) } returns Mono.just(role1)
 
-        StepVerifier.create(controller[1, "role"])
+        StepVerifier.create(controller.findById(1, 1))
                 .expectNext(role1)
                 .verifyComplete()
     }

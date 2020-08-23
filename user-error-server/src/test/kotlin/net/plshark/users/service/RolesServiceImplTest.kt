@@ -51,34 +51,23 @@ class RolesServiceImplTest {
     }
 
     @Test
-    fun `deleting a role by name should look up the role then delete the role`() {
-        every { rolesRepo[123, "role"] } returns Mono.just(Role(456, 123, "role"))
-        val rolesProbe = PublisherProbe.empty<Void>()
-        every { rolesRepo.delete(456) } returns rolesProbe.mono()
-
-        StepVerifier.create(service.delete(123, "role"))
-                .verifyComplete()
-        rolesProbe.assertWasSubscribed()
-    }
-
-    @Test
-    fun `should be able to retrieve a role by name`() {
+    fun `should be able to retrieve a role by ID`() {
         val role = Role(123, 132, "role-name")
-        every { rolesRepo[132, "role-name"] } returns Mono.just(role)
+        every { rolesRepo.findById(123) } returns Mono.just(role)
 
-        StepVerifier.create(service[132, "role-name"])
+        StepVerifier.create(service.findById(123))
                 .expectNext(role)
                 .verifyComplete()
-        StepVerifier.create(service.getRequired(132, "role-name"))
+        StepVerifier.create(service.findRequiredById(123))
                 .expectNext(role)
                 .verifyComplete()
     }
 
     @Test
     fun `should return an error when a required role does not exist`() {
-        every { rolesRepo[132, "role-name"] } returns Mono.empty()
+        every { rolesRepo.findById(132) } returns Mono.empty()
 
-        StepVerifier.create(service.getRequired(132, "role-name"))
+        StepVerifier.create(service.findRequiredById(132))
                 .verifyError(ObjectNotFoundException::class.java)
     }
 

@@ -99,22 +99,23 @@ class UsersController(private val usersService: UsersService) {
         @PathVariable("username") username: String,
         @RequestBody roleGrant: RoleGrant
     ): Mono<Void> {
-        return usersService.grantRoleToUser(username, roleGrant.applicationId, roleGrant.role)
+        return usersService.grantRoleToUser(username, roleGrant.applicationId, roleGrant.roleId)
     }
 
     /**
      * Remove a role from a user
      * @param username the name of the user to remove the role from
-     * @param role the name of the role to remove
+     * @param applicationId the ID of the parent application
+     * @param roleId the ID of the role to remove
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
-    @DeleteMapping(path = ["/{username}/roles/{applicationId}/{role}"])
+    @DeleteMapping(path = ["/{username}/roles/{applicationId}/{roleId}"])
     fun removeRole(
         @PathVariable("username") username: String,
         @PathVariable("applicationId") applicationId: Long,
-        @PathVariable("role") role: String
+        @PathVariable("roleId") roleId: Long
     ): Mono<Void> {
-        return usersService.removeRoleFromUser(username, applicationId, role)
+        return usersService.removeRoleFromUser(username, applicationId, roleId)
     }
 
     /**

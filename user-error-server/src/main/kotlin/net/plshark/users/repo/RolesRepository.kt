@@ -9,12 +9,13 @@ import reactor.core.publisher.Mono
  * Repository for saving, deleting, and retrieving roles
  */
 interface RolesRepository {
+
     /**
      * Get a role by ID
      * @param id the ID
      * @return the matching role
      */
-    operator fun get(id: Long): Mono<Role>
+    fun findById(id: Long): Mono<Role>
 
     /**
      * Get a role by name
@@ -22,7 +23,7 @@ interface RolesRepository {
      * @param name the role name
      * @return the matching role
      */
-    operator fun get(applicationId: Long, name: String): Mono<Role>
+    fun findByApplicationIdAndName(applicationId: Long, name: String): Mono<Role>
 
     /**
      * Get all roles up to the maximum result count and starting at an offset

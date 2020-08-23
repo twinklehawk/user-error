@@ -49,15 +49,15 @@ class RolesController(private val rolesService: RolesService, private val appSer
     /**
      * Delete a role
      * @param applicationId the ID of the parent application
-     * @param name the role name
+     * @param roleId the role ID
      * @return an empty result
      */
-    @DeleteMapping(path = ["/{name}"])
+    @DeleteMapping(path = ["/{roleId}"])
     fun delete(
         @PathVariable("applicationId") applicationId: Long,
-        @PathVariable("name") name: String
+        @PathVariable("roleId") roleId: Long
     ): Mono<Void> {
-        return rolesService.delete(applicationId, name)
+        return rolesService.delete(roleId)
     }
 
     /**
@@ -78,15 +78,15 @@ class RolesController(private val rolesService: RolesService, private val appSer
     /**
      * Get a role
      * @param applicationId the ID of the parent application name
-     * @param name the name of the role
+     * @param roleId the ID of the role
      * @return the matching role if found
      */
-    @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    operator fun get(
+    @GetMapping(path = ["/{roleId}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findById(
         @PathVariable("applicationId") applicationId: Long,
-        @PathVariable("name") name: String
+        @PathVariable("roleId") roleId: Long
     ): Mono<Role> {
-        return rolesService[applicationId, name]
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $applicationId:$name") })
+        return rolesService.findById(roleId)
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $roleId") })
     }
 }

@@ -16,14 +16,14 @@ import java.util.Optional
 @Repository
 class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepository {
 
-    override fun get(id: Long): Mono<Role> {
+    override fun findById(id: Long): Mono<Role> {
         return client.execute("SELECT * FROM roles WHERE id = :id")
             .bind("id", id)
             .map { row -> mapRow(row) }
             .one()
     }
 
-    override fun get(applicationId: Long, name: String): Mono<Role> {
+    override fun findByApplicationIdAndName(applicationId: Long, name: String): Mono<Role> {
         return client.execute("SELECT * FROM roles WHERE application_id = :applicationId AND name = :name")
             .bind("applicationId", applicationId)
             .bind("name", name)

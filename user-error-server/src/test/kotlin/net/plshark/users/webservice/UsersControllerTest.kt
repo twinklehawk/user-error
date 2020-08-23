@@ -47,9 +47,9 @@ class UsersControllerTest {
     @Test
     fun `granting a role passes the user and role names through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.grantRoleToUser("user", 43, "role1") } returns probe.mono()
+        every { service.grantRoleToUser("user", 43, 65) } returns probe.mono()
 
-        StepVerifier.create(controller.grantRole("user", RoleGrant(43, "role1")))
+        StepVerifier.create(controller.grantRole("user", RoleGrant(43, 65)))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -59,9 +59,9 @@ class UsersControllerTest {
     @Test
     fun `removing a role passes the user and role names through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.removeRoleFromUser("ted", 56, "role") } returns probe.mono()
+        every { service.removeRoleFromUser("ted", 56, 45) } returns probe.mono()
 
-        StepVerifier.create(controller.removeRole("ted", 56, "role"))
+        StepVerifier.create(controller.removeRole("ted", 56, 45))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
