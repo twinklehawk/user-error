@@ -14,14 +14,14 @@ interface GroupsRepository {
      * @param id the group ID
      * @return the matching group if found
      */
-    fun getForId(id: Long): Mono<Group>
+    fun findById(id: Long): Mono<Group>
 
     /**
      * Get a group by name
      * @param name the group name
      * @return the matching group if found
      */
-    fun getForName(name: String): Mono<Group>
+    fun findByName(name: String): Mono<Group>
 
     /**
      * Get all groups up to a maximum number of results

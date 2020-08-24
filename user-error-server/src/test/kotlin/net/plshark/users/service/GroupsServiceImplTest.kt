@@ -22,22 +22,22 @@ class GroupsServiceImplTest {
     private val service = GroupsServiceImpl(groupsRepo, groupRolesRepo)
 
     @Test
-    fun `should be able to retrieve groups by name`() {
-        every { groupsRepo.getForName("group-name") } returns Mono.just(Group(123, "group-name"))
+    fun `should be able to retrieve groups by ID`() {
+        every { groupsRepo.findById(123) } returns Mono.just(Group(123, "group-name"))
 
-        StepVerifier.create(service["group-name"])
+        StepVerifier.create(service.findById(123))
                 .expectNext(Group(123, "group-name"))
                 .verifyComplete()
-        StepVerifier.create(service.getRequired("group-name"))
+        StepVerifier.create(service.findRequiredById(123))
                 .expectNext(Group(123, "group-name"))
                 .verifyComplete()
     }
 
     @Test
     fun `should throw an exception when a required group is not found`() {
-        every { groupsRepo.getForName("group-name") } returns Mono.empty()
+        every { groupsRepo.findById(123) } returns Mono.empty()
 
-        StepVerifier.create(service.getRequired("group-name"))
+        StepVerifier.create(service.findRequiredById(123))
                 .verifyError(ObjectNotFoundException::class.java)
     }
 
@@ -84,7 +84,7 @@ class GroupsServiceImplTest {
 
     @Test
     fun `deleting by name should delete the group`() {
-        every { groupsRepo.getForName("group") } returns Mono.just(Group(100, "group"))
+        every { groupsRepo.findByName("group") } returns Mono.just(Group(100, "group"))
         val groupsProbe = PublisherProbe.empty<Void>()
         every { groupsRepo.delete(100) } returns groupsProbe.mono()
 

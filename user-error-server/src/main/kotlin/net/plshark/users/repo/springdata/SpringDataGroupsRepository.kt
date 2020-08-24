@@ -16,14 +16,14 @@ import java.util.Optional
 @Repository
 class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRepository {
 
-    override fun getForId(id: Long): Mono<Group> {
+    override fun findById(id: Long): Mono<Group> {
         return client.execute("SELECT * FROM groups WHERE id = :id")
             .bind("id", id)
             .map { row: Row -> mapRow(row) }
             .one()
     }
 
-    override fun getForName(name: String): Mono<Group> {
+    override fun findByName(name: String): Mono<Group> {
         return client.execute("SELECT * FROM groups WHERE name = :name")
             .bind("name", name)
             .map { row -> mapRow(row) }

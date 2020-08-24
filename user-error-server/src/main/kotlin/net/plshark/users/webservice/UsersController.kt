@@ -48,7 +48,7 @@ class UsersController(private val usersService: UsersService) {
      */
     @GetMapping(path = ["/{username}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUser(@PathVariable("username") username: String): Mono<User> {
-        return usersService[username]
+        return usersService.findByUsername(username)
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for username") })
     }
 
@@ -121,28 +121,28 @@ class UsersController(private val usersService: UsersService) {
     /**
      * Grant a group to a user
      * @param username the username of the user to grant to
-     * @param group the name of the group to grant
+     * @param groupId the ID of the group to grant
      * @return an empty result or ObjectNotFoundException if the user or group does not exist
      */
-    @PostMapping(path = ["/{username}/groups/{group}"])
+    @PostMapping(path = ["/{username}/groups/{groupId}"])
     fun grantGroup(
         @PathVariable("username") username: String,
-        @PathVariable("group") group: String
+        @PathVariable("groupId") groupId: Long
     ): Mono<Void> {
-        return usersService.grantGroupToUser(username, group)
+        return usersService.grantGroupToUser(username, groupId)
     }
 
     /**
      * Remove a group from a user
      * @param username the name of the user to remove the role from
-     * @param group the name of the group to remove
+     * @param groupId the ID of the group to remove
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
-    @DeleteMapping(path = ["/{username}/groups/{group}"])
+    @DeleteMapping(path = ["/{username}/groups/{groupId}"])
     fun removeGroup(
         @PathVariable("username") username: String,
-        @PathVariable("group") group: String
+        @PathVariable("groupId") groupId: Long
     ): Mono<Void> {
-        return usersService.removeGroupFromUser(username, group)
+        return usersService.removeGroupFromUser(username, groupId)
     }
 }

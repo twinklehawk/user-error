@@ -18,12 +18,12 @@ import reactor.core.publisher.Mono
 class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val groupRolesRepo: GroupRolesRepository) :
     GroupsService {
 
-    override fun get(name: String): Mono<Group> {
-        return groupsRepo.getForName(name)
+    override fun findById(id: Long): Mono<Group> {
+        return groupsRepo.findById(id)
     }
 
-    override fun getRequired(name: String): Mono<Group> {
-        return get(name).switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $name") })
+    override fun findRequiredById(id: Long): Mono<Group> {
+        return findById(id).switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $id") })
     }
 
     override fun getGroups(maxResults: Int, offset: Long): Flux<Group> {
@@ -42,7 +42,7 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
     }
 
     override fun delete(name: String): Mono<Void> {
-        return get(name)
+        return groupsRepo.findByName(name)
             .flatMap { group: Group -> delete(group.id) }
     }
 

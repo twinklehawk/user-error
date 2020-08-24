@@ -15,14 +15,14 @@ interface UsersService {
      * @param username the username
      * @return the matching user if found
      */
-    operator fun get(username: String): Mono<User>
+    fun findByUsername(username: String): Mono<User>
 
     /**
      * Retrieve a user by username
      * @param username the username
      * @return the matching user or an ObjectNotFoundException if no matching user is found
      */
-    fun getRequired(username: String): Mono<User>
+    fun findRequiredByUsername(username: String): Mono<User>
 
     /**
      * Get all users up to the maximum result count and starting at an offset
@@ -84,16 +84,16 @@ interface UsersService {
     /**
      * Add a user to a group
      * @param username the user name
-     * @param groupName the group name
+     * @param groupId the group ID
      * @return when complete
      */
-    fun grantGroupToUser(username: String, groupName: String): Mono<Void>
+    fun grantGroupToUser(username: String, groupId: Long): Mono<Void>
 
     /**
      * Remove a user from a group
      * @param username the user name
-     * @param groupName the group name
+     * @param groupId the group ID
      * @return when complete
      */
-    fun removeGroupFromUser(username: String, groupName: String): Mono<Void>
+    fun removeGroupFromUser(username: String, groupId: Long): Mono<Void>
 }

@@ -19,18 +19,18 @@ class GroupsControllerTest {
     @Test
     fun `get should pass through the response from the service`() {
         val group = Group(1, "group")
-        every { groupsService["group"] } returns Mono.just(group)
+        every { groupsService.findById(1) } returns Mono.just(group)
 
-        StepVerifier.create(controller["group"])
+        StepVerifier.create(controller.findById(1))
                 .expectNext(group)
                 .verifyComplete()
     }
 
     @Test
     fun `getting a group should throw an exception when the group does not exist`() {
-        every { groupsService["test-group"] } returns Mono.empty()
+        every { groupsService.findById(2) } returns Mono.empty()
 
-        StepVerifier.create(controller["test-group"])
+        StepVerifier.create(controller.findById(2))
                 .verifyError(ObjectNotFoundException::class.java)
     }
 

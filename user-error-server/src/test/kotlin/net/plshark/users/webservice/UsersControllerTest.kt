@@ -45,7 +45,7 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `granting a role passes the user and role names through`() {
+    fun `granting a role passes the user name and role ID through`() {
         val probe = PublisherProbe.empty<Void>()
         every { service.grantRoleToUser("user", 43, 65) } returns probe.mono()
 
@@ -57,7 +57,7 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `removing a role passes the user and role names through`() {
+    fun `removing a role passes the user name and role ID through`() {
         val probe = PublisherProbe.empty<Void>()
         every { service.removeRoleFromUser("ted", 56, 45) } returns probe.mono()
 
@@ -69,11 +69,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `granting a group passes the user and group names through`() {
+    fun `granting a group passes the user name and group ID through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.grantGroupToUser("user", "group") } returns probe.mono()
+        every { service.grantGroupToUser("user", 3) } returns probe.mono()
 
-        StepVerifier.create(controller.grantGroup("user", "group"))
+        StepVerifier.create(controller.grantGroup("user", 3))
                 .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -81,11 +81,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `removing a group passes the user and role names through`() {
+    fun `removing a group passes the user name and group ID through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.removeGroupFromUser("ted", "group") } returns probe.mono()
+        every { service.removeGroupFromUser("ted", 4) } returns probe.mono()
 
-        StepVerifier.create(controller.removeGroup("ted", "group"))
+        StepVerifier.create(controller.removeGroup("ted", 4))
                 .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -106,7 +106,7 @@ class UsersControllerTest {
     @Test
     fun `getUser passes the username through`() {
         val user1 = User(1, "user")
-        every { service["user"] } returns Mono.just(user1)
+        every { service.findByUsername("user") } returns Mono.just(user1)
 
         StepVerifier.create(controller.getUser("user"))
                 .expectNext(user1)

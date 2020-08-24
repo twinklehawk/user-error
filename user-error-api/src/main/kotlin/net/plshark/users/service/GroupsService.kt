@@ -9,19 +9,20 @@ import reactor.core.publisher.Mono
  * Service for managing groups
  */
 interface GroupsService {
-    /**
-     * Retrieve a group by name
-     * @param name the group name
-     * @return the matching group if found
-     */
-    operator fun get(name: String): Mono<Group>
 
     /**
-     * Retrieve a group by name
-     * @param name the group name
+     * Retrieve a group by ID
+     * @param id the group ID
+     * @return the matching group if found
+     */
+    fun findById(id: Long): Mono<Group>
+
+    /**
+     * Retrieve a group by ID
+     * @param id the group ID
      * @return the matching group or an [net.plshark.errors.ObjectNotFoundException] if no match is found
      */
-    fun getRequired(name: String): Mono<Group>
+    fun findRequiredById(id: Long): Mono<Group>
 
     /**
      * Get all groups up to the maximum result count and starting at an offset

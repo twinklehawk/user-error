@@ -158,20 +158,20 @@ class UsersServiceImplTest {
     @Test
     fun `should be able to add a user to a group`() {
         every { userRepo.getForUsername("bill") } returns Mono.just(User(100, "bill"))
-        every { groupsService.getRequired("group") } returns Mono.just(Group(200, "group"))
+        every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
         every { userGroupsRepo.insert(100, 200) } returns Mono.empty()
 
-        StepVerifier.create(service.grantGroupToUser("bill", "group"))
+        StepVerifier.create(service.grantGroupToUser("bill", 200))
                 .verifyComplete()
     }
 
     @Test
     fun `should be able to remove a user from a group`() {
         every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "ted"))
-        every { groupsService.getRequired("group") } returns Mono.just(Group(200, "group"))
+        every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
         every { userGroupsRepo.delete(100, 200) } returns Mono.empty()
 
-        StepVerifier.create(service.removeGroupFromUser("ted", "group"))
+        StepVerifier.create(service.removeGroupFromUser("ted", 200))
                 .verifyComplete()
     }
 }

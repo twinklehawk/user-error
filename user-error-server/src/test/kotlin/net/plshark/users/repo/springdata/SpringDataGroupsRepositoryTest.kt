@@ -33,14 +33,14 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted group by ID`() {
         val group = repo.insert(GroupCreate("group")).block()!!
 
-        StepVerifier.create(repo.getForId(group.id))
+        StepVerifier.create(repo.findById(group.id))
                 .expectNext(group)
                 .verifyComplete()
     }
 
     @Test
     fun `retrieving a group by ID when no group matches returns empty`() {
-        StepVerifier.create(repo.getForId(100))
+        StepVerifier.create(repo.findById(100))
                 .expectNextCount(0)
                 .verifyComplete()
     }
@@ -49,14 +49,14 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted group by name`() {
         val group = repo.insert(GroupCreate("group")).block()!!
 
-        StepVerifier.create(repo.getForName("group"))
+        StepVerifier.create(repo.findByName("group"))
                 .expectNext(group)
                 .verifyComplete()
     }
 
     @Test
     fun `retrieving a group by name when no group matches returns empty`() {
-        StepVerifier.create(repo.getForName("name"))
+        StepVerifier.create(repo.findByName("name"))
                 .expectNextCount(0)
                 .verifyComplete()
     }
@@ -66,7 +66,7 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
         val group = repo.insert(GroupCreate("group")).block()!!
         repo.delete(group.id).block()
 
-        StepVerifier.create(repo.getForName("name"))
+        StepVerifier.create(repo.findByName("name"))
                 .expectNextCount(0)
                 .verifyComplete()
     }

@@ -22,14 +22,14 @@ import reactor.core.publisher.Mono
 class GroupsController(private val groupsService: GroupsService) {
 
     /**
-     * Get a group by name
-     * @param name the name of the group
+     * Get a group by ID
+     * @param id the ID of the group
      * @return the matching group if found
      */
-    @GetMapping(path = ["/{name}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    operator fun get(@PathVariable("name") name: String): Mono<Group> {
-        return groupsService[name]
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $name") })
+    @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findById(@PathVariable("id") id: Long): Mono<Group> {
+        return groupsService.findById(id)
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $id") })
     }
 
     /**

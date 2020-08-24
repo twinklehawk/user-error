@@ -31,12 +31,13 @@ class UsersServiceImpl(
     private val passwordEncoder: PasswordEncoder
 ) : UsersService {
 
-    override fun get(username: String): Mono<User> {
+    override fun findByUsername(username: String): Mono<User> {
         return userRepo.getForUsername(username)
     }
 
-    override fun getRequired(username: String): Mono<User> {
-        return get(username).switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for $username") })
+    override fun findRequiredByUsername(username: String): Mono<User> {
+        return findByUsername(username)
+            .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for $username") })
     }
 
     override fun getUsers(maxResults: Int, offset: Long): Flux<User> {
@@ -59,14 +60,14 @@ class UsersServiceImpl(
     }
 
     override fun delete(username: String): Mono<Void> {
-        return get(username)
+        return findByUsername(username)
             .flatMap { delete(it.id) }
     }
 
     // TODO applicationId necessary?
 
     override fun grantRoleToUser(username: String, applicationId: Long, roleId: Long): Mono<Void> {
-        return getRequired(username)
+        return findRequiredByUsername(username)
             .flatMap { user: User ->
                 rolesService.findRequiredById(roleId)
                     .flatMap { role -> userRolesRepo.insert(user.id, role.id) }
@@ -74,25 +75,27 @@ class UsersServiceImpl(
     }
 
     override fun removeRoleFromUser(username: String, applicationId: Long, roleId: Long): Mono<Void> {
-        return getRequired(username)
+        return findRequiredByUsername(username)
             .flatMap { user: User ->
                 rolesService.findRequiredById(roleId)
                     .flatMap { role -> userRolesRepo.delete(user.id, role.id) }
             }
     }
 
-    override fun grantGroupToUser(username: String, groupName: String): Mono<Void> {
-        return getRequired(username)
+    override fun grantGroupToUser(username: String, groupId: Long): Mono<Void> {
+        return findRequiredByUsername(username)
             .flatMap { user: User ->
-                groupsService.getRequired(groupName)
+                // TODO necessary to lookup first?
+                groupsService.findRequiredById(groupId)
                     .flatMap { group -> userGroupsRepo.insert(user.id, group.id) }
             }
     }
 
-    override fun removeGroupFromUser(username: String, groupName: String): Mono<Void> {
-        return getRequired(username)
+    override fun removeGroupFromUser(username: String, groupId: Long): Mono<Void> {
+        return findRequiredByUsername(username)
             .flatMap { user: User ->
-                groupsService.getRequired(groupName)
+                // TODO necessary to lookup first?
+                groupsService.findRequiredById(groupId)
                     .flatMap { group -> userGroupsRepo.delete(user.id, group.id) }
             }
     }
@@ -101,7 +104,7 @@ class UsersServiceImpl(
         require(newPassword.isNotEmpty()) { "New password cannot be empty" }
         val newPasswordEncoded = passwordEncoder.encode(newPassword)
         val currentPasswordEncoded = passwordEncoder.encode(currentPassword)
-        return getRequired(username)
+        return findRequiredByUsername(username)
             .flatMap { user: User ->
                 userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
                     .onErrorResume(EmptyResultDataAccessException::class.java) { e: EmptyResultDataAccessException? ->
