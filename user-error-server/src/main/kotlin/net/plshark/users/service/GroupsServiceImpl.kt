@@ -41,11 +41,6 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
         return groupsRepo.deleteById(groupId)
     }
 
-    override fun deleteByName(name: String): Mono<Void> {
-        return groupsRepo.findByName(name)
-            .flatMap { group: Group -> deleteById(group.id) }
-    }
-
     override fun addRoleToGroup(groupId: Long, roleId: Long): Mono<Void> {
         return groupRolesRepo.insert(groupId, roleId)
     }

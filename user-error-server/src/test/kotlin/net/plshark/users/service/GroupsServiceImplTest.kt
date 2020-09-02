@@ -83,17 +83,6 @@ class GroupsServiceImplTest {
     }
 
     @Test
-    fun `deleting by name should delete the group`() {
-        every { groupsRepo.findByName("group") } returns Mono.just(Group(100, "group"))
-        val groupsProbe = PublisherProbe.empty<Void>()
-        every { groupsRepo.deleteById(100) } returns groupsProbe.mono()
-
-        StepVerifier.create(service.deleteByName("group"))
-                .verifyComplete()
-        groupsProbe.assertWasSubscribed()
-    }
-
-    @Test
     fun `should be able to add a role to a group`() {
         val probe = PublisherProbe.empty<Void>()
         every { groupRolesRepo.insert(1, 2) } returns probe.mono()

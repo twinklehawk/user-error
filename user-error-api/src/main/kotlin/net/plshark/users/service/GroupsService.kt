@@ -48,14 +48,6 @@ interface GroupsService {
      */
     fun deleteById(groupId: Long): Mono<Void>
 
-    // TODO remove
-    /**
-     * Delete a group
-     * @param name the group name
-     * @return a [Mono] signalling when complete
-     */
-    fun deleteByName(name: String): Mono<Void>
-
     /**
      * Add a role to a group
      * @param groupId the group ID
