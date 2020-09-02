@@ -10,12 +10,13 @@ import reactor.core.publisher.Mono
  * Repository for saving, deleting, and retrieving users
  */
 interface UsersRepository {
+
     /**
      * Get a user by user ID
      * @param id the user ID
      * @return the matching user
      */
-    fun getForId(id: Long): Mono<User>
+    fun findById(id: Long): Mono<User>
 
     /**
      * Get a user by the username

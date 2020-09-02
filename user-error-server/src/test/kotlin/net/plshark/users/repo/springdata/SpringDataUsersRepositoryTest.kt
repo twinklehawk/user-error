@@ -35,7 +35,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted user by ID`() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        val user = repo.getForId(inserted.id).block()!!
+        val user = repo.findById(inserted.id).block()!!
 
         assertEquals(inserted, user)
     }
@@ -64,7 +64,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
         repo.delete(inserted.id).block()
-        val retrieved = repo.getForId(inserted.id).block()
+        val retrieved = repo.findById(inserted.id).block()
 
         assertEquals(null, retrieved)
     }

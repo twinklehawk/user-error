@@ -10,6 +10,14 @@ import reactor.core.publisher.Mono
  * Service for modifying users and roles
  */
 interface UsersService {
+
+    /**
+     * Retrieve a user by ID
+     * @param id the user ID
+     * @return a [Mono] emitting the matching user or empty if not found
+     */
+    fun findById(id: Long): Mono<User>
+
     /**
      * Retrieve a user by username
      * @param username the username
@@ -48,52 +56,45 @@ interface UsersService {
     fun delete(userId: Long): Mono<Void>
 
     /**
-     * Delete a user
-     * @param username the username
-     * @return an empty result
-     */
-    fun delete(username: String): Mono<Void>
-
-    /**
      * Update a user's password
-     * @param username the ID of the user
+     * @param id the ID of the user
      * @param currentPassword the current password, used for verification
      * @param newPassword the new password
      * @return an empty result or ObjectNotFoundException if the user was not found
      */
-    fun updateUserPassword(username: String, currentPassword: String, newPassword: String): Mono<Void>
+    fun updateUserPassword(id: Long, currentPassword: String, newPassword: String): Mono<Void>
 
     /**
      * Grant a role to a user
-     * @param username the name of the user to grant the role to
+     * @param id the ID of the user
      * @param applicationId the ID of the role's application
      * @param roleId the ID of the role to grant
      * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
-    fun grantRoleToUser(username: String, applicationId: Long, roleId: Long): Mono<Void>
+    fun grantRoleToUser(id: Long, applicationId: Long, roleId: Long): Mono<Void>
 
     /**
      * Remove a role from a user
-     * @param username the name of the user to remove the role from
+     * @param id the ID of the user
      * @param applicationId the ID of the role's application
      * @param roleId the ID of the role to remove
      * @return an empty result or ObjectNotFoundException if the user does not exist
      */
-    fun removeRoleFromUser(username: String, applicationId: Long, roleId: Long): Mono<Void>
+    fun removeRoleFromUser(id: Long, applicationId: Long, roleId: Long): Mono<Void>
 
     /**
      * Add a user to a group
-     * @param username the user name
+     * @param id the ID of the user
      * @param groupId the group ID
      * @return when complete
      */
-    fun grantGroupToUser(username: String, groupId: Long): Mono<Void>
+    fun grantGroupToUser(id: Long, groupId: Long): Mono<Void>
 
     /**
      * Remove a user from a group
-     * @param username the user name
+     * @param id the ID of the user
      * @param groupId the group ID
      * @return when complete
      */
-    fun removeGroupFromUser(username: String, groupId: Long): Mono<Void>
+    fun removeGroupFromUser(id: Long, groupId: Long): Mono<Void>
 }

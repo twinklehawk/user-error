@@ -56,18 +56,18 @@ class UsersServiceImplTest {
 
     @Test
     fun `cannot update a user to have an empty password`() {
-        assertThrows<IllegalArgumentException> { service.updateUserPassword("bill", "current", "") }
+        assertThrows<IllegalArgumentException> { service.updateUserPassword(123, "current", "") }
     }
 
     @Test
     fun `new password is encoded when updating password`() {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new-pass") } returns "new-pass-encoded"
-        every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "test"))
+        every { userRepo.findById(100) } returns Mono.just(User(100, "test"))
         val probe = PublisherProbe.empty<Void>()
         every { userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") } returns probe.mono()
 
-        StepVerifier.create(service.updateUserPassword("ted", "current", "new-pass"))
+        StepVerifier.create(service.updateUserPassword(100, "current", "new-pass"))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -78,9 +78,9 @@ class UsersServiceImplTest {
     fun `no matching user when updating password throws exception`() {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new") } returns "new-encoded"
-        every { userRepo.getForUsername("ted") } returns Mono.empty()
+        every { userRepo.findById(200) } returns Mono.empty()
 
-        StepVerifier.create(service.updateUserPassword("ted", "current", "new"))
+        StepVerifier.create(service.updateUserPassword(200, "current", "new"))
             .verifyError(ObjectNotFoundException::class.java)
     }
 
@@ -88,10 +88,10 @@ class UsersServiceImplTest {
     fun `no matching existing password when updating password throws exception`() {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new") } returns "new-encoded"
-        every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "ted"))
+        every { userRepo.findById(100) } returns Mono.just(User(100, "ted"))
         every { userRepo.updatePassword(100, "current-encoded", "new-encoded") } returns Mono.error(EmptyResultDataAccessException(1))
 
-        StepVerifier.create(service.updateUserPassword("ted", "current", "new"))
+        StepVerifier.create(service.updateUserPassword(100, "current", "new"))
                 .verifyError(BadRequestException::class.java)
     }
 
@@ -106,8 +106,7 @@ class UsersServiceImplTest {
     }
 
     @Test
-    fun `deleting by username retrieves the user and deletes the user`() {
-        every { userRepo.getForUsername("user") } returns Mono.just(User(100, "user"))
+    fun `deleting by username deletes the user`() {
         val userProbe = PublisherProbe.empty<Void>()
         every { userRepo.delete(100) } returns userProbe.mono()
 
@@ -118,12 +117,12 @@ class UsersServiceImplTest {
 
     @Test
     fun `granting a role to a user should add the role to the user's roles`() {
-        every { userRepo.getForUsername("bill") } returns Mono.just(User(12, "bill"))
+        every { userRepo.findById(12) } returns Mono.just(User(12, "bill"))
         every { rolesService.findRequiredById(34) } returns Mono.just(Role(34, 1, "role"))
         val probe = PublisherProbe.empty<Void>()
         every { userRolesRepo.insert(12, 34) } returns probe.mono()
 
-        StepVerifier.create(service.grantRoleToUser("bill", 1, 34))
+        StepVerifier.create(service.grantRoleToUser(12, 1, 34))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -132,12 +131,12 @@ class UsersServiceImplTest {
 
     @Test
     fun `removing a role from a user should remove the role from the user's roles`() {
-        every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "bill"))
+        every { userRepo.findById(100) } returns Mono.just(User(100, "bill"))
         every { rolesService.findRequiredById(200) } returns Mono.just(Role(200, 1, "role"))
         val probe = PublisherProbe.empty<Void>()
         every { userRolesRepo.delete(100, 200) } returns probe.mono()
 
-        StepVerifier.create(service.removeRoleFromUser("ted", 1, 200))
+        StepVerifier.create(service.removeRoleFromUser(100, 1, 200))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -157,21 +156,21 @@ class UsersServiceImplTest {
 
     @Test
     fun `should be able to add a user to a group`() {
-        every { userRepo.getForUsername("bill") } returns Mono.just(User(100, "bill"))
+        every { userRepo.findById(100) } returns Mono.just(User(100, "bill"))
         every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
         every { userGroupsRepo.insert(100, 200) } returns Mono.empty()
 
-        StepVerifier.create(service.grantGroupToUser("bill", 200))
+        StepVerifier.create(service.grantGroupToUser(100, 200))
                 .verifyComplete()
     }
 
     @Test
     fun `should be able to remove a user from a group`() {
-        every { userRepo.getForUsername("ted") } returns Mono.just(User(100, "ted"))
+        every { userRepo.findById(100) } returns Mono.just(User(100, "ted"))
         every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
         every { userGroupsRepo.delete(100, 200) } returns Mono.empty()
 
-        StepVerifier.create(service.removeGroupFromUser("ted", 200))
+        StepVerifier.create(service.removeGroupFromUser(100, 200))
                 .verifyComplete()
     }
 }

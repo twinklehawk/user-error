@@ -25,6 +25,13 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .one()
     }
 
+    override fun findById(id: Long): Mono<User> {
+        return client.execute("SELECT * FROM users WHERE id = :id")
+            .bind("id", id)
+            .map { row -> mapRow(row) }
+            .one()
+    }
+
     override fun getForUsernameWithPassword(username: String): Mono<PrivateUser> {
         return client.execute("SELECT * FROM users WHERE username = :username")
             .bind("username", username)
@@ -51,13 +58,6 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
         return client.execute("DELETE FROM users WHERE id = :id")
             .bind("id", userId)
             .then()
-    }
-
-    override fun getForId(id: Long): Mono<User> {
-        return client.execute("SELECT * FROM users WHERE id = :id")
-            .bind("id", id)
-            .map { row -> mapRow(row) }
-            .one()
     }
 
     override fun updatePassword(id: Long, currentPassword: String, newPassword: String): Mono<Void> {

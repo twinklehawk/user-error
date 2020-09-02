@@ -23,9 +23,9 @@ class UsersControllerTest {
     @Test
     fun `delete passes the user ID through to be deleted`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.delete("user") } returns probe.mono()
+        every { service.delete(1) } returns probe.mono()
 
-        StepVerifier.create(controller.delete("user"))
+        StepVerifier.create(controller.delete(1))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -35,9 +35,9 @@ class UsersControllerTest {
     @Test
     fun `change password passes the user ID, current password, and new passwords through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.updateUserPassword("bob", "current", "new") } returns probe.mono()
+        every { service.updateUserPassword(2, "current", "new") } returns probe.mono()
 
-        StepVerifier.create(controller.changePassword("bob", PasswordChangeRequest("current", "new")))
+        StepVerifier.create(controller.changePassword(2, PasswordChangeRequest("current", "new")))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -45,11 +45,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `granting a role passes the user name and role ID through`() {
+    fun `granting a role passes the user and role IDs through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.grantRoleToUser("user", 43, 65) } returns probe.mono()
+        every { service.grantRoleToUser(3, 43, 65) } returns probe.mono()
 
-        StepVerifier.create(controller.grantRole("user", RoleGrant(43, 65)))
+        StepVerifier.create(controller.grantRole(3, RoleGrant(43, 65)))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -57,11 +57,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `removing a role passes the user name and role ID through`() {
+    fun `removing a role passes the user and role IDs through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.removeRoleFromUser("ted", 56, 45) } returns probe.mono()
+        every { service.removeRoleFromUser(4, 56, 45) } returns probe.mono()
 
-        StepVerifier.create(controller.removeRole("ted", 56, 45))
+        StepVerifier.create(controller.removeRole(4, 56, 45))
             .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -69,11 +69,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `granting a group passes the user name and group ID through`() {
+    fun `granting a group passes the user and group IDs through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.grantGroupToUser("user", 3) } returns probe.mono()
+        every { service.grantGroupToUser(5, 3) } returns probe.mono()
 
-        StepVerifier.create(controller.grantGroup("user", 3))
+        StepVerifier.create(controller.grantGroup(5, 3))
                 .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -81,11 +81,11 @@ class UsersControllerTest {
     }
 
     @Test
-    fun `removing a group passes the user name and group ID through`() {
+    fun `removing a group passes the user name group IDs through`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.removeGroupFromUser("ted", 4) } returns probe.mono()
+        every { service.removeGroupFromUser(6, 4) } returns probe.mono()
 
-        StepVerifier.create(controller.removeGroup("ted", 4))
+        StepVerifier.create(controller.removeGroup(6, 4))
                 .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
@@ -106,9 +106,9 @@ class UsersControllerTest {
     @Test
     fun `getUser passes the username through`() {
         val user1 = User(1, "user")
-        every { service.findByUsername("user") } returns Mono.just(user1)
+        every { service.findById(7) } returns Mono.just(user1)
 
-        StepVerifier.create(controller.getUser("user"))
+        StepVerifier.create(controller.findById(7))
                 .expectNext(user1)
                 .verifyComplete()
     }
