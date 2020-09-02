@@ -5,12 +5,9 @@ import io.mockk.mockk
 import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
-import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
-import net.plshark.users.repo.RolesRepository
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -18,8 +15,7 @@ import reactor.test.publisher.PublisherProbe
 class ApplicationsServiceImplTest {
 
     private val appsRepo = mockk<ApplicationsRepository>()
-    private val rolesRepo = mockk<RolesRepository>()
-    private val service = ApplicationsServiceImpl(appsRepo, rolesRepo)
+    private val service = ApplicationsServiceImpl(appsRepo)
 
     @Test
     fun `get should pass through the response from the repo`() {
@@ -59,16 +55,5 @@ class ApplicationsServiceImplTest {
         StepVerifier.create(service.deleteById(1))
                 .verifyComplete()
         deleteAppProbe.assertWasSubscribed()
-    }
-
-    @Test
-    fun `getApplicationRoles should pass through the response from the repo`() {
-        val role1 = Role(1, 100, "role1")
-        val role2 = Role(2, 100, "role2")
-        every { rolesRepo.getRolesForApplication(100) } returns Flux.just(role1, role2)
-
-        StepVerifier.create(service.getApplicationRoles(100))
-                .expectNext(role1, role2)
-                .verifyComplete()
     }
 }

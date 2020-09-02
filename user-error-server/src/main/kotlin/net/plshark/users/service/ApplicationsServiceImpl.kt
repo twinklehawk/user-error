@@ -3,9 +3,7 @@ package net.plshark.users.service
 import net.plshark.errors.DuplicateException
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
-import net.plshark.users.model.Role
 import net.plshark.users.repo.ApplicationsRepository
-import net.plshark.users.repo.RolesRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
@@ -15,7 +13,7 @@ import reactor.core.publisher.Mono
  * Applications management service implementation
  */
 @Component
-class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, private val rolesRepo: RolesRepository) :
+class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository) :
     ApplicationsService {
 
     override fun findById(id: Long): Mono<Application> {
@@ -36,9 +34,5 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
 
     override fun deleteById(id: Long): Mono<Void> {
         return appsRepo.deleteById(id)
-    }
-
-    fun getApplicationRoles(id: Long): Flux<Role> {
-        return rolesRepo.getRolesForApplication(id)
     }
 }
