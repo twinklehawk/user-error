@@ -15,14 +15,14 @@ import java.util.Optional
 @Repository
 class SpringDataApplicationsRepository(private val client: DatabaseClient) : ApplicationsRepository {
 
-    override fun get(id: Long): Mono<Application> {
+    override fun findById(id: Long): Mono<Application> {
         return client.execute("SELECT * FROM applications WHERE id = :id")
             .bind("id", id)
             .map { row -> mapRow(row) }
             .one()
     }
 
-    override fun get(name: String): Mono<Application> {
+    override fun findByName(name: String): Mono<Application> {
         return client.execute("SELECT * FROM applications WHERE name = :name")
             .bind("name", name)
             .map { row -> mapRow(row) }
@@ -42,15 +42,9 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
             .map { id -> Application(id = id, name = application.name) }
     }
 
-    override fun delete(id: Long): Mono<Void> {
+    override fun deleteById(id: Long): Mono<Void> {
         return client.execute("DELETE FROM applications WHERE id = :id")
             .bind("id", id)
-            .then()
-    }
-
-    override fun delete(name: String): Mono<Void> {
-        return client.execute("DELETE FROM applications WHERE name = :name")
-            .bind("name", name)
             .then()
     }
 

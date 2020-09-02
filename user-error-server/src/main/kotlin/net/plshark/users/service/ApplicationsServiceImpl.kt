@@ -19,7 +19,7 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
     ApplicationsService {
 
     override fun findById(id: Long): Mono<Application> {
-        return appsRepo[id]
+        return appsRepo.findById(id)
     }
 
     override fun getApplications(limit: Int, offset: Long): Flux<Application> {
@@ -35,7 +35,7 @@ class ApplicationsServiceImpl(private val appsRepo: ApplicationsRepository, priv
     }
 
     override fun deleteById(id: Long): Mono<Void> {
-        return appsRepo.delete(id)
+        return appsRepo.deleteById(id)
     }
 
     fun getApplicationRoles(id: Long): Flux<Role> {

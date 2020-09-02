@@ -32,14 +32,14 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted application by ID`() {
         val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
-        val app = repo[inserted.id].block()
+        val app = repo.findById(inserted.id).block()
 
         assertEquals(inserted, app)
     }
 
     @Test
     fun `retrieving an application by ID when no application matches returns empty`() {
-        StepVerifier.create(repo[1000])
+        StepVerifier.create(repo.findById(1000))
                 .verifyComplete()
     }
 
@@ -47,14 +47,14 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted application by name`() {
         val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
-        val app = repo[inserted.name].block()
+        val app = repo.findByName(inserted.name).block()
 
         assertEquals(inserted, app)
     }
 
     @Test
     fun `retrieving an application by name when no application matches returns empty`() {
-        StepVerifier.create(repo["app"])
+        StepVerifier.create(repo.findByName("app"))
                 .verifyComplete()
     }
 
@@ -62,29 +62,14 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     fun `can delete a previously inserted application by ID`() {
         val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
 
-        repo.delete(inserted.id).block()
-        val retrieved = repo[inserted.id].block()
+        repo.deleteById(inserted.id).block()
+        val retrieved = repo.findById(inserted.id).block()
 
         assertNull(retrieved)
     }
 
     @Test
     fun `no exception is thrown when attempting to delete an application by ID that does not exist`() {
-        repo.delete(10000).block()
-    }
-
-    @Test
-    fun `can delete a previously inserted application by name`() {
-        val inserted = repo.insert(ApplicationCreate("test-app")).block()!!
-
-        repo.delete(inserted.name).block()
-        val retrieved = repo[inserted.id].block()
-
-        assertNull(retrieved)
-    }
-
-    @Test
-    fun `no exception is thrown when attempting to delete an application by name that does not exist`() {
-        repo.delete("test").block()
+        repo.deleteById(10000).block()
     }
 }

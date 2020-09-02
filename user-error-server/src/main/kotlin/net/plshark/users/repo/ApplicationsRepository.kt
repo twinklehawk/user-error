@@ -8,19 +8,20 @@ import reactor.core.publisher.Mono
  * Repository for saving, deleting, and retrieving applications
  */
 interface ApplicationsRepository {
+
     /**
      * Get an application by ID
      * @param id the ID
      * @return the matching application or empty if not found
      */
-    operator fun get(id: Long): Mono<Application>
+    fun findById(id: Long): Mono<Application>
 
     /**
      * Get an application by name
      * @param name the applications name
      * @return the matching application or empty if not found
      */
-    operator fun get(name: String): Mono<Application>
+    fun findByName(name: String): Mono<Application>
 
     /**
      * Insert a new application
@@ -34,12 +35,5 @@ interface ApplicationsRepository {
      * @param id the application ID
      * @return an empty result
      */
-    fun delete(id: Long): Mono<Void>
-
-    /**
-     * Delete an application by name
-     * @param name the application name
-     * @return an empty result
-     */
-    fun delete(name: String): Mono<Void>
+    fun deleteById(id: Long): Mono<Void>
 }
