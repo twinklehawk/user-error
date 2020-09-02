@@ -34,16 +34,4 @@ class SpringDataUserRolesRepository(private val client: DatabaseClient) : UserRo
             .bind("roleId", roleId)
             .then()
     }
-
-    override fun deleteUserRolesByUserId(userId: Long): Mono<Void> {
-        return client.execute("DELETE FROM user_roles WHERE user_id = :userId")
-            .bind("userId", userId)
-            .then()
-    }
-
-    override fun deleteUserRolesByRoleId(roleId: Long): Mono<Void> {
-        return client.execute("DELETE FROM user_roles WHERE role_id = :roleId")
-            .bind("roleId", roleId)
-            .then()
-    }
 }

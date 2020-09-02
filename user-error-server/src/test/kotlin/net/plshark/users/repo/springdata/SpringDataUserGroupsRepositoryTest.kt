@@ -62,44 +62,6 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `deleting a group ID should delete all associations for that group`() {
-        val group1 = groupsRepo.insert(GroupCreate("group1")).block()!!
-        val group2 = groupsRepo.insert(GroupCreate("group2")).block()!!
-        val user1 = usersRepo.insert(UserCreate("user1", "pass")).block()!!
-        val user2 = usersRepo.insert(UserCreate("user2", "pass")).block()!!
-        val user3 = usersRepo.insert(UserCreate("user3", "pass")).block()!!
-        repo.insert(user1.id, group1.id)
-            .then(repo.insert(user2.id, group1.id))
-            .then(repo.insert(user2.id, group2.id))
-            .then(repo.insert(user3.id, group2.id))
-            .block()
-
-        repo.deleteUserGroupsByGroupId(group1.id).block()
-
-        assertEquals(0, repo.findGroupsByUserId(user1.id).count().block())
-        assertEquals(listOf(group2), repo.findGroupsByUserId(user2.id).collectList().block())
-        assertEquals(listOf(group2), repo.findGroupsByUserId(user3.id).collectList().block())
-    }
-
-    @Test
-    fun `deleting a user ID should delete all associations for that user`() {
-        val group1 = groupsRepo.insert(GroupCreate("group1")).block()!!
-        val group2 = groupsRepo.insert(GroupCreate("group2")).block()!!
-        val user1 = usersRepo.insert(UserCreate("user1", "pass")).block()!!
-        val user2 = usersRepo.insert(UserCreate("user2", "pass")).block()!!
-        repo.insert(user1.id, group1.id)
-                .then(repo.insert(user1.id, group2.id))
-                .then(repo.insert(user2.id, group1.id))
-                .then(repo.insert(user2.id, group2.id))
-                .block()
-
-        repo.deleteUserGroupsByUserId(user1.id).block()
-
-        assertEquals(0, repo.findGroupsByUserId(user1.id).count().block())
-        assertEquals(listOf(group1, group2), repo.findGroupsByUserId(user2.id).collectList().block())
-    }
-
-    @Test
     fun `retrieving roles should return each role in each group the user belongs to`() {
         val app1 = appsRepo.insert(ApplicationCreate("test-app")).block()!!
         val role1 = rolesRepo.insert(RoleCreate(app1.id, "role1")).block()!!

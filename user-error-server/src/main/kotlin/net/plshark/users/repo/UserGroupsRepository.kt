@@ -36,18 +36,4 @@ interface UserGroupsRepository {
      * @return a [Mono] signalling when complete
      */
     fun deleteById(userId: Long, groupId: Long): Mono<Void>
-
-    /**
-     * Remove a user from all groups
-     * @param userId the user ID
-     * @return a [Mono] signalling when complete
-     */
-    fun deleteUserGroupsByUserId(userId: Long): Mono<Void>
-
-    /**
-     * Remove a group from all users
-     * @param groupId the group ID
-     * @return a [Mono] signalling when complete
-     */
-    fun deleteUserGroupsByGroupId(groupId: Long): Mono<Void>
 }

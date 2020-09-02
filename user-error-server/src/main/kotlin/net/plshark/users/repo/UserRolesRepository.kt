@@ -31,19 +31,4 @@ interface UserRolesRepository {
      * @return a [Mono] signalling when complete
      */
     fun deleteById(userId: Long, roleId: Long): Mono<Void>
-
-    // TODO delete with group versions
-    /**
-     * Delete all user roles for a user
-     * @param userId the user ID
-     * @return a [Mono] signalling when complete
-     */
-    fun deleteUserRolesByUserId(userId: Long): Mono<Void>
-
-    /**
-     * Delete all user roles for a role
-     * @param roleId the role ID
-     * @return a [Mono] signalling when complete
-     */
-    fun deleteUserRolesByRoleId(roleId: Long): Mono<Void>
 }

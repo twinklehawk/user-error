@@ -43,16 +43,4 @@ class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserG
             .bind("groupId", groupId)
             .then()
     }
-
-    override fun deleteUserGroupsByUserId(userId: Long): Mono<Void> {
-        return client.execute("DELETE FROM user_groups WHERE user_id = :userId")
-            .bind("userId", userId)
-            .then()
-    }
-
-    override fun deleteUserGroupsByGroupId(groupId: Long): Mono<Void> {
-        return client.execute("DELETE FROM user_groups WHERE group_id = :groupId")
-            .bind("groupId", groupId)
-            .then()
-    }
 }

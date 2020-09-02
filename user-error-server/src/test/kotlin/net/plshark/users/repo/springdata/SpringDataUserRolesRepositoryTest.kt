@@ -79,47 +79,4 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     fun `deleting a user role that does not exist does not throw an exception`() {
         repo.deleteById(user1.id, 200).block()
     }
-
-    @Test
-    fun `can delete all roles for a user`() {
-        repo.insert(user1.id, testRole1.id).block()
-        repo.insert(user1.id, testRole2.id).block()
-
-        repo.deleteUserRolesByUserId(user1.id).block()
-
-        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
-    }
-
-    @Test
-    fun `deleting all roles for a user does not affect other users`() {
-        repo.insert(user1.id, testRole1.id).block()
-        repo.insert(user2.id, testRole2.id).block()
-
-        repo.deleteUserRolesByUserId(user1.id).block()
-
-        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
-        assertEquals(1, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
-    }
-
-    @Test
-    fun `can remove a role from all users`() {
-        repo.insert(user1.id, testRole1.id).block()
-        repo.insert(user2.id, testRole1.id).block()
-
-        repo.deleteUserRolesByRoleId(testRole1.id).block()
-
-        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
-        assertEquals(0, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
-    }
-
-    @Test
-    fun `removing a role from all users does not affect other roles`() {
-        repo.insert(user1.id, testRole1.id).block()
-        repo.insert(user2.id, testRole2.id).block()
-
-        repo.deleteUserRolesByRoleId(testRole1.id).block()
-
-        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
-        assertEquals(1, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
-    }
 }
