@@ -64,7 +64,7 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
     @Test
     fun `can delete a previously inserted group by ID`() {
         val group = repo.insert(GroupCreate("group")).block()!!
-        repo.delete(group.id).block()
+        repo.deleteById(group.id).block()
 
         StepVerifier.create(repo.findByName("name"))
                 .expectNextCount(0)
@@ -73,7 +73,7 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
 
     @Test
     fun `no exception is thrown when attempting to delete a group that does not exist`() {
-        StepVerifier.create(repo.delete(200))
+        StepVerifier.create(repo.deleteById(200))
                 .verifyComplete()
     }
 

@@ -6,25 +6,26 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface UserGroupsRepository {
-    /**
-     * Get all the groups a user belongs to
-     * @param userId the ID of the user
-     * @return the groups
-     */
-    fun getGroupsForUser(userId: Long): Flux<Group>
 
     /**
-     * Get all roles a user has through the groups a user belongs to
+     * Find all the groups a user belongs to
      * @param userId the ID of the user
-     * @return the roles
+     * @return a [Flux] emitting the groups
      */
-    fun getGroupRolesForUser(userId: Long): Flux<Role>
+    fun findGroupsByUserId(userId: Long): Flux<Group>
+
+    /**
+     * Find all roles a user has through the groups a user belongs to
+     * @param userId the ID of the user
+     * @return a [Flux] emitting the roles
+     */
+    fun findGroupRolesByUserId(userId: Long): Flux<Role>
 
     /**
      * Add a user to a group
      * @param userId the user ID
      * @param groupId the group ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
     fun insert(userId: Long, groupId: Long): Mono<Void>
 
@@ -32,21 +33,21 @@ interface UserGroupsRepository {
      * Remove a user from a group
      * @param userId the user ID
      * @param groupId the group ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun delete(userId: Long, groupId: Long): Mono<Void>
+    fun deleteById(userId: Long, groupId: Long): Mono<Void>
 
     /**
      * Remove a user from all groups
      * @param userId the user ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun deleteUserGroupsForUser(userId: Long): Mono<Void>
+    fun deleteUserGroupsByUserId(userId: Long): Mono<Void>
 
     /**
      * Remove a group from all users
      * @param groupId the group ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun deleteUserGroupsForGroup(groupId: Long): Mono<Void>
+    fun deleteUserGroupsByGroupId(groupId: Long): Mono<Void>
 }

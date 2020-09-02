@@ -57,7 +57,7 @@ class RolesController(private val rolesService: RolesService, private val appSer
         @PathVariable("applicationId") applicationId: Long,
         @PathVariable("roleId") roleId: Long
     ): Mono<Void> {
-        return rolesService.delete(roleId)
+        return rolesService.deleteById(roleId)
     }
 
     /**

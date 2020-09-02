@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 interface ApplicationsService {
 
     /**
-     * Retrieve an application by ID
+     * Find an application by ID
      * @param id the application ID
      * @return a [Mono] emitting the matching application or empty if not found
      */

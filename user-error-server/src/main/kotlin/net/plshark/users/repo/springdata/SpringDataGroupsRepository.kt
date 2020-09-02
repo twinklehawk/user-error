@@ -52,7 +52,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
             .map { id: Long -> Group(id = id, name = group.name) }
     }
 
-    override fun delete(groupId: Long): Mono<Void> {
+    override fun deleteById(groupId: Long): Mono<Void> {
         return client.execute("DELETE FROM groups WHERE id = :id")
             .bind("id", groupId)
             .then()

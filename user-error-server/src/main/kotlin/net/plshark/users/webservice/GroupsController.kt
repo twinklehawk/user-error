@@ -47,12 +47,12 @@ class GroupsController(private val groupsService: GroupsService) {
 
     /**
      * Delete a group
-     * @param name the group name
+     * @param name the group ID
      * @return an empty result
      */
-    @DeleteMapping(path = ["/{name}"])
-    fun delete(@PathVariable("name") name: String): Mono<Void> {
-        return groupsService.delete(name)
+    @DeleteMapping(path = ["/{id}"])
+    fun delete(@PathVariable("id") id: Long): Mono<Void> {
+        return groupsService.deleteById(id)
     }
 
     // TODO methods for adding/removing roles from group, viewing roles in group

@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 @Repository
 class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserGroupsRepository {
 
-    override fun getGroupsForUser(userId: Long): Flux<Group> {
+    override fun findGroupsByUserId(userId: Long): Flux<Group> {
         return client.execute("SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE " +
                 "ug.user_id = :id")
             .bind("id", userId)
@@ -22,7 +22,7 @@ class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserG
             .all()
     }
 
-    override fun getGroupRolesForUser(userId: Long): Flux<Role> {
+    override fun findGroupRolesByUserId(userId: Long): Flux<Role> {
         return client.execute("SELECT r.* from roles r, user_groups ug, group_roles gr WHERE " +
                 "ug.user_id = :userId AND gr.group_id = ug.group_id AND r.id = gr.role_id")
             .bind("userId", userId)
@@ -37,20 +37,20 @@ class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserG
             .then()
     }
 
-    override fun delete(userId: Long, groupId: Long): Mono<Void> {
+    override fun deleteById(userId: Long, groupId: Long): Mono<Void> {
         return client.execute("DELETE FROM user_groups WHERE user_id = :userId AND group_id = :groupId")
             .bind("userId", userId)
             .bind("groupId", groupId)
             .then()
     }
 
-    override fun deleteUserGroupsForUser(userId: Long): Mono<Void> {
+    override fun deleteUserGroupsByUserId(userId: Long): Mono<Void> {
         return client.execute("DELETE FROM user_groups WHERE user_id = :userId")
             .bind("userId", userId)
             .then()
     }
 
-    override fun deleteUserGroupsForGroup(groupId: Long): Mono<Void> {
+    override fun deleteUserGroupsByGroupId(groupId: Long): Mono<Void> {
         return client.execute("DELETE FROM user_groups WHERE group_id = :groupId")
             .bind("groupId", groupId)
             .then()

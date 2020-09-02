@@ -24,11 +24,11 @@ class UserDetailsServiceImpl(
 ) : ReactiveUserDetailsService {
 
     override fun findByUsername(username: String): Mono<UserDetails> {
-        return userRepo.getForUsernameWithPassword(username)
+        return userRepo.findByUsernameWithPassword(username)
             .switchIfEmpty(Mono.error { UsernameNotFoundException("No matching user for $username") })
             .flatMap { user ->
-                userRolesRepo.getRolesForUser(user.id)
-                    .mergeWith(userGroupsRepo.getGroupRolesForUser(user.id))
+                userRolesRepo.findRolesByUserId(user.id)
+                    .mergeWith(userGroupsRepo.findGroupRolesByUserId(user.id))
                     .collectList()
                     .map { roles -> buildUserDetails(user, roles) }
             }

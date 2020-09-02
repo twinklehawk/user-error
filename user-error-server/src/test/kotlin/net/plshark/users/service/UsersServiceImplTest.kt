@@ -98,9 +98,9 @@ class UsersServiceImplTest {
     @Test
     fun `the user is removed when the user is deleted`() {
         val userProbe = PublisherProbe.empty<Void>()
-        every { userRepo.delete(100) } returns userProbe.mono()
+        every { userRepo.deleteById(100) } returns userProbe.mono()
 
-        StepVerifier.create(service.delete(100))
+        StepVerifier.create(service.deleteById(100))
             .verifyComplete()
         userProbe.assertWasSubscribed()
     }
@@ -108,9 +108,9 @@ class UsersServiceImplTest {
     @Test
     fun `deleting by username deletes the user`() {
         val userProbe = PublisherProbe.empty<Void>()
-        every { userRepo.delete(100) } returns userProbe.mono()
+        every { userRepo.deleteById(100) } returns userProbe.mono()
 
-        StepVerifier.create(service.delete(100))
+        StepVerifier.create(service.deleteById(100))
                 .verifyComplete()
         userProbe.assertWasSubscribed()
     }
@@ -134,7 +134,7 @@ class UsersServiceImplTest {
         every { userRepo.findById(100) } returns Mono.just(User(100, "bill"))
         every { rolesService.findRequiredById(200) } returns Mono.just(Role(200, 1, "role"))
         val probe = PublisherProbe.empty<Void>()
-        every { userRolesRepo.delete(100, 200) } returns probe.mono()
+        every { userRolesRepo.deleteById(100, 200) } returns probe.mono()
 
         StepVerifier.create(service.removeRoleFromUser(100, 1, 200))
             .verifyComplete()
@@ -168,7 +168,7 @@ class UsersServiceImplTest {
     fun `should be able to remove a user from a group`() {
         every { userRepo.findById(100) } returns Mono.just(User(100, "ted"))
         every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
-        every { userGroupsRepo.delete(100, 200) } returns Mono.empty()
+        every { userGroupsRepo.deleteById(100, 200) } returns Mono.empty()
 
         StepVerifier.create(service.removeGroupFromUser(100, 200))
                 .verifyComplete()

@@ -51,7 +51,7 @@ class RolesControllerTest {
     @Test
     fun `delete passes ID through to service`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.delete(6) } returns probe.mono()
+        every { service.deleteById(6) } returns probe.mono()
 
         StepVerifier.create(controller.delete(5, 6))
             .verifyComplete()

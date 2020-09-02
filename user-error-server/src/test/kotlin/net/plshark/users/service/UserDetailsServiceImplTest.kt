@@ -23,11 +23,11 @@ class UserDetailsServiceImplTest {
 
     @Test
     fun `a user and its roles are mapped to the correct UserDetails`() {
-        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
-        every { userRolesRepo.getRolesForUser(25) } returns Flux.just(
+        every { usersRepo.findByUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
+        every { userRolesRepo.findRolesByUserId(25) } returns Flux.just(
                 Role(3, 1, "normal-user"),
                 Role(5, 1, "admin"))
-        every { userGroupsRepo.getGroupRolesForUser(25) } returns Flux.just(
+        every { userGroupsRepo.findGroupRolesByUserId(25) } returns Flux.just(
                 Role(3, 1, "group-role-1"),
                 Role(5, 1, "group-role-2"))
 
@@ -46,7 +46,7 @@ class UserDetailsServiceImplTest {
 
     @Test
     fun `UsernameNotFoundException thrown when no user is found for username`() {
-        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.empty()
+        every { usersRepo.findByUsernameWithPassword("user") } returns Mono.empty()
 
         StepVerifier.create(service.findByUsername("user"))
             .verifyError(UsernameNotFoundException::class.java)
@@ -54,9 +54,9 @@ class UserDetailsServiceImplTest {
 
     @Test
     fun `empty roles returns no granted authorities`() {
-        every { usersRepo.getForUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
-        every { userRolesRepo.getRolesForUser(25) } returns Flux.empty()
-        every { userGroupsRepo.getGroupRolesForUser(25) } returns Flux.empty()
+        every { usersRepo.findByUsernameWithPassword("user") } returns Mono.just(PrivateUser(25, "user", "pass"))
+        every { userRolesRepo.findRolesByUserId(25) } returns Flux.empty()
+        every { userGroupsRepo.findGroupRolesByUserId(25) } returns Flux.empty()
 
         StepVerifier.create(service.findByUsername("user"))
             .expectNextMatches { details -> details.authorities.isEmpty() }

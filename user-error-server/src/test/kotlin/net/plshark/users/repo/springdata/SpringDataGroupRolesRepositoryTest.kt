@@ -39,7 +39,7 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
 
         val roles = repo.insert(group.id, role1.id)
                 .then(repo.insert(group.id, role2.id))
-                .thenMany(repo.getRolesForGroup(group.id))
+                .thenMany(repo.findRolesForGroup(group.id))
                 .collectList()
                 .block()!!
 
@@ -50,7 +50,7 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `retrieving should return empty when no roles are assigned to the group`() {
-        StepVerifier.create(repo.getRolesForGroup(100))
+        StepVerifier.create(repo.findRolesForGroup(100))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -63,8 +63,8 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
         val group = groupsRepo.insert(GroupCreate("group1")).block()!!
 
         val roles = repo.insert(group.id, role.id)
-                .then(repo.delete(group.id, role.id))
-                .thenMany(repo.getRolesForGroup(group.id))
+                .then(repo.deleteById(group.id, role.id))
+                .thenMany(repo.findRolesForGroup(group.id))
                 .collectList()
                 .block()!!
 
@@ -73,7 +73,7 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `delete should not throw an exception if the group-role association does not already exist`() {
-        StepVerifier.create(repo.delete(1, 2))
+        StepVerifier.create(repo.deleteById(1, 2))
                 .expectNextCount(0)
                 .expectComplete()
                 .verify()
@@ -89,8 +89,8 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
 
         val roles = repo.insert(group.id, role1.id)
                 .then(repo.insert(group.id, role2.id))
-                .then(repo.deleteForGroup(group.id))
-                .thenMany(repo.getRolesForGroup(group.id))
+                .then(repo.deleteByGroupId(group.id))
+                .thenMany(repo.findRolesForGroup(group.id))
                 .collectList()
                 .block()!!
 
@@ -106,8 +106,8 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
 
         val roles = repo.insert(group1.id, role.id)
                 .then(repo.insert(group2.id, role.id))
-                .then(repo.deleteForRole(role.id))
-                .thenMany(repo.getRolesForGroup(group1.id).concatWith(repo.getRolesForGroup(group2.id)))
+                .then(repo.deleteByRoleId(role.id))
+                .thenMany(repo.findRolesForGroup(group1.id).concatWith(repo.findRolesForGroup(group2.id)))
                 .collectList()
                 .block()!!
 

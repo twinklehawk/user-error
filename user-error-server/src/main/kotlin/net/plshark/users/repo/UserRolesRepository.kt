@@ -8,40 +8,42 @@ import reactor.core.publisher.Mono
  * Repository for adding and removing roles for users
  */
 interface UserRolesRepository {
+
     /**
-     * Get all the roles for a user
+     * Find all the roles for a user
      * @param userId the user ID
-     * @return the roles for that user
+     * @return a [Flux] emitting the roles for the user
      */
-    fun getRolesForUser(userId: Long): Flux<Role>
+    fun findRolesByUserId(userId: Long): Flux<Role>
 
     /**
      * Grant a role to a user
      * @param userId the ID of the user to grant the role to
      * @param roleId the ID of the role to grant
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
     fun insert(userId: Long, roleId: Long): Mono<Void>
 
     /**
-     * Remove a role to a user
+     * Remove a role from a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
-    fun delete(userId: Long, roleId: Long): Mono<Void>
+    fun deleteById(userId: Long, roleId: Long): Mono<Void>
 
+    // TODO delete with group versions
     /**
      * Delete all user roles for a user
      * @param userId the user ID
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
-    fun deleteUserRolesForUser(userId: Long): Mono<Void>
+    fun deleteUserRolesByUserId(userId: Long): Mono<Void>
 
     /**
      * Delete all user roles for a role
      * @param roleId the role ID
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
-    fun deleteUserRolesForRole(roleId: Long): Mono<Void>
+    fun deleteUserRolesByRoleId(roleId: Long): Mono<Void>
 }

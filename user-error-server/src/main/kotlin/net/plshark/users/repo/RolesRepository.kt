@@ -11,46 +11,46 @@ import reactor.core.publisher.Mono
 interface RolesRepository {
 
     /**
-     * Get a role by ID
+     * Find a role by ID
      * @param id the ID
-     * @return the matching role
+     * @return a [Mono] emitting the matching role or empty if not found
      */
     fun findById(id: Long): Mono<Role>
 
     /**
-     * Get a role by name
-     * @param applicationId the application the role belongs to
+     * Find a role by name
+     * @param applicationId the parent application ID
      * @param name the role name
-     * @return the matching role
+     * @return a [Mono] emitting the matching role or empty if not found
      */
     fun findByApplicationIdAndName(applicationId: Long, name: String): Mono<Role>
 
     /**
-     * Get all roles up to the maximum result count and starting at an offset
+     * Find all roles up to the maximum result count and starting at an offset
      * @param maxResults the maximum number of results to return
      * @param offset the offset to start the list at, 0 to start at the beginning
-     * @return the roles
+     * @return a [Flux] emitting the roles
      */
     fun getRoles(maxResults: Int, offset: Long): Flux<Role>
 
     /**
+     * Find all roles belonging to an application
+     * @param applicationId the application ID
+     * @return a [Flux] emitting the roles
+     */
+    fun findRolesByApplicationId(applicationId: Long): Flux<Role>
+
+    /**
      * Insert a new role
      * @param role the role to insert
-     * @return the inserted role, will have the ID set
+     * @return a [Mono] emitting the inserted role
      */
     fun insert(role: RoleCreate): Mono<Role>
 
     /**
      * Delete a role by ID
      * @param id the role ID
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
-    fun delete(id: Long): Mono<Void>
-
-    /**
-     * Get all roles belonging to an application
-     * @param applicationId the application ID
-     * @return the roles
-     */
-    fun getRolesForApplication(applicationId: Long): Flux<Role>
+    fun deleteById(id: Long): Mono<Void>
 }

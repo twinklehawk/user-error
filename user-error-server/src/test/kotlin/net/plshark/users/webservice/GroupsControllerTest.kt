@@ -48,9 +48,9 @@ class GroupsControllerTest {
     @Test
     fun `delete should pass through the response from the service`() {
         val probe = PublisherProbe.empty<Void>()
-        every { groupsService.delete("group") } returns probe.mono()
+        every { groupsService.deleteById(321) } returns probe.mono()
 
-        StepVerifier.create(controller.delete("group"))
+        StepVerifier.create(controller.delete(321))
                 .verifyComplete()
         probe.assertWasSubscribed()
     }

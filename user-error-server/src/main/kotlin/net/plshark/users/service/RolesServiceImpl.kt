@@ -23,8 +23,8 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository) : RolesService {
             }
     }
 
-    override fun delete(roleId: Long): Mono<Void> {
-        return rolesRepo.delete(roleId)
+    override fun deleteById(roleId: Long): Mono<Void> {
+        return rolesRepo.deleteById(roleId)
     }
 
     override fun findById(roleId: Long): Mono<Role> {

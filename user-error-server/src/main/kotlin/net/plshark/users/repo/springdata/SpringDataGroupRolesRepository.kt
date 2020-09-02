@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 @Repository
 class SpringDataGroupRolesRepository(private val client: DatabaseClient) : GroupRolesRepository {
 
-    override fun getRolesForGroup(groupId: Long): Flux<Role> {
+    override fun findRolesForGroup(groupId: Long): Flux<Role> {
         return client.execute("SELECT r.* FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE " +
                 "ur.group_id = :id")
             .bind("id", groupId)
@@ -25,20 +25,20 @@ class SpringDataGroupRolesRepository(private val client: DatabaseClient) : Group
             .then()
     }
 
-    override fun delete(groupId: Long, roleId: Long): Mono<Void> {
+    override fun deleteById(groupId: Long, roleId: Long): Mono<Void> {
         return client.execute("DELETE FROM group_roles WHERE group_id = :groupId AND role_id = :roleId")
             .bind("groupId", groupId)
             .bind("roleId", roleId)
             .then()
     }
 
-    override fun deleteForGroup(groupId: Long): Mono<Void> {
+    override fun deleteByGroupId(groupId: Long): Mono<Void> {
         return client.execute("DELETE FROM group_roles WHERE group_id = :groupId")
             .bind("groupId", groupId)
             .then()
     }
 
-    override fun deleteForRole(roleId: Long): Mono<Void> {
+    override fun deleteByRoleId(roleId: Long): Mono<Void> {
         return client.execute("DELETE FROM group_roles WHERE role_id = :roleId")
             .bind("roleId", roleId)
             .then()

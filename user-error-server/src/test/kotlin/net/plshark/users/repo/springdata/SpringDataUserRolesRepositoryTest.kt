@@ -40,7 +40,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     fun `can add a role to a user`() {
         repo.insert(user1.id, testRole1.id).block()
 
-        repo.getRolesForUser(user1.id).collectList().block()!!.stream().anyMatch{ role -> role.id == testRole1.id}
+        repo.findRolesByUserId(user1.id).collectList().block()!!.stream().anyMatch{ role -> role.id == testRole1.id}
     }
 
     @Test
@@ -48,7 +48,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user1.id, testRole2.id).block()
 
-        val roles = repo.getRolesForUser(user1.id).collectList().block()!!
+        val roles = repo.findRolesByUserId(user1.id).collectList().block()!!
 
         assertEquals(2, roles.size)
         assertTrue(roles.stream().anyMatch{role -> role.id == testRole1.id})
@@ -60,7 +60,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user2.id, testRole2.id).block()
 
-        val roles = repo.getRolesForUser(user1.id).collectList().block()!!
+        val roles = repo.findRolesByUserId(user1.id).collectList().block()!!
 
         assertEquals(1, roles.size)
         assertTrue(roles.stream().anyMatch{role -> role.id == testRole1.id})
@@ -70,14 +70,14 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     fun `can delete an existing user role`() {
         repo.insert(user1.id, testRole1.id).block()
 
-        repo.delete(user1.id, testRole1.id).block()
+        repo.deleteById(user1.id, testRole1.id).block()
 
-        assertEquals(0, repo.getRolesForUser(user1.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
     }
 
     @Test
     fun `deleting a user role that does not exist does not throw an exception`() {
-        repo.delete(user1.id, 200).block()
+        repo.deleteById(user1.id, 200).block()
     }
 
     @Test
@@ -85,9 +85,9 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user1.id, testRole2.id).block()
 
-        repo.deleteUserRolesForUser(user1.id).block()
+        repo.deleteUserRolesByUserId(user1.id).block()
 
-        assertEquals(0, repo.getRolesForUser(user1.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
     }
 
     @Test
@@ -95,10 +95,10 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user2.id, testRole2.id).block()
 
-        repo.deleteUserRolesForUser(user1.id).block()
+        repo.deleteUserRolesByUserId(user1.id).block()
 
-        assertEquals(0, repo.getRolesForUser(user1.id).collectList().block()!!.size)
-        assertEquals(1, repo.getRolesForUser(user2.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
+        assertEquals(1, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
     }
 
     @Test
@@ -106,10 +106,10 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user2.id, testRole1.id).block()
 
-        repo.deleteUserRolesForRole(testRole1.id).block()
+        repo.deleteUserRolesByRoleId(testRole1.id).block()
 
-        assertEquals(0, repo.getRolesForUser(user1.id).collectList().block()!!.size)
-        assertEquals(0, repo.getRolesForUser(user2.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
     }
 
     @Test
@@ -117,9 +117,9 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         repo.insert(user1.id, testRole1.id).block()
         repo.insert(user2.id, testRole2.id).block()
 
-        repo.deleteUserRolesForRole(testRole1.id).block()
+        repo.deleteUserRolesByRoleId(testRole1.id).block()
 
-        assertEquals(0, repo.getRolesForUser(user1.id).collectList().block()!!.size)
-        assertEquals(1, repo.getRolesForUser(user2.id).collectList().block()!!.size)
+        assertEquals(0, repo.findRolesByUserId(user1.id).collectList().block()!!.size)
+        assertEquals(1, repo.findRolesByUserId(user2.id).collectList().block()!!.size)
     }
 }

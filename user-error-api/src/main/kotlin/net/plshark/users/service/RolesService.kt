@@ -11,16 +11,16 @@ import reactor.core.publisher.Mono
 interface RolesService {
 
     /**
-     * Retrieve a role by ID
+     * Find a role by ID
      * @param roleId the role ID
      * @return a [Mono] emitting the matching role or empty if not found
      */
     fun findById(roleId: Long): Mono<Role>
 
     /**
-     * Retrieve a role by ID
+     * Find a role by ID
      * @param roleId the role ID
-     * @return ta [Mono] emitting he matching role or an [net.plshark.errors.ObjectNotFoundException] if not found
+     * @return a [Mono] emitting the matching role or an [net.plshark.errors.ObjectNotFoundException] if not found
      */
     fun findRequiredById(roleId: Long): Mono<Role>
 
@@ -41,9 +41,9 @@ interface RolesService {
     fun create(role: RoleCreate): Mono<Role>
 
     /**
-     * Delete a role
+     * Delete a role by ID
      * @param roleId the role ID
      * @return a [Mono] signalling when complete
      */
-    fun delete(roleId: Long): Mono<Void>
+    fun deleteById(roleId: Long): Mono<Void>
 }

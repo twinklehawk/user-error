@@ -70,7 +70,7 @@ class UsersController(private val usersService: UsersService) {
      */
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): Mono<Void> {
-        return usersService.delete(id)
+        return usersService.deleteById(id)
     }
 
     /**

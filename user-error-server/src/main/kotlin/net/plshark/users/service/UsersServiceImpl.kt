@@ -41,7 +41,7 @@ class UsersServiceImpl(
     }
 
     override fun findByUsername(username: String): Mono<User> {
-        return userRepo.getForUsername(username)
+        return userRepo.findByUsername(username)
     }
 
     override fun findRequiredByUsername(username: String): Mono<User> {
@@ -64,8 +64,8 @@ class UsersServiceImpl(
             }
     }
 
-    override fun delete(userId: Long): Mono<Void> {
-        return userRepo.delete(userId)
+    override fun deleteById(userId: Long): Mono<Void> {
+        return userRepo.deleteById(userId)
     }
 
     // TODO applicationId necessary?
@@ -84,7 +84,7 @@ class UsersServiceImpl(
         return findRequiredById(id)
             .flatMap { user: User ->
                 rolesService.findRequiredById(roleId)
-                    .flatMap { role -> userRolesRepo.delete(user.id, role.id) }
+                    .flatMap { role -> userRolesRepo.deleteById(user.id, role.id) }
             }
     }
 
@@ -102,7 +102,7 @@ class UsersServiceImpl(
         return findRequiredById(id)
             .flatMap { user: User ->
                 groupsService.findRequiredById(groupId)
-                    .flatMap { group -> userGroupsRepo.delete(user.id, group.id) }
+                    .flatMap { group -> userGroupsRepo.deleteById(user.id, group.id) }
             }
     }
 

@@ -11,16 +11,17 @@ import reactor.core.publisher.Mono
 interface GroupsService {
 
     /**
-     * Retrieve a group by ID
+     * Find a group by ID
      * @param id the group ID
-     * @return the matching group if found
+     * @return a [Mono] emitting the matching group or empty if not found
      */
     fun findById(id: Long): Mono<Group>
 
     /**
-     * Retrieve a group by ID
+     * Find a group by ID
      * @param id the group ID
-     * @return the matching group or an [net.plshark.errors.ObjectNotFoundException] if no match is found
+     * @return a [Mono] emitting the matching group or an [net.plshark.errors.ObjectNotFoundException] if no match is
+     * found
      */
     fun findRequiredById(id: Long): Mono<Group>
 
@@ -28,37 +29,38 @@ interface GroupsService {
      * Get all groups up to the maximum result count and starting at an offset
      * @param maxResults the maximum number of results to return
      * @param offset the offset to start the list at, 0 to start at the beginning
-     * @return the group
+     * @return a [Flux] emitting the group
      */
     fun getGroups(maxResults: Int, offset: Long): Flux<Group>
 
     /**
      * Save a new group
      * @param group the group
-     * @return the saved group or a [net.plshark.errors.DuplicateException] if a group with the same name already
-     * exists
+     * @return a [Mono] emitting the saved group or a [net.plshark.errors.DuplicateException] if a group with the same
+     * name already exists
      */
     fun create(group: GroupCreate): Mono<Group>
 
     /**
-     * Delete a group
+     * Delete a group by ID
      * @param groupId the group ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun delete(groupId: Long): Mono<Void>
+    fun deleteById(groupId: Long): Mono<Void>
 
+    // TODO remove
     /**
      * Delete a group
      * @param name the group name
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun delete(name: String): Mono<Void>
+    fun deleteByName(name: String): Mono<Void>
 
     /**
      * Add a role to a group
      * @param groupId the group ID
      * @param roleId the role ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
     fun addRoleToGroup(groupId: Long, roleId: Long): Mono<Void>
 
@@ -66,7 +68,7 @@ interface GroupsService {
      * Remove a role from a group
      * @param groupId the group ID
      * @param roleId the role ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
     fun removeRoleFromGroup(groupId: Long, roleId: Long): Mono<Void>
 }

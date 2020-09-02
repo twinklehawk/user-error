@@ -9,39 +9,40 @@ import reactor.core.publisher.Mono
  * Repository for groups
  */
 interface GroupsRepository {
+
     /**
-     * Get a group by ID
+     * Find a group by ID
      * @param id the group ID
-     * @return the matching group if found
+     * @return a [Mono] emitting the matching group or empty if not found
      */
     fun findById(id: Long): Mono<Group>
 
     /**
-     * Get a group by name
+     * Find a group by name
      * @param name the group name
-     * @return the matching group if found
+     * @return a [Mono] emitting the matching group or empty if not found
      */
     fun findByName(name: String): Mono<Group>
 
     /**
-     * Get all groups up to a maximum number of results
+     * Find all groups up to a maximum number of results
      * @param maxResults the max results to return
      * @param offset the offset to start at
-     * @return the groups
+     * @return a [Flux] emitting the groups
      */
     fun getGroups(maxResults: Int, offset: Long): Flux<Group>
 
     /**
      * Save a new group
      * @param group the group to save
-     * @return the saved group
+     * @return a [Mono] emitting the saved group
      */
     fun insert(group: GroupCreate): Mono<Group>
 
     /**
      * Delete a group by ID
      * @param groupId the group ID
-     * @return when complete
+     * @return a [Mono] signalling when complete
      */
-    fun delete(groupId: Long): Mono<Void>
+    fun deleteById(groupId: Long): Mono<Void>
 }

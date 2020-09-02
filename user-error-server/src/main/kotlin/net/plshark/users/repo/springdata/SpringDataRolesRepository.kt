@@ -54,7 +54,7 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
             .map { id -> Role(id = id, applicationId = role.applicationId, name = role.name) }
     }
 
-    override fun delete(id: Long): Mono<Void> {
+    override fun deleteById(id: Long): Mono<Void> {
         return client.execute("DELETE FROM roles WHERE id = :id")
             .bind("id", id)
             .then()
@@ -65,7 +65,7 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
             .then()
     }
 
-    override fun getRolesForApplication(applicationId: Long): Flux<Role> {
+    override fun findRolesByApplicationId(applicationId: Long): Flux<Role> {
         return client.execute("SELECT * FROM roles WHERE application_id = :applicationId ORDER BY id")
             .bind("applicationId", applicationId)
             .map { row -> mapRow(row) }

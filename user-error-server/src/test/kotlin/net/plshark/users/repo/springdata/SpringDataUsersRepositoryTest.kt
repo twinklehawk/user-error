@@ -44,7 +44,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
     fun `can retrieve a previously inserted user by username`() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        val user = repo.getForUsername("name").block()!!
+        val user = repo.findByUsername("name").block()!!
 
         assertEquals(inserted, user)
     }
@@ -53,7 +53,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
     fun `the user password is returned when specifically fetching the password`() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        val user = repo.getForUsernameWithPassword("name").block()!!
+        val user = repo.findByUsernameWithPassword("name").block()!!
 
         assertNotNull(user.password)
         assertEquals(PrivateUser(inserted.id, inserted.username, "pass"), user)
@@ -63,7 +63,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
     fun `can delete a previously inserted user by ID`() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
-        repo.delete(inserted.id).block()
+        repo.deleteById(inserted.id).block()
         val retrieved = repo.findById(inserted.id).block()
 
         assertEquals(null, retrieved)
@@ -71,7 +71,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
 
     @Test
     fun `no exception is thrown when attempting to delete a user that does not exist`() {
-        repo.delete(10000).block()
+        repo.deleteById(10000).block()
     }
 
     @Test
@@ -79,7 +79,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         val inserted = repo.insert(UserCreate("name", "pass")).block()!!
 
         repo.updatePassword(inserted.id, "pass", "new-pass").block()
-        val user = repo.getForUsernameWithPassword("name").block()!!
+        val user = repo.findByUsernameWithPassword("name").block()!!
 
         assertEquals("new-pass", user.password)
     }
@@ -91,7 +91,7 @@ class SpringDataUsersRepositoryTest : DbIntTest() {
         StepVerifier.create(repo.updatePassword(inserted.id, "wrong-pass", "new-pass"))
                 .expectError(EmptyResultDataAccessException::class.java)
                 .verify()
-        val user = repo.getForUsernameWithPassword("name").block()!!
+        val user = repo.findByUsernameWithPassword("name").block()!!
 
         assertEquals("pass", user.password)
     }

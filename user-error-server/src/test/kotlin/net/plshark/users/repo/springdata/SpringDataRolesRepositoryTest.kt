@@ -75,7 +75,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         val app = appsRepo.insert(ApplicationCreate("app")).block()!!
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
-        repo.delete(inserted.id).block()
+        repo.deleteById(inserted.id).block()
         val retrieved = repo.findById(inserted.id).block()
         
         assertNull(retrieved)
@@ -83,7 +83,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
     @Test
     fun `no exception is thrown when attempting to delete a role that does not exist`() {
-        repo.delete(10000).block()
+        repo.deleteById(10000).block()
     }
 
     @Test
@@ -138,7 +138,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         repo.insert(RoleCreate(app.id, "r2")).block()
         repo.insert(RoleCreate(app2.id, "r3")).block()
 
-        StepVerifier.create(repo.getRolesForApplication(app.id))
+        StepVerifier.create(repo.findRolesByApplicationId(app.id))
             .expectNextMatches { r -> r.name == "r1" }
             .expectNextMatches { r -> r.name == "r2" }
             .verifyComplete()

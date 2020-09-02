@@ -23,7 +23,7 @@ class UsersControllerTest {
     @Test
     fun `delete passes the user ID through to be deleted`() {
         val probe = PublisherProbe.empty<Void>()
-        every { service.delete(1) } returns probe.mono()
+        every { service.deleteById(1) } returns probe.mono()
 
         StepVerifier.create(controller.delete(1))
             .verifyComplete()

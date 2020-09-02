@@ -43,9 +43,9 @@ class RolesServiceImplTest {
     @Test
     fun `deleting a role should delete the role`() {
         val rolesProbe = PublisherProbe.empty<Void>()
-        every { rolesRepo.delete(100) } returns rolesProbe.mono()
+        every { rolesRepo.deleteById(100) } returns rolesProbe.mono()
 
-        StepVerifier.create(service.delete(100))
+        StepVerifier.create(service.deleteById(100))
                 .verifyComplete()
         rolesProbe.assertWasSubscribed()
     }

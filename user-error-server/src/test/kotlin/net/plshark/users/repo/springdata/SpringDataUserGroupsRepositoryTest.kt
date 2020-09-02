@@ -37,12 +37,12 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
         repo.insert(user.id, group.id).block()
 
-        assertEquals(listOf(group), repo.getGroupsForUser(user.id).collectList().block())
+        assertEquals(listOf(group), repo.findGroupsByUserId(user.id).collectList().block())
     }
 
     @Test
     fun `retrieving should return empty when no users are assigned to the group`() {
-        assertEquals(0, repo.getGroupsForUser(123).count().block())
+        assertEquals(0, repo.findGroupsByUserId(123).count().block())
     }
 
     @Test
@@ -51,14 +51,14 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
         val user = usersRepo.insert(UserCreate("test-user", "pass")).block()!!
         repo.insert(user.id, group.id).block()
 
-        repo.delete(user.id, group.id).block()
+        repo.deleteById(user.id, group.id).block()
 
-        assertEquals(0, repo.getGroupsForUser(user.id).count().block())
+        assertEquals(0, repo.findGroupsByUserId(user.id).count().block())
     }
 
     @Test
     fun `delete should not throw an exception if the group-user association does not already exist`() {
-        repo.delete(100, 200).block()
+        repo.deleteById(100, 200).block()
     }
 
     @Test
@@ -74,11 +74,11 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
             .then(repo.insert(user3.id, group2.id))
             .block()
 
-        repo.deleteUserGroupsForGroup(group1.id).block()
+        repo.deleteUserGroupsByGroupId(group1.id).block()
 
-        assertEquals(0, repo.getGroupsForUser(user1.id).count().block())
-        assertEquals(listOf(group2), repo.getGroupsForUser(user2.id).collectList().block())
-        assertEquals(listOf(group2), repo.getGroupsForUser(user3.id).collectList().block())
+        assertEquals(0, repo.findGroupsByUserId(user1.id).count().block())
+        assertEquals(listOf(group2), repo.findGroupsByUserId(user2.id).collectList().block())
+        assertEquals(listOf(group2), repo.findGroupsByUserId(user3.id).collectList().block())
     }
 
     @Test
@@ -93,10 +93,10 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
                 .then(repo.insert(user2.id, group2.id))
                 .block()
 
-        repo.deleteUserGroupsForUser(user1.id).block()
+        repo.deleteUserGroupsByUserId(user1.id).block()
 
-        assertEquals(0, repo.getGroupsForUser(user1.id).count().block())
-        assertEquals(listOf(group1, group2), repo.getGroupsForUser(user2.id).collectList().block())
+        assertEquals(0, repo.findGroupsByUserId(user1.id).count().block())
+        assertEquals(listOf(group1, group2), repo.findGroupsByUserId(user2.id).collectList().block())
     }
 
     @Test
@@ -111,7 +111,7 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
                 .then(groupRolesRepo.insert(group.id, role2.id))
                 .then(repo.insert(user.id, group.id)).block()
 
-        StepVerifier.create(repo.getGroupRolesForUser(user.id).collectList())
+        StepVerifier.create(repo.findGroupRolesByUserId(user.id).collectList())
             .expectNextMatches { list -> list.size == 2 && list.contains(role1) && list.contains(role2) }
             .verifyComplete()
     }

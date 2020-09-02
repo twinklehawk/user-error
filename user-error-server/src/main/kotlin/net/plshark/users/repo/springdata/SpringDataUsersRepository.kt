@@ -18,7 +18,7 @@ import java.util.Optional
 @Repository
 class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepository {
 
-    override fun getForUsername(username: String): Mono<User> {
+    override fun findByUsername(username: String): Mono<User> {
         return client.execute("SELECT id, username FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRow(row) }
@@ -32,7 +32,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .one()
     }
 
-    override fun getForUsernameWithPassword(username: String): Mono<PrivateUser> {
+    override fun findByUsernameWithPassword(username: String): Mono<PrivateUser> {
         return client.execute("SELECT * FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRowWithPassword(row) }
@@ -54,7 +54,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
             .map { id -> User(id = id, username = user.username) }
     }
 
-    override fun delete(userId: Long): Mono<Void> {
+    override fun deleteById(userId: Long): Mono<Void> {
         return client.execute("DELETE FROM users WHERE id = :id")
             .bind("id", userId)
             .then()

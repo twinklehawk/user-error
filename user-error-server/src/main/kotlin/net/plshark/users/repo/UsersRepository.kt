@@ -12,40 +12,38 @@ import reactor.core.publisher.Mono
 interface UsersRepository {
 
     /**
-     * Get a user by user ID
+     * Find a user by user ID
      * @param id the user ID
-     * @return the matching user
+     * @return a [Mono] emitting the matching user or empty if not found
      */
     fun findById(id: Long): Mono<User>
 
     /**
-     * Get a user by the username
+     * Find a user by the username
      * @param username the username
-     * @return the matching user
+     * @return a [Mono] emitting the matching user or empty if not found
      */
-    fun getForUsername(username: String): Mono<User>
+    fun findByUsername(username: String): Mono<User>
 
     /**
-     * Get a user by the username
-     *
-     ***This method returns the user's password**
+     * Find a user by the username with the user's password
      * @param username the username
-     * @return the matching user
+     * @return a [Mono] emitting the matching user or empty if not found
      */
-    fun getForUsernameWithPassword(username: String): Mono<PrivateUser>
+    fun findByUsernameWithPassword(username: String): Mono<PrivateUser>
 
     /**
      * Get all users up to the maximum result count
      * @param maxResults the maximum number of results to return
      * @param offset the offset to start the list at
-     * @return the users
+     * @return a [Flux] emitting the users
      */
     fun getAll(maxResults: Int, offset: Long): Flux<User>
 
     /**
      * Insert a new user
      * @param user the user to insert
-     * @return the inserted user, will have the ID set
+     * @return a [Mono] emitting the inserted user
      */
     fun insert(user: UserCreate): Mono<User>
 
@@ -54,14 +52,14 @@ interface UsersRepository {
      * @param id the ID of the user to update
      * @param currentPassword the current password
      * @param newPassword the new password
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
     fun updatePassword(id: Long, currentPassword: String, newPassword: String): Mono<Void>
 
     /**
      * Delete a user by ID
      * @param userId the user ID
-     * @return an empty result
+     * @return a [Mono] signalling when complete
      */
-    fun delete(userId: Long): Mono<Void>
+    fun deleteById(userId: Long): Mono<Void>
 }

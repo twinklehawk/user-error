@@ -7,24 +7,25 @@ import reactor.core.publisher.Mono
  * Methods for user authentication settings in the repository
  */
 interface UserAuthSettingsRepository {
+
     /**
-     * Find settings for a user by the user's ID
-     * @param userId the user's ID
-     * @return the settings if found or empty if no settings exist for the user
+     * Find settings for a user
+     * @param userId the user ID
+     * @return a [Mono] emitting the settings or empty if not found
      */
     fun findByUserId(userId: Long): Mono<UserAuthSettings>
 
     /**
-     * Find settings for a user by the user's username
+     * Find settings for a user by the username
      * @param username the username
-     * @return the settings if found or empty if no settings exist for the user
+     * @return a [Mono] emitting the settings or empty if not found
      */
     fun findByUsername(username: String): Mono<UserAuthSettings>
 
     /**
      * Save settings for a user
      * @param userAuthSettings the settings, the user ID must not be null
-     * @return the inserted settings with the ID set
+     * @return a [Mono] emitting the inserted settings with the ID set
      */
     fun insert(userAuthSettings: UserAuthSettings): Mono<UserAuthSettings>
 }

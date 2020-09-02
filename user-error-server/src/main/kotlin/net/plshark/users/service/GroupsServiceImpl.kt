@@ -37,13 +37,13 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
             }
     }
 
-    override fun delete(groupId: Long): Mono<Void> {
-        return groupsRepo.delete(groupId)
+    override fun deleteById(groupId: Long): Mono<Void> {
+        return groupsRepo.deleteById(groupId)
     }
 
-    override fun delete(name: String): Mono<Void> {
+    override fun deleteByName(name: String): Mono<Void> {
         return groupsRepo.findByName(name)
-            .flatMap { group: Group -> delete(group.id) }
+            .flatMap { group: Group -> deleteById(group.id) }
     }
 
     override fun addRoleToGroup(groupId: Long, roleId: Long): Mono<Void> {
@@ -51,6 +51,6 @@ class GroupsServiceImpl(private val groupsRepo: GroupsRepository, private val gr
     }
 
     override fun removeRoleFromGroup(groupId: Long, roleId: Long): Mono<Void> {
-        return groupRolesRepo.delete(groupId, roleId)
+        return groupRolesRepo.deleteById(groupId, roleId)
     }
 }

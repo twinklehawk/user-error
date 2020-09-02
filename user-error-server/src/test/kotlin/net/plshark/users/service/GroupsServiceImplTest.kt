@@ -75,9 +75,9 @@ class GroupsServiceImplTest {
     @Test
     fun `deleting should delete the group`() {
         val groupsProbe = PublisherProbe.empty<Void>()
-        every { groupsRepo.delete(100) } returns groupsProbe.mono()
+        every { groupsRepo.deleteById(100) } returns groupsProbe.mono()
 
-        StepVerifier.create(service.delete(100))
+        StepVerifier.create(service.deleteById(100))
                 .verifyComplete()
         groupsProbe.assertWasSubscribed()
     }
@@ -86,9 +86,9 @@ class GroupsServiceImplTest {
     fun `deleting by name should delete the group`() {
         every { groupsRepo.findByName("group") } returns Mono.just(Group(100, "group"))
         val groupsProbe = PublisherProbe.empty<Void>()
-        every { groupsRepo.delete(100) } returns groupsProbe.mono()
+        every { groupsRepo.deleteById(100) } returns groupsProbe.mono()
 
-        StepVerifier.create(service.delete("group"))
+        StepVerifier.create(service.deleteByName("group"))
                 .verifyComplete()
         groupsProbe.assertWasSubscribed()
     }
@@ -106,7 +106,7 @@ class GroupsServiceImplTest {
     @Test
     fun `should be able to remove a role from a group`() {
         val probe = PublisherProbe.empty<Void>()
-        every { groupRolesRepo.delete(1, 2) } returns probe.mono()
+        every { groupRolesRepo.deleteById(1, 2) } returns probe.mono()
 
         StepVerifier.create(service.removeRoleFromGroup(1, 2))
                 .verifyComplete()
