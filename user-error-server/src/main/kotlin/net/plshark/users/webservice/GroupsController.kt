@@ -47,7 +47,7 @@ class GroupsController(private val groupsService: GroupsService) {
 
     /**
      * Delete a group
-     * @param name the group ID
+     * @param id the group ID
      * @return an empty result
      */
     @DeleteMapping(path = ["/{id}"])
