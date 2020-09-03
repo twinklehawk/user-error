@@ -52,7 +52,8 @@ interface UsersRepository {
      * @param id the ID of the user to update
      * @param currentPassword the current password
      * @param newPassword the new password
-     * @return a [Mono] signalling when complete
+     * @return a [Mono] signalling when complete or emitting an [org.springframework.dao.EmptyResultDataAccessException]
+     * if no matching row was updated
      */
     fun updatePassword(id: Long, currentPassword: String, newPassword: String): Mono<Void>
 

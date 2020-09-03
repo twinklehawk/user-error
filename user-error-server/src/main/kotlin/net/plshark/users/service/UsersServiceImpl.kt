@@ -110,7 +110,6 @@ class UsersServiceImpl(
         require(newPassword.isNotEmpty()) { "New password cannot be empty" }
         val newPasswordEncoded = passwordEncoder.encode(newPassword)
         val currentPasswordEncoded = passwordEncoder.encode(currentPassword)
-        // TODO need to look up user by ID?
         return findRequiredById(id)
             .flatMap { user: User ->
                 userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
