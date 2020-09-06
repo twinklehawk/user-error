@@ -1,6 +1,8 @@
 @file:Suppress("TooManyFunctions")
 package net.plshark.users.service
 
+import net.plshark.users.model.Group
+import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import reactor.core.publisher.Flux
@@ -67,40 +69,36 @@ interface UsersService {
     fun updateUserPassword(id: Long, currentPassword: String, newPassword: String): Mono<Void>
 
     /**
-     * Grant a role to a user
-     * @param id the ID of the user
-     * @param applicationId the ID of the role's application
-     * @param roleId the ID of the role to grant
-     * @return a [Mono] signalling when complete or emitting an an [net.plshark.errors.ObjectNotFoundException] if the
-     * user or role does not exist
+     * Find the roles assigned to a user
+     * @param userId the user ID
+     * @return a [Flux] emitting the roles assigned to the user or [net.plshark.errors.ObjectNotFoundException] if the
+     * user was not found
      */
-    fun grantRoleToUser(id: Long, applicationId: Long, roleId: Long): Mono<Void>
+    fun getUserRoles(userId: Long): Flux<Role>
 
     /**
-     * Remove a role from a user
-     * @param id the ID of the user
-     * @param applicationId the ID of the role's application
-     * @param roleId the ID of the role to remove
-     * @return a [Mono] signalling when complete or emitting an [net.plshark.errors.ObjectNotFoundException] if the user
-     * does not exist
+     * Update the roles assigned to a user
+     * @param userId the user ID
+     * @param roles the new set of roles to assign to the user
+     * @return a [Flux] emitting the new roles assigned to the user or [net.plshark.errors.ObjectNotFoundException] if
+     * the user was not found
      */
-    fun removeRoleFromUser(id: Long, applicationId: Long, roleId: Long): Mono<Void>
+    fun updateUserRoles(userId: Long, roles: Set<Role>): Flux<Role>
 
     /**
-     * Add a user to a group
-     * @param id the ID of the user
-     * @param groupId the group ID
-     * @return a [Mono] signalling when complete or emitting an [net.plshark.errors.ObjectNotFoundException] if the user
-     * or group does not exist
+     * Find the groups assigned to a user
+     * @param userId the user ID
+     * @return a [Flux] emitting the groups assigned to the user or [net.plshark.errors.ObjectNotFoundException] if the
+     * user was not found
      */
-    fun grantGroupToUser(id: Long, groupId: Long): Mono<Void>
+    fun getUserGroups(userId: Long): Flux<Group>
 
     /**
-     * Remove a user from a group
-     * @param id the ID of the user
-     * @param groupId the group ID
-     * @return a [Mono] signalling when complete or emitting an [net.plshark.errors.ObjectNotFoundException] if the user
-     * or group does not exist
+     * Update the groups assigned to a user
+     * @param userId the user ID
+     * @param groups the new set of groups to assign to the user
+     * @return a [Flux] emitting the new groups assigned to the user or [net.plshark.errors.ObjectNotFoundException] if
+     * the user was not found
      */
-    fun removeGroupFromUser(id: Long, groupId: Long): Mono<Void>
+    fun updateUserGroups(userId: Long, groups: Set<Group>): Flux<Group>
 }

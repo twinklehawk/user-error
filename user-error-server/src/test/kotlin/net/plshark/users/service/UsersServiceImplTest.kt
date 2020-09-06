@@ -5,8 +5,6 @@ import io.mockk.mockk
 import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
-import net.plshark.users.model.Group
-import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UserGroupsRepository
@@ -27,11 +25,8 @@ class UsersServiceImplTest {
     private val userRepo = mockk<UsersRepository>()
     private val userRolesRepo = mockk<UserRolesRepository>()
     private val userGroupsRepo = mockk<UserGroupsRepository>()
-    private val rolesService = mockk<RolesService>()
-    private val groupsService = mockk<GroupsService>()
     private val encoder = mockk<PasswordEncoder>()
-    private val service = UsersServiceImpl(userRepo, userRolesRepo, userGroupsRepo, rolesService,
-            groupsService, encoder)
+    private val service = UsersServiceImpl(userRepo, userRolesRepo, userGroupsRepo, encoder)
 
     @Test
     fun `new users have password encoded`() {
@@ -116,34 +111,6 @@ class UsersServiceImplTest {
     }
 
     @Test
-    fun `granting a role to a user should add the role to the user's roles`() {
-        every { userRepo.findById(12) } returns Mono.just(User(12, "bill"))
-        every { rolesService.findRequiredById(34) } returns Mono.just(Role(34, 1, "role"))
-        val probe = PublisherProbe.empty<Void>()
-        every { userRolesRepo.insert(12, 34) } returns probe.mono()
-
-        StepVerifier.create(service.grantRoleToUser(12, 1, 34))
-            .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
-    fun `removing a role from a user should remove the role from the user's roles`() {
-        every { userRepo.findById(100) } returns Mono.just(User(100, "bill"))
-        every { rolesService.findRequiredById(200) } returns Mono.just(Role(200, 1, "role"))
-        val probe = PublisherProbe.empty<Void>()
-        every { userRolesRepo.deleteById(100, 200) } returns probe.mono()
-
-        StepVerifier.create(service.removeRoleFromUser(100, 1, 200))
-            .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
     fun `getUsers should return all results`() {
         val user1 = User(1, "user")
         val user2 = User(2, "user2")
@@ -151,26 +118,6 @@ class UsersServiceImplTest {
 
         StepVerifier.create(service.getUsers(5, 0))
                 .expectNext(user1, user2)
-                .verifyComplete()
-    }
-
-    @Test
-    fun `should be able to add a user to a group`() {
-        every { userRepo.findById(100) } returns Mono.just(User(100, "bill"))
-        every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
-        every { userGroupsRepo.insert(100, 200) } returns Mono.empty()
-
-        StepVerifier.create(service.grantGroupToUser(100, 200))
-                .verifyComplete()
-    }
-
-    @Test
-    fun `should be able to remove a user from a group`() {
-        every { userRepo.findById(100) } returns Mono.just(User(100, "ted"))
-        every { groupsService.findRequiredById(200) } returns Mono.just(Group(200, "group"))
-        every { userGroupsRepo.deleteById(100, 200) } returns Mono.empty()
-
-        StepVerifier.create(service.removeGroupFromUser(100, 200))
                 .verifyComplete()
     }
 }

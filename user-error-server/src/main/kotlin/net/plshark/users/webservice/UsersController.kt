@@ -2,8 +2,9 @@ package net.plshark.users.webservice
 
 import net.plshark.errors.BadRequestException
 import net.plshark.errors.ObjectNotFoundException
+import net.plshark.users.model.Group
 import net.plshark.users.model.PasswordChangeRequest
-import net.plshark.users.model.RoleGrant
+import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import net.plshark.users.service.UsersService
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -88,61 +90,23 @@ class UsersController(private val usersService: UsersService) {
         return usersService.updateUserPassword(id, request.currentPassword, request.newPassword)
     }
 
-    /**
-     * Grant a role to a user
-     * @param id the ID of the user to grant to
-     * @param roleGrant the role to grant
-     * @return an empty result or ObjectNotFoundException if the user or role does not exist
-     */
-    @PostMapping(path = ["/{id}/roles"])
-    fun grantRole(
-        @PathVariable("id") id: Long,
-        @RequestBody roleGrant: RoleGrant
-    ): Mono<Void> {
-        return usersService.grantRoleToUser(id, roleGrant.applicationId, roleGrant.roleId)
+    @GetMapping(path = ["/{id}/roles"])
+    fun getUserRoles(@PathVariable("id") id: Long): Flux<Role> {
+        return usersService.getUserRoles(id)
     }
 
-    /**
-     * Remove a role from a user
-     * @param id the user ID
-     * @param applicationId the ID of the parent application
-     * @param roleId the ID of the role to remove
-     * @return an empty result or ObjectNotFoundException if the user does not exist
-     */
-    @DeleteMapping(path = ["/{id}/roles/{applicationId}/{roleId}"])
-    fun removeRole(
-        @PathVariable("id") id: Long,
-        @PathVariable("applicationId") applicationId: Long,
-        @PathVariable("roleId") roleId: Long
-    ): Mono<Void> {
-        return usersService.removeRoleFromUser(id, applicationId, roleId)
+    @PutMapping(path = ["/{id}/roles"])
+    fun updateUserRoles(@PathVariable("id") id: Long, @RequestBody updatedRoles: Set<Role>): Flux<Role> {
+        return usersService.updateUserRoles(id, updatedRoles)
     }
 
-    /**
-     * Grant a group to a user
-     * @param id the user ID
-     * @param groupId the ID of the group to grant
-     * @return an empty result or ObjectNotFoundException if the user or group does not exist
-     */
-    @PostMapping(path = ["/{id}/groups/{groupId}"])
-    fun grantGroup(
-        @PathVariable("id") id: Long,
-        @PathVariable("groupId") groupId: Long
-    ): Mono<Void> {
-        return usersService.grantGroupToUser(id, groupId)
+    @GetMapping(path = ["/{id}/groups"])
+    fun getUserGroups(@PathVariable("id") id: Long): Flux<Group> {
+        return usersService.getUserGroups(id)
     }
 
-    /**
-     * Remove a group from a user
-     * @param id the user ID
-     * @param groupId the ID of the group to remove
-     * @return an empty result or ObjectNotFoundException if the user does not exist
-     */
-    @DeleteMapping(path = ["/{id}/groups/{groupId}"])
-    fun removeGroup(
-        @PathVariable("id") id: Long,
-        @PathVariable("groupId") groupId: Long
-    ): Mono<Void> {
-        return usersService.removeGroupFromUser(id, groupId)
+    @PutMapping(path = ["/{id}/groups"])
+    fun updateUserGroups(@PathVariable("id") id: Long, @RequestBody updatedGroups: Set<Group>): Flux<Group> {
+        return usersService.updateUserGroups(id, updatedGroups)
     }
 }

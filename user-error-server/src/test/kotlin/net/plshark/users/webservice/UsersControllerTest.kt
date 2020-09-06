@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import net.plshark.errors.BadRequestException
 import net.plshark.users.model.PasswordChangeRequest
-import net.plshark.users.model.RoleGrant
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import net.plshark.users.service.UsersService
@@ -39,54 +38,6 @@ class UsersControllerTest {
 
         StepVerifier.create(controller.changePassword(2, PasswordChangeRequest("current", "new")))
             .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
-    fun `granting a role passes the user and role IDs through`() {
-        val probe = PublisherProbe.empty<Void>()
-        every { service.grantRoleToUser(3, 43, 65) } returns probe.mono()
-
-        StepVerifier.create(controller.grantRole(3, RoleGrant(43, 65)))
-            .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
-    fun `removing a role passes the user and role IDs through`() {
-        val probe = PublisherProbe.empty<Void>()
-        every { service.removeRoleFromUser(4, 56, 45) } returns probe.mono()
-
-        StepVerifier.create(controller.removeRole(4, 56, 45))
-            .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
-    fun `granting a group passes the user and group IDs through`() {
-        val probe = PublisherProbe.empty<Void>()
-        every { service.grantGroupToUser(5, 3) } returns probe.mono()
-
-        StepVerifier.create(controller.grantGroup(5, 3))
-                .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
-    }
-
-    @Test
-    fun `removing a group passes the user name group IDs through`() {
-        val probe = PublisherProbe.empty<Void>()
-        every { service.removeGroupFromUser(6, 4) } returns probe.mono()
-
-        StepVerifier.create(controller.removeGroup(6, 4))
-                .verifyComplete()
         probe.assertWasSubscribed()
         probe.assertWasRequested()
         probe.assertWasNotCancelled()

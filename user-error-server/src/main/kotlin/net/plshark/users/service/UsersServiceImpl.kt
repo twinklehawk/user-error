@@ -1,9 +1,12 @@
 @file:Suppress("TooManyFunctions")
+
 package net.plshark.users.service
 
 import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
+import net.plshark.users.model.Group
+import net.plshark.users.model.Role
 import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UserGroupsRepository
@@ -13,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -26,8 +30,6 @@ class UsersServiceImpl(
     private val userRepo: UsersRepository,
     private val userRolesRepo: UserRolesRepository,
     private val userGroupsRepo: UserGroupsRepository,
-    private val rolesService: RolesService,
-    private val groupsService: GroupsService,
     private val passwordEncoder: PasswordEncoder
 ) : UsersService {
 
@@ -68,42 +70,44 @@ class UsersServiceImpl(
         return userRepo.deleteById(userId)
     }
 
-    // TODO applicationId necessary?
-
-    override fun grantRoleToUser(id: Long, applicationId: Long, roleId: Long): Mono<Void> {
-        // TODO need to look up user or role?
-        return findRequiredById(id)
-            .flatMap { user: User ->
-                rolesService.findRequiredById(roleId)
-                    .flatMap { role -> userRolesRepo.insert(user.id, role.id) }
-            }
+    override fun getUserRoles(userId: Long): Flux<Role> {
+        return findRequiredById(userId)
+            .thenMany(userRolesRepo.findRolesByUserId(userId))
     }
 
-    override fun removeRoleFromUser(id: Long, applicationId: Long, roleId: Long): Mono<Void> {
-        // TODO need to look up user or role?
-        return findRequiredById(id)
-            .flatMap { user: User ->
-                rolesService.findRequiredById(roleId)
-                    .flatMap { role -> userRolesRepo.deleteById(user.id, role.id) }
-            }
+    @Transactional
+    override fun updateUserRoles(userId: Long, updatedRoles: Set<Role>): Flux<Role> {
+        return findRequiredById(userId)
+            .thenMany(userRolesRepo.findRolesByUserId(userId))
+            .collectList()
+            .map { existingRoles ->
+                Flux.merge(
+                    Flux.fromIterable(existingRoles.minus(updatedRoles))
+                        .flatMap { userRolesRepo.deleteById(userId, it.id) },
+                    Flux.fromIterable(updatedRoles.minus(existingRoles))
+                        .flatMap { userRolesRepo.insert(userId, it.id) }
+                )
+            }.thenMany(Flux.fromIterable(updatedRoles))
     }
 
-    override fun grantGroupToUser(id: Long, groupId: Long): Mono<Void> {
-        // TODO need to look up user or group?
-        return findRequiredById(id)
-            .flatMap { user: User ->
-                groupsService.findRequiredById(groupId)
-                    .flatMap { group -> userGroupsRepo.insert(user.id, group.id) }
-            }
+    override fun getUserGroups(userId: Long): Flux<Group> {
+        return findRequiredById(userId)
+            .thenMany(userGroupsRepo.findGroupsByUserId(userId))
     }
 
-    override fun removeGroupFromUser(id: Long, groupId: Long): Mono<Void> {
-        // TODO need to look up user or group?
-        return findRequiredById(id)
-            .flatMap { user: User ->
-                groupsService.findRequiredById(groupId)
-                    .flatMap { group -> userGroupsRepo.deleteById(user.id, group.id) }
-            }
+    @Transactional
+    override fun updateUserGroups(userId: Long, updatedGroups: Set<Group>): Flux<Group> {
+        return findRequiredById(userId)
+            .thenMany(userGroupsRepo.findGroupsByUserId(userId))
+            .collectList()
+            .map { existingGroups ->
+                Flux.merge(
+                    Flux.fromIterable(existingGroups.minus(updatedGroups))
+                        .flatMap { userGroupsRepo.deleteById(userId, it.id) },
+                    Flux.fromIterable(updatedGroups.minus(existingGroups))
+                        .flatMap { userGroupsRepo.insert(userId, it.id) }
+                )
+            }.thenMany(Flux.fromIterable(updatedGroups))
     }
 
     override fun updateUserPassword(id: Long, currentPassword: String, newPassword: String): Mono<Void> {
