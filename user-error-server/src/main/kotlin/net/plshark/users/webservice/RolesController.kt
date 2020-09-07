@@ -61,18 +61,19 @@ class RolesController(private val rolesService: RolesService, private val appSer
     }
 
     /**
-     * Get all roles up to the maximum result count and starting at an offset
+     * Get roles belonging to an application
+     * @param applicationId the application ID
      * @param maxResults the maximum number of results to return
-     * @param offset the offset to start the list at
-     * @return the roles
+     * @param offset the offset to start at, 0 to start at the beginning
+     * @return a [Flux] emitting the roles
      */
-    // TODO should only get roles belonging to application
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getRoles(
+    fun findRolesByApplication(
+        @PathVariable("applicationId") applicationId: Long,
         @RequestParam(value = "max-results", defaultValue = "50") maxResults: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
     ): Flux<Role> {
-        return rolesService.getRoles(maxResults, offset)
+        return rolesService.findRolesByApplicationId(applicationId, maxResults, offset)
     }
 
     /**

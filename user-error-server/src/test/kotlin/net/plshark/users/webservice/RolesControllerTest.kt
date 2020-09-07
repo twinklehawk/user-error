@@ -59,12 +59,12 @@ class RolesControllerTest {
     }
 
     @Test
-    fun `getRoles passes the max results and offset through`() {
+    fun `findRolesByApplication passes through`() {
         val role1 = Role(1, 1, "role1")
         val role2 = Role(2, 1, "role2")
-        every { service.getRoles(3, 2) } returns Flux.just(role1, role2)
+        every { service.findRolesByApplicationId(4, 3, 2) } returns Flux.just(role1, role2)
 
-        StepVerifier.create(controller.getRoles(3, 2))
+        StepVerifier.create(controller.findRolesByApplication(4, 3, 2))
                 .expectNext(role1, role2)
                 .verifyComplete()
     }

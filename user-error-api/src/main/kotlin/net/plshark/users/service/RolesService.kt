@@ -25,12 +25,13 @@ interface RolesService {
     fun findRequiredById(roleId: Long): Mono<Role>
 
     /**
-     * Get all roles up to the maximum result count and starting at an offset
+     * Get roles belonging to an application
+     * @param applicationId the application ID
      * @param maxResults the maximum number of results to return
-     * @param offset the offset to start the list at, 0 to start at the beginning
+     * @param offset the offset to start at, 0 to start at the beginning
      * @return a [Flux] emitting the roles
      */
-    fun getRoles(maxResults: Int, offset: Long): Flux<Role>
+    fun findRolesByApplicationId(applicationId: Long, maxResults: Int, offset: Long): Flux<Role>
 
     /**
      * Save a new role

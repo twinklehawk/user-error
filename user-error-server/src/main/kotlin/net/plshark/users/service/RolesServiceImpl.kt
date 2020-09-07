@@ -36,7 +36,10 @@ class RolesServiceImpl(private val rolesRepo: RolesRepository) : RolesService {
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $roleId") })
     }
 
-    override fun getRoles(maxResults: Int, offset: Long): Flux<Role> {
-        return rolesRepo.getRoles(maxResults, offset)
+    override fun findRolesByApplicationId(applicationId: Long, maxResults: Int, offset: Long): Flux<Role> {
+        // TODO better pagination
+        return rolesRepo.findRolesByApplicationId(applicationId)
+            .skip(offset)
+            .take(maxResults.toLong())
     }
 }

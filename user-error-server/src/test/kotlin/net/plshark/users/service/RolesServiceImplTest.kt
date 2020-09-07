@@ -74,10 +74,10 @@ class RolesServiceImplTest {
     @Test
     fun `should be able to retrieve all roles`() {
         val role1 = Role(1, 2, "role1")
-        val role2 = Role(2, 3, "role2")
-        every { rolesRepo.getRoles(100, 0) } returns Flux.just(role1, role2)
+        val role2 = Role(2, 2, "role2")
+        every { rolesRepo.findRolesByApplicationId(2) } returns Flux.just(role1, role2)
 
-        StepVerifier.create(service.getRoles(100, 0))
+        StepVerifier.create(service.findRolesByApplicationId(2, 100, 0))
                 .expectNext(role1, role2)
                 .verifyComplete()
     }
