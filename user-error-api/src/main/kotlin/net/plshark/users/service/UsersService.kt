@@ -79,11 +79,11 @@ interface UsersService {
     /**
      * Update the roles assigned to a user
      * @param userId the user ID
-     * @param roles the new set of roles to assign to the user
+     * @param updatedRoles the new set of roles to assign to the user
      * @return a [Flux] emitting the new roles assigned to the user or [net.plshark.errors.ObjectNotFoundException] if
      * the user was not found
      */
-    fun updateUserRoles(userId: Long, roles: Set<Role>): Flux<Role>
+    fun updateUserRoles(userId: Long, updatedRoles: Set<Role>): Flux<Role>
 
     /**
      * Find the groups assigned to a user
@@ -96,9 +96,9 @@ interface UsersService {
     /**
      * Update the groups assigned to a user
      * @param userId the user ID
-     * @param groups the new set of groups to assign to the user
+     * @param updatedGroups the new set of groups to assign to the user
      * @return a [Flux] emitting the new groups assigned to the user or [net.plshark.errors.ObjectNotFoundException] if
      * the user was not found
      */
-    fun updateUserGroups(userId: Long, groups: Set<Group>): Flux<Group>
+    fun updateUserGroups(userId: Long, updatedGroups: Set<Group>): Flux<Group>
 }
