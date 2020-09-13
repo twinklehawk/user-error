@@ -27,7 +27,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
     tasks.withType<JacocoReport> {
         reports {
             xml.isEnabled = true
-            html.isEnabled = false
+            html.isEnabled = true
             csv.isEnabled = false
         }
     }
@@ -40,6 +40,18 @@ configure(subprojects.filter{ it.name != "platform" }) {
 
     dependencies {
         "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.11.2")
+    }
+}
+
+configure(subprojects.filter{ it.name != "platform" && it.name != "user-error-api" }) {
+    tasks.withType<JacocoCoverageVerification> {
+        violationRules {
+            rule {
+                limit {
+                    minimum = "0.8".toBigDecimal()
+                }
+            }
+        }
     }
 }
 
