@@ -2,80 +2,81 @@ package net.plshark.users.webservice
 
 import io.mockk.every
 import io.mockk.mockk
+import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
-import net.plshark.users.model.Application
 import net.plshark.users.model.Role
 import net.plshark.users.model.RoleCreate
-import net.plshark.users.service.ApplicationsService
-
-import net.plshark.users.service.RolesService
+import net.plshark.users.repo.RolesRepository
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 
+@Suppress("ReactiveStreamsUnusedPublisher")
 class RolesControllerTest {
 
-    private val service = mockk<RolesService>()
-    private val appService = mockk<ApplicationsService>()
-    private val controller = RolesController(service, appService)
+    private val rolesRepo = mockk<RolesRepository>()
+    private val controller = RolesController(rolesRepo)
 
     @Test
-    fun `insert passes role through to service`() {
-        val inserted = Role(100, 12, "app")
-        every { appService.findById(12) } returns Mono.just(Application(12, "app"))
-        every { service.create(RoleCreate(12, "admin")) } returns Mono.just(inserted)
+    fun `creating should save a role and return the saved role`() {
+        val role = RoleCreate(123, "role")
+        val inserted = Role(1, 123, "role")
+        every { rolesRepo.insert(role) } returns Mono.just(inserted)
 
-        StepVerifier.create(controller.create(12, "admin"))
+        StepVerifier.create(controller.create(123, "role"))
             .expectNext(inserted)
             .verifyComplete()
     }
 
     @Test
-    fun `insert returns an ObjectNotFoundException if the application is not found`() {
-        every { appService.findById(4) } returns Mono.empty()
+    fun `create should map the exception for a duplicate name to a DuplicateException`() {
+        val request = RoleCreate(321, "app")
+        every { rolesRepo.insert(request.copy(applicationId = 321)) } returns
+                Mono.error(DataIntegrityViolationException("test error"))
 
-        StepVerifier.create(controller.create(4, "admin"))
-            .verifyError(ObjectNotFoundException::class.java)
+        StepVerifier.create(controller.create(321, "app"))
+            .verifyError(DuplicateException::class.java)
+    }
+
+    @Test
+    fun `deleting a role should delete the role`() {
+        val rolesProbe = PublisherProbe.empty<Void>()
+        every { rolesRepo.deleteById(100) } returns rolesProbe.mono()
+
+        StepVerifier.create(controller.delete(100))
+            .verifyComplete()
+        rolesProbe.assertWasSubscribed()
+    }
+
+    @Test
+    fun `should be able to retrieve a role by ID`() {
+        val role = Role(123, 132, "role-name")
+        every { rolesRepo.findById(123) } returns Mono.just(role)
+
+        StepVerifier.create(controller.findById(132, 123))
+            .expectNext(role)
+            .verifyComplete()
     }
 
     @Test
     fun `getting a role should throw an exception when the role does not exist`() {
-        every { service.findById(5) } returns Mono.empty()
+        every { rolesRepo.findById(5) } returns Mono.empty()
 
         StepVerifier.create(controller.findById(4, 5))
-                .verifyError(ObjectNotFoundException::class.java)
+            .verifyError(ObjectNotFoundException::class.java)
     }
 
     @Test
-    fun `delete passes ID through to service`() {
-        val probe = PublisherProbe.empty<Void>()
-        every { service.deleteById(6) } returns probe.mono()
+    fun `should be able to retrieve all roles`() {
+        val role1 = Role(1, 2, "role1")
+        val role2 = Role(2, 2, "role2")
+        every { rolesRepo.findRolesByApplicationId(2) } returns Flux.just(role1, role2)
 
-        StepVerifier.create(controller.delete(5, 6))
+        StepVerifier.create(controller.findRolesByApplication(2, 100, 0))
+            .expectNext(role1, role2)
             .verifyComplete()
-        probe.assertWasSubscribed()
-    }
-
-    @Test
-    fun `findRolesByApplication passes through`() {
-        val role1 = Role(1, 1, "role1")
-        val role2 = Role(2, 1, "role2")
-        every { service.findRolesByApplicationId(4, 3, 2) } returns Flux.just(role1, role2)
-
-        StepVerifier.create(controller.findRolesByApplication(4, 3, 2))
-                .expectNext(role1, role2)
-                .verifyComplete()
-    }
-
-    @Test
-    fun `get passes the role name through`() {
-        val role1 = Role(1, 1, "role")
-        every { service.findById(1) } returns Mono.just(role1)
-
-        StepVerifier.create(controller.findById(1, 1))
-                .expectNext(role1)
-                .verifyComplete()
     }
 }

@@ -1,10 +1,11 @@
 package net.plshark.users.webservice
 
+import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
 import net.plshark.users.model.RoleCreate
-import net.plshark.users.service.ApplicationsService
-import net.plshark.users.service.RolesService
+import net.plshark.users.repo.RolesRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import javax.validation.constraints.Min
 
 /**
@@ -24,7 +24,7 @@ import javax.validation.constraints.Min
  */
 @RestController
 @RequestMapping("/applications/{applicationId}/roles")
-class RolesController(private val rolesService: RolesService, private val appService: ApplicationsService) {
+class RolesController(private val rolesRepo: RolesRepository) {
 
     /**
      * Insert a new role
@@ -40,24 +40,23 @@ class RolesController(private val rolesService: RolesService, private val appSer
         @PathVariable("applicationId") applicationId: Long,
         @RequestBody role: String
     ): Mono<Role> {
-        return appService.findById(applicationId)
-            .switchIfEmpty { Mono.error(ObjectNotFoundException("Application $applicationId not found")) }
-            .map { RoleCreate(it.id, role) }
-            .flatMap { rolesService.create(it) }
+        // TODO return 404 when application does not exist
+        // TODO make this method accept a RoleCreate object
+        return rolesRepo.insert(RoleCreate(applicationId, role))
+            .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException? ->
+                DuplicateException("A role with name $role already exists", e)
+            }
     }
 
     /**
      * Delete a role
-     * @param applicationId the ID of the parent application
      * @param roleId the role ID
      * @return an empty result
      */
     @DeleteMapping(path = ["/{roleId}"])
-    fun delete(
-        @PathVariable("applicationId") applicationId: Long,
-        @PathVariable("roleId") roleId: Long
-    ): Mono<Void> {
-        return rolesService.deleteById(roleId)
+    fun delete(@PathVariable("roleId") roleId: Long): Mono<Void> {
+        // TODO care about app ID
+        return rolesRepo.deleteById(roleId)
     }
 
     /**
@@ -73,7 +72,10 @@ class RolesController(private val rolesService: RolesService, private val appSer
         @RequestParam(value = "max-results", defaultValue = "50") maxResults: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
     ): Flux<Role> {
-        return rolesService.findRolesByApplicationId(applicationId, maxResults, offset)
+        // TODO better pagination
+        return rolesRepo.findRolesByApplicationId(applicationId)
+            .skip(offset)
+            .take(maxResults.toLong())
     }
 
     /**
@@ -87,7 +89,8 @@ class RolesController(private val rolesService: RolesService, private val appSer
         @PathVariable("applicationId") applicationId: Long,
         @PathVariable("roleId") roleId: Long
     ): Mono<Role> {
-        return rolesService.findById(roleId)
+        return rolesRepo.findById(roleId)
+            .filter { it.applicationId == applicationId }
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No role found for $roleId") })
     }
 }
