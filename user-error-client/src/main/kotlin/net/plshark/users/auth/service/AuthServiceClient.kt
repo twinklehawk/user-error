@@ -34,6 +34,7 @@ class AuthServiceClient(private val webClient: WebClient, private val baseUri: S
     }
 
     override fun validateToken(accessToken: String): Mono<AuthenticatedUser> {
+        // TODO needs authentication, remove from this class
         return webClient.post()
             .uri(URI.create("$baseUri/auth/validate"))
             .contentType(MediaType.TEXT_PLAIN)
