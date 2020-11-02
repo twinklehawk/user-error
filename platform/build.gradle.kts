@@ -12,6 +12,6 @@ dependencies {
     constraints {
         api("com.auth0:java-jwt:3.11.0")
         api("io.mockk:mockk:1.10.2")
-        api("com.google.guava:guava:29.0-jre")
+        api("com.google.guava:guava:30.0-jre")
     }
 }
