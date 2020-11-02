@@ -11,8 +11,9 @@ import reactor.core.publisher.Mono
 class SpringDataGroupRolesRepository(private val client: DatabaseClient) : GroupRolesRepository {
 
     override fun findRolesForGroup(groupId: Long): Flux<Role> {
-        return client.execute("SELECT r.* FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE " +
-                "ur.group_id = :id")
+        return client.execute(
+            "SELECT r.* FROM roles r INNER JOIN group_roles ur ON r.id = ur.role_id WHERE ur.group_id = :id"
+        )
             .bind("id", groupId)
             .map { row -> SpringDataRolesRepository.mapRow(row) }
             .all()

@@ -29,10 +29,12 @@ class LoginAttemptThrottlingFilter(
         } else {
             result = chain.filter(exchange)
                 .doOnError(AccessDeniedException::class.java) { service.onLoginFailed(username, clientIp) }
-                .then(Mono.fromRunnable {
-                    val status = exchange.response.statusCode
-                    if (isLoginFailedStatus(status)) service.onLoginFailed(username, clientIp)
-                })
+                .then(
+                    Mono.fromRunnable {
+                        val status = exchange.response.statusCode
+                        if (isLoginFailedStatus(status)) service.onLoginFailed(username, clientIp)
+                    }
+                )
         }
 
         return result

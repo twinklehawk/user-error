@@ -15,16 +15,19 @@ import reactor.core.publisher.Mono
 class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserGroupsRepository {
 
     override fun findGroupsByUserId(userId: Long): Flux<Group> {
-        return client.execute("SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE " +
-                "ug.user_id = :id")
+        return client.execute(
+            "SELECT * FROM groups g INNER JOIN user_groups ug ON g.id = ug.group_id WHERE ug.user_id = :id"
+        )
             .bind("id", userId)
             .map { row -> SpringDataGroupsRepository.mapRow(row) }
             .all()
     }
 
     override fun findGroupRolesByUserId(userId: Long): Flux<Role> {
-        return client.execute("SELECT r.* from roles r, user_groups ug, group_roles gr WHERE " +
-                "ug.user_id = :userId AND gr.group_id = ug.group_id AND r.id = gr.role_id")
+        return client.execute(
+            "SELECT r.* from roles r, user_groups ug, group_roles gr WHERE ug.user_id = :userId AND gr.group_id " +
+                    "= ug.group_id AND r.id = gr.role_id"
+        )
             .bind("userId", userId)
             .map { row -> SpringDataRolesRepository.mapRow(row) }
             .all()
