@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.3.5.RELEASE" apply false
     id("com.jfrog.bintray") version "1.8.5" apply false
     id("com.github.ben-manes.versions") version "0.33.0"
-    id("io.gitlab.arturbosch.detekt") version "1.11.2" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.14.2" apply false
 }
 
 allprojects {
@@ -39,7 +39,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
     }
 
     dependencies {
-        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.11.2")
+        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.12.0")
     }
 }
 
