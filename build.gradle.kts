@@ -48,7 +48,7 @@ configure(subprojects.filter{ it.name != "platform" && it.name != "user-error-ap
         violationRules {
             rule {
                 limit {
-                    minimum = "0.8".toBigDecimal()
+                    minimum = "0.7".toBigDecimal()
                 }
             }
         }
