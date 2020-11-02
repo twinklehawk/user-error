@@ -1,9 +1,11 @@
 package net.plshark.users.webservice
 
+import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
-import net.plshark.users.service.ApplicationsService
+import net.plshark.users.repo.ApplicationsRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,19 +24,20 @@ import javax.validation.constraints.Min
  */
 @RestController
 @RequestMapping("/applications")
-class ApplicationsController(private val applicationsService: ApplicationsService) {
+class ApplicationsController(private val appsRepo: ApplicationsRepository) {
 
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getApplications(
         @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
     ): Flux<Application> {
-        return applicationsService.getApplications(limit, offset)
+        // TODO
+        return Flux.empty()
     }
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findById(@PathVariable("id") id: Long): Mono<Application> {
-        return applicationsService.findById(id)
+        return appsRepo.findById(id)
             .switchIfEmpty(Mono.error { ObjectNotFoundException("No application found for $id") })
     }
 
@@ -43,11 +46,14 @@ class ApplicationsController(private val applicationsService: ApplicationsServic
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun create(@RequestBody application: ApplicationCreate): Mono<Application> {
-        return applicationsService.create(application)
+        return appsRepo.insert(application)
+            .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException ->
+                DuplicateException("An application with name ${application.name} already exists", e)
+            }
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): Mono<Void> {
-        return applicationsService.deleteById(id)
+        return appsRepo.deleteById(id)
     }
 }
