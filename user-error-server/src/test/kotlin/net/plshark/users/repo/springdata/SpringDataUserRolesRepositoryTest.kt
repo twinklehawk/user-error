@@ -1,8 +1,13 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
-import net.plshark.users.model.*
+import net.plshark.users.model.ApplicationCreate
+import net.plshark.users.model.Role
+import net.plshark.users.model.RoleCreate
+import net.plshark.users.model.User
+import net.plshark.users.model.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +26,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     private lateinit var user2: User
 
     @BeforeEach
-    fun setup() {
+    fun setup() = runBlocking {
         val connectionFactory = ConnectionFactories.get(DB_URL)
         val client = DatabaseClient.create(connectionFactory)
         repo = SpringDataUserRolesRepository(client)
@@ -29,7 +34,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         rolesRepo = SpringDataRolesRepository(client)
         appsRepo = SpringDataApplicationsRepository(client)
 
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+        val app = appsRepo.insert(ApplicationCreate("app"))
         testRole1 = rolesRepo.insert(RoleCreate(app.id, "testRole1")).block()!!
         testRole2 = rolesRepo.insert(RoleCreate(app.id, "testRole2")).block()!!
         user1 = usersRepo.insert(UserCreate("test-user", "test-pass")).block()!!

@@ -1,5 +1,7 @@
 package net.plshark.users.webservice
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import javax.validation.constraints.Min
 
 /**
@@ -30,30 +31,30 @@ class ApplicationsController(private val appsRepo: ApplicationsRepository) {
     fun getApplications(
         @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
-    ): Flux<Application> {
+    ): Flow<Application> {
         // TODO
-        return Flux.empty()
+        return Flux.empty<Application>().asFlow()
     }
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun findById(@PathVariable("id") id: Long): Mono<Application> {
-        return appsRepo.findById(id)
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No application found for $id") })
+    suspend fun findById(@PathVariable("id") id: Long): Application {
+        return appsRepo.findById(id) ?: throw ObjectNotFoundException("No application found for $id")
     }
 
     @PostMapping(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun create(@RequestBody application: ApplicationCreate): Mono<Application> {
-        return appsRepo.insert(application)
-            .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException ->
-                DuplicateException("An application with name ${application.name} already exists", e)
-            }
+    suspend fun create(@RequestBody application: ApplicationCreate): Application {
+        try {
+            return appsRepo.insert(application)
+        } catch (e: DataIntegrityViolationException) {
+            throw DuplicateException("An application with name ${application.name} already exists", e)
+        }
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable("id") id: Long): Mono<Void> {
-        return appsRepo.deleteById(id)
+    suspend fun delete(@PathVariable("id") id: Long) {
+        appsRepo.deleteById(id)
     }
 }

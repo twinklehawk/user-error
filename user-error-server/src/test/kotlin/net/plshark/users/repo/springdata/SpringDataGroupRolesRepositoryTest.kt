@@ -1,6 +1,7 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.GroupCreate
@@ -30,9 +31,9 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `insert should save a group and role association and should be retrievable`() {
-        val app1 = appsRepo.insert(ApplicationCreate("app1")).block()!!
-        val app2 = appsRepo.insert(ApplicationCreate("app2")).block()!!
+    fun `insert should save a group and role association and should be retrievable`() = runBlocking {
+        val app1 = appsRepo.insert(ApplicationCreate("app1"))
+        val app2 = appsRepo.insert(ApplicationCreate("app2"))
         val role1 = rolesRepo.insert(RoleCreate(app1.id, "test1")).block()!!
         val role2 = rolesRepo.insert(RoleCreate(app2.id, "test2")).block()!!
         val group = groupsRepo.insert(GroupCreate("group1")).block()!!
@@ -57,8 +58,8 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `delete should delete a group-role association`() {
-        val app = appsRepo.insert(ApplicationCreate("app1")).block()!!
+    fun `delete should delete a group-role association`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app1"))
         val role = rolesRepo.insert(RoleCreate(app.id, "test1")).block()!!
         val group = groupsRepo.insert(GroupCreate("group1")).block()!!
 
@@ -80,9 +81,9 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `deleting a group ID should delete all associations for that group`() {
-        val app1 = appsRepo.insert(ApplicationCreate("app1")).block()!!
-        val app2 = appsRepo.insert(ApplicationCreate("app2")).block()!!
+    fun `deleting a group ID should delete all associations for that group`() = runBlocking {
+        val app1 = appsRepo.insert(ApplicationCreate("app1"))
+        val app2 = appsRepo.insert(ApplicationCreate("app2"))
         val role1 = rolesRepo.insert(RoleCreate(app1.id, "test1")).block()!!
         val role2 = rolesRepo.insert(RoleCreate(app2.id, "test2")).block()!!
         val group = groupsRepo.insert(GroupCreate("group1")).block()!!
@@ -98,8 +99,8 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `deleting a role ID should delete all associations for that role`() {
-        val app = appsRepo.insert(ApplicationCreate("app1")).block()!!
+    fun `deleting a role ID should delete all associations for that role`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app1"))
         val role = rolesRepo.insert(RoleCreate(app.id, "test1")).block()!!
         val group1 = groupsRepo.insert(GroupCreate("group1")).block()!!
         val group2 = groupsRepo.insert(GroupCreate("group2")).block()!!

@@ -1,10 +1,13 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.RoleCreate
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
@@ -24,8 +27,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `inserting a role returns the inserted role with the ID set`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `inserting a role returns the inserted role with the ID set`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
 
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
@@ -35,8 +38,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `can retrieve a previously inserted role by ID`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `can retrieve a previously inserted role by ID`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
         val role = repo.findById(inserted.id).block()
@@ -53,8 +56,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `can retrieve a previously inserted role by name`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `can retrieve a previously inserted role by name`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
         val role = repo.findByApplicationIdAndName(app.id, "test-role").block()
@@ -71,8 +74,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `can delete a previously inserted role by ID`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `can delete a previously inserted role by ID`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         val inserted = repo.insert(RoleCreate(app.id, "test-role")).block()!!
 
         repo.deleteById(inserted.id).block()
@@ -87,8 +90,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRoles should return all results when there are less than max results`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `getRoles should return all results when there are less than max results`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name"))
                 .then(repo.insert(RoleCreate(app.id, "name2"))).block()
@@ -101,8 +104,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRoles should return up to max results when there are more results`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `getRoles should return up to max results when there are more results`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name")).block()
         repo.insert(RoleCreate(app.id, "name2")).block()
@@ -116,8 +119,8 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRoles should start at the correct offset`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
+    fun `getRoles should start at the correct offset`() = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
         repo.deleteAll().block()
         repo.insert(RoleCreate(app.id, "name"))
                 .then(repo.insert(RoleCreate(app.id, "name2")))
@@ -131,9 +134,9 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRolesForApplication should return all rows with a matching application ID`() {
-        val app = appsRepo.insert(ApplicationCreate("app")).block()!!
-        val app2 = appsRepo.insert(ApplicationCreate("app2")).block()!!
+    fun `getRolesForApplication should return all rows with a matching application ID`(): Unit = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
+        val app2 = appsRepo.insert(ApplicationCreate("app2"))
         repo.insert(RoleCreate(app.id, "r1")).block()
         repo.insert(RoleCreate(app.id, "r2")).block()
         repo.insert(RoleCreate(app2.id, "r3")).block()
@@ -142,5 +145,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
             .expectNextMatches { r -> r.name == "r1" }
             .expectNextMatches { r -> r.name == "r2" }
             .verifyComplete()
+
+        return@runBlocking
     }
 }

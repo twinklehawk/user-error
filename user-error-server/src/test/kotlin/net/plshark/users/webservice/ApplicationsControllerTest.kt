@@ -1,17 +1,18 @@
 package net.plshark.users.webservice
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.repo.ApplicationsRepository
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.DataIntegrityViolationException
-import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
-import reactor.test.publisher.PublisherProbe
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 class ApplicationsControllerTest {
@@ -20,50 +21,49 @@ class ApplicationsControllerTest {
     private val controller = ApplicationsController(appsRepo)
 
     @Test
-    fun `get should pass through the response from the repo`() {
+    fun `get should pass through the response from the repo`() = runBlocking {
         val app = Application(1, "app")
-        every { appsRepo.findById(1) } returns Mono.just(app)
+        coEvery { appsRepo.findById(1) } returns app
 
-        StepVerifier.create(controller.findById(1))
-            .expectNext(app)
-            .verifyComplete()
+        assertEquals(app, controller.findById(1))
     }
 
     @Test
     fun `getting an application should throw an exception when the application does not exist`() {
-        every { appsRepo.findById(456) } returns Mono.empty()
+        coEvery { appsRepo.findById(456) } returns null
 
-        StepVerifier.create(controller.findById(456))
-            .verifyError(ObjectNotFoundException::class.java)
+        assertThrows<ObjectNotFoundException> {
+            runBlocking {
+                controller.findById(456)
+            }
+        }
     }
 
     @Test
-    fun `create should pass through the response from the repo`() {
+    fun `create should pass through the response from the repo`() = runBlocking {
         val request = ApplicationCreate("app")
         val inserted = Application(1, "app")
-        every { appsRepo.insert(request) } returns Mono.just(inserted)
+        coEvery { appsRepo.insert(request) } returns inserted
 
-        StepVerifier.create(controller.create(request))
-            .expectNext(inserted)
-            .verifyComplete()
+        assertEquals(inserted, controller.create(request))
     }
 
     @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
         val request = ApplicationCreate("app")
-        every { appsRepo.insert(request) } returns Mono.error(DataIntegrityViolationException("test error"))
+        coEvery { appsRepo.insert(request) } throws DataIntegrityViolationException("test error")
 
-        StepVerifier.create(controller.create(request))
-            .verifyError(DuplicateException::class.java)
+        assertThrows<DuplicateException> {
+            runBlocking {
+                controller.create(request)
+            }
+        }
     }
 
     @Test
     fun `delete should delete the app`() {
-        val deleteAppProbe = PublisherProbe.empty<Void>()
-        every { appsRepo.deleteById(1) } returns deleteAppProbe.mono()
-
-        StepVerifier.create(controller.delete(1))
-            .verifyComplete()
-        deleteAppProbe.assertWasSubscribed()
+        coEvery { appsRepo.deleteById(1) } coAnswers { }
+        runBlocking { controller.delete(1) }
+        coVerify { appsRepo.deleteById(1) }
     }
 }
