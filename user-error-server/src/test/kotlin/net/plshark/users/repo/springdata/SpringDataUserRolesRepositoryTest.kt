@@ -35,8 +35,8 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         appsRepo = SpringDataApplicationsRepository(client)
 
         val app = appsRepo.insert(ApplicationCreate("app"))
-        testRole1 = rolesRepo.insert(RoleCreate(app.id, "testRole1")).block()!!
-        testRole2 = rolesRepo.insert(RoleCreate(app.id, "testRole2")).block()!!
+        testRole1 = rolesRepo.insert(RoleCreate(app.id, "testRole1"))
+        testRole2 = rolesRepo.insert(RoleCreate(app.id, "testRole2"))
         user1 = usersRepo.insert(UserCreate("test-user", "test-pass")).block()!!
         user2 = usersRepo.insert(UserCreate("test-user2", "test-pass")).block()!!
     }

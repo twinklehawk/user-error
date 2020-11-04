@@ -1,18 +1,20 @@
 package net.plshark.users.webservice
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
 import net.plshark.users.model.RoleCreate
 import net.plshark.users.repo.RolesRepository
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.DataIntegrityViolationException
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
-import reactor.test.publisher.PublisherProbe
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 class RolesControllerTest {
@@ -21,62 +23,65 @@ class RolesControllerTest {
     private val controller = RolesController(rolesRepo)
 
     @Test
-    fun `creating should save a role and return the saved role`() {
+    fun `creating should save a role and return the saved role`() = runBlocking {
         val role = RoleCreate(123, "role")
         val inserted = Role(1, 123, "role")
-        every { rolesRepo.insert(role) } returns Mono.just(inserted)
+        coEvery { rolesRepo.insert(role) } returns inserted
 
-        StepVerifier.create(controller.create(123, "role"))
-            .expectNext(inserted)
-            .verifyComplete()
+        assertEquals(inserted, controller.create(123, "role"))
     }
 
     @Test
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
         val request = RoleCreate(321, "app")
-        every { rolesRepo.insert(request.copy(applicationId = 321)) } returns
-                Mono.error(DataIntegrityViolationException("test error"))
+        coEvery { rolesRepo.insert(request.copy(applicationId = 321)) } throws
+                DataIntegrityViolationException("test error")
 
-        StepVerifier.create(controller.create(321, "app"))
-            .verifyError(DuplicateException::class.java)
+        assertThrows<DuplicateException> {
+            runBlocking {
+                controller.create(321, "app")
+            }
+        }
     }
 
     @Test
     fun `deleting a role should delete the role`() {
-        val rolesProbe = PublisherProbe.empty<Void>()
-        every { rolesRepo.deleteById(100) } returns rolesProbe.mono()
-
-        StepVerifier.create(controller.delete(100))
-            .verifyComplete()
-        rolesProbe.assertWasSubscribed()
+        coEvery { rolesRepo.deleteById(100) } coAnswers { }
+        runBlocking { rolesRepo.deleteById(100) }
+        coVerify { rolesRepo.deleteById(100) }
     }
 
     @Test
-    fun `should be able to retrieve a role by ID`() {
+    fun `should be able to retrieve a role by ID`() = runBlocking {
         val role = Role(123, 132, "role-name")
-        every { rolesRepo.findById(123) } returns Mono.just(role)
+        coEvery { rolesRepo.findById(123) } returns role
 
-        StepVerifier.create(controller.findById(132, 123))
-            .expectNext(role)
-            .verifyComplete()
+        assertEquals(role, controller.findById(132, 123))
     }
 
     @Test
     fun `getting a role should throw an exception when the role does not exist`() {
-        every { rolesRepo.findById(5) } returns Mono.empty()
+        coEvery { rolesRepo.findById(5) } returns null
 
-        StepVerifier.create(controller.findById(4, 5))
-            .verifyError(ObjectNotFoundException::class.java)
+        assertThrows<ObjectNotFoundException> {
+            runBlocking {
+                controller.findById(4, 5)
+            }
+        }
     }
 
     @Test
-    fun `should be able to retrieve all roles`() {
+    fun `should be able to retrieve all roles`() = runBlocking {
         val role1 = Role(1, 2, "role1")
         val role2 = Role(2, 2, "role2")
-        every { rolesRepo.findRolesByApplicationId(2) } returns Flux.just(role1, role2)
+        coEvery { rolesRepo.findRolesByApplicationId(2) } returns flow {
+            emit(role1)
+            emit(role2)
+        }
 
-        StepVerifier.create(controller.findRolesByApplication(2, 100, 0))
-            .expectNext(role1, role2)
-            .verifyComplete()
+        val list = controller.findRolesByApplication(2, 100, 0).toList()
+        assertEquals(2, list.size)
+        assertEquals(role1, list[0])
+        assertEquals(role2, list[1])
     }
 }
