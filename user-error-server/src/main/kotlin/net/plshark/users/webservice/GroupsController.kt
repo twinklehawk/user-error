@@ -1,5 +1,6 @@
 package net.plshark.users.webservice
 
+import kotlinx.coroutines.flow.Flow
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Group
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 /**
  * Controller to provide web service methods for groups
@@ -27,9 +26,8 @@ import reactor.core.publisher.Mono
 class GroupsController(private val groupsRepo: GroupsRepository, private val groupRolesRepo: GroupRolesRepository) {
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun findById(@PathVariable("id") id: Long): Mono<Group> {
-        return groupsRepo.findById(id)
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No group found for $id") })
+    suspend fun findById(@PathVariable("id") id: Long): Group {
+        return groupsRepo.findById(id) ?: throw ObjectNotFoundException("No group found for $id")
     }
 
     // TODO getGroups
@@ -38,34 +36,35 @@ class GroupsController(private val groupsRepo: GroupsRepository, private val gro
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun create(@RequestBody group: GroupCreate): Mono<Group> {
-        return groupsRepo.insert(group)
-            .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException? ->
-                DuplicateException("A group with name ${group.name} already exists", e)
-            }
+    suspend fun create(@RequestBody group: GroupCreate): Group {
+        try {
+            return groupsRepo.insert(group)
+        } catch (e: DataIntegrityViolationException) {
+            throw DuplicateException("A group with name ${group.name} already exists", e)
+        }
     }
 
     @DeleteMapping(path = ["/{id}"])
-    fun delete(@PathVariable("id") id: Long): Mono<Void> {
-        return groupsRepo.deleteById(id)
+    suspend fun delete(@PathVariable("id") id: Long) {
+        groupsRepo.deleteById(id)
     }
 
     @PostMapping(path = ["/{id}/roles"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun addRoleToGroup(@PathVariable("id") groupId: Long, roleId: Long): Mono<Void> {
+    suspend fun addRoleToGroup(@PathVariable("id") groupId: Long, roleId: Long) {
         // TODO return 404 if group or role not found
-        return groupRolesRepo.insert(groupId, roleId)
+        groupRolesRepo.insert(groupId, roleId)
     }
 
     @DeleteMapping(path = ["/{id}/roles/{roleId}"])
-    fun removeRoleFromGroup(
+    suspend fun removeRoleFromGroup(
         @PathVariable("id") groupId: Long,
         @PathVariable("roleId") roleId: Long
-    ): Mono<Void> {
-        return groupRolesRepo.deleteById(groupId, roleId)
+    ) {
+        groupRolesRepo.deleteById(groupId, roleId)
     }
 
     @GetMapping(path = ["/{id}/roles"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getRolesInGroup(@PathVariable("id") groupId: Long): Flux<Role> {
+    fun getRolesInGroup(@PathVariable("id") groupId: Long): Flow<Role> {
         return groupRolesRepo.findRolesForGroup(groupId)
     }
 }

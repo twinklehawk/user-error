@@ -1,14 +1,16 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.Row
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitSingle
 import net.plshark.users.model.Group
 import net.plshark.users.model.GroupCreate
 import net.plshark.users.repo.GroupsRepository
 import org.springframework.data.r2dbc.core.DatabaseClient
+import org.springframework.data.r2dbc.core.await
+import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import java.util.Optional
 
 /**
  * Groups repository using spring data
@@ -16,46 +18,43 @@ import java.util.Optional
 @Repository
 class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRepository {
 
-    override fun findById(id: Long): Mono<Group> {
+    override suspend fun findById(id: Long): Group? {
         return client.execute("SELECT * FROM groups WHERE id = :id")
             .bind("id", id)
             .map { row: Row -> mapRow(row) }
-            .one()
+            .awaitOneOrNull()
     }
 
-    override fun findByName(name: String): Mono<Group> {
+    override suspend fun findByName(name: String): Group? {
         return client.execute("SELECT * FROM groups WHERE name = :name")
             .bind("name", name)
             .map { row -> mapRow(row) }
-            .one()
+            .awaitOneOrNull()
     }
 
-    override fun getGroups(maxResults: Int, offset: Long): Flux<Group> {
+    override fun getGroups(maxResults: Int, offset: Long): Flow<Group> {
         require(maxResults >= 1) { "Max results must be greater than 0" }
         require(offset >= 0) { "Offset cannot be negative" }
         val sql = "SELECT * FROM groups ORDER BY id OFFSET $offset ROWS FETCH FIRST $maxResults ROWS ONLY"
         return client.execute(sql)
             .map { row -> mapRow(row) }
             .all()
+            .asFlow()
     }
 
-    override fun insert(group: GroupCreate): Mono<Group> {
-        return client.execute("INSERT INTO groups (name) VALUES (:name) RETURNING id")
+    override suspend fun insert(group: GroupCreate): Group {
+        val id = client.execute("INSERT INTO groups (name) VALUES (:name) RETURNING id")
             .bind("name", group.name)
             .fetch().one()
-            .flatMap { map ->
-                Optional.ofNullable(map["id"] as Long?)
-                    .map { data -> Mono.just(data) }
-                    .orElse(Mono.empty())
-            }
-            .switchIfEmpty(Mono.error { IllegalStateException("No ID returned from insert") })
-            .map { id: Long -> Group(id = id, name = group.name) }
+            .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
+            .awaitSingle()
+        return Group(id = id, name = group.name)
     }
 
-    override fun deleteById(groupId: Long): Mono<Void> {
+    override suspend fun deleteById(groupId: Long) {
         return client.execute("DELETE FROM groups WHERE id = :id")
             .bind("id", groupId)
-            .then()
+            .await()
     }
 
     companion object {

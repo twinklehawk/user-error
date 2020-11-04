@@ -35,8 +35,8 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `insert should save a group and user association and should be retrievable`() {
-        val group = groupsRepo.insert(GroupCreate("test-name")).block()!!
+    fun `insert should save a group and user association and should be retrievable`() = runBlocking {
+        val group = groupsRepo.insert(GroupCreate("test-name"))
         val user = usersRepo.insert(UserCreate("test-user", "pass")).block()!!
 
         repo.insert(user.id, group.id).block()
@@ -50,8 +50,8 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `delete should delete a group-user association`() {
-        val group = groupsRepo.insert(GroupCreate("test-group")).block()!!
+    fun `delete should delete a group-user association`() = runBlocking {
+        val group = groupsRepo.insert(GroupCreate("test-group"))
         val user = usersRepo.insert(UserCreate("test-user", "pass")).block()!!
         repo.insert(user.id, group.id).block()
 
@@ -71,11 +71,11 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
         val role1 = rolesRepo.insert(RoleCreate(app1.id, "role1"))
         val role2 = rolesRepo.insert(RoleCreate(app1.id, "role2"))
         rolesRepo.insert(RoleCreate(app1.id, "role3"))
-        val group = groupsRepo.insert(GroupCreate("test-group")).block()!!
+        val group = groupsRepo.insert(GroupCreate("test-group"))
         val user = usersRepo.insert(UserCreate("user", "pass")).block()!!
         groupRolesRepo.insert(group.id, role1.id)
-                .then(groupRolesRepo.insert(group.id, role2.id))
-                .then(repo.insert(user.id, group.id)).block()
+        groupRolesRepo.insert(group.id, role2.id)
+        repo.insert(user.id, group.id).block()
 
         StepVerifier.create(repo.findGroupRolesByUserId(user.id).collectList())
             .expectNextMatches { list -> list.size == 2 && list.contains(role1) && list.contains(role2) }

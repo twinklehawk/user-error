@@ -1,14 +1,16 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.GroupCreate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
-import reactor.test.StepVerifier
 
 class SpringDataGroupsRepositoryTest : DbIntTest() {
 
@@ -22,96 +24,78 @@ class SpringDataGroupsRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `inserting a group returns the inserted group with the ID set`() {
-        val group = repo.insert(GroupCreate("test-group")).block()!!
+    fun `inserting a group returns the inserted group with the ID set`() = runBlocking {
+        val group = repo.insert(GroupCreate("test-group"))
 
         assertNotNull(group.id)
         assertEquals("test-group", group.name)
     }
 
     @Test
-    fun `can retrieve a previously inserted group by ID`() {
-        val group = repo.insert(GroupCreate("group")).block()!!
+    fun `can retrieve a previously inserted group by ID`() = runBlocking {
+        val group = repo.insert(GroupCreate("group"))
 
-        StepVerifier.create(repo.findById(group.id))
-                .expectNext(group)
-                .verifyComplete()
+        assertEquals(group, repo.findById(group.id))
     }
 
     @Test
-    fun `retrieving a group by ID when no group matches returns empty`() {
-        StepVerifier.create(repo.findById(100))
-                .expectNextCount(0)
-                .verifyComplete()
+    fun `retrieving a group by ID when no group matches returns empty`() = runBlocking {
+        assertNull(repo.findById(100))
     }
 
     @Test
-    fun `can retrieve a previously inserted group by name`() {
-        val group = repo.insert(GroupCreate("group")).block()!!
+    fun `can retrieve a previously inserted group by name`() = runBlocking {
+        val group = repo.insert(GroupCreate("group"))
 
-        StepVerifier.create(repo.findByName("group"))
-                .expectNext(group)
-                .verifyComplete()
+        assertEquals(group, repo.findByName("group"))
     }
 
     @Test
-    fun `retrieving a group by name when no group matches returns empty`() {
-        StepVerifier.create(repo.findByName("name"))
-                .expectNextCount(0)
-                .verifyComplete()
+    fun `retrieving a group by name when no group matches returns empty`() = runBlocking {
+        assertNull(repo.findByName("name"))
     }
 
     @Test
-    fun `can delete a previously inserted group by ID`() {
-        val group = repo.insert(GroupCreate("group")).block()!!
-        repo.deleteById(group.id).block()
+    fun `can delete a previously inserted group by ID`() = runBlocking {
+        val group = repo.insert(GroupCreate("group"))
+        repo.deleteById(group.id)
 
-        StepVerifier.create(repo.findByName("name"))
-                .expectNextCount(0)
-                .verifyComplete()
+        assertNull(repo.findByName("name"))
     }
 
     @Test
-    fun `no exception is thrown when attempting to delete a group that does not exist`() {
-        StepVerifier.create(repo.deleteById(200))
-                .verifyComplete()
+    fun `no exception is thrown when attempting to delete a group that does not exist`() = runBlocking {
+        repo.deleteById(200)
     }
 
     @Test
-    fun `getGroups should return all results when there are less than max results`() {
+    fun `getGroups should return all results when there are less than max results`() = runBlocking {
         repo.insert(GroupCreate("group1"))
-                .then(repo.insert(GroupCreate("group2")))
-                .then(repo.insert(GroupCreate("group3")))
-                .block()
+        repo.insert(GroupCreate("group2"))
+        repo.insert(GroupCreate("group3"))
 
-        StepVerifier.create(repo.getGroups(50, 0))
-                // one group is inserted by the migration scripts
-                .expectNextCount(4)
-                .verifyComplete()
+        // one group is inserted by the migration scripts
+        assertEquals(4, repo.getGroups(50, 0).toList().size)
     }
 
     @Test
-    fun `getGroups should return up to max results when there are more results`() {
+    fun `getGroups should return up to max results when there are more results`() = runBlocking {
         repo.insert(GroupCreate("group1"))
-            .then(repo.insert(GroupCreate("group2")))
-            .then(repo.insert(GroupCreate("group3")))
-            .block()
+        repo.insert(GroupCreate("group2"))
+        repo.insert(GroupCreate("group3"))
 
-        StepVerifier.create(repo.getGroups(2, 0))
-                .expectNextCount(2)
-                .verifyComplete()
+        assertEquals(2, repo.getGroups(2, 0).toList().size)
     }
 
     @Test
-    fun `getGroups should start at the correct offset`() {
+    fun `getGroups should start at the correct offset`() = runBlocking {
         repo.insert(GroupCreate("group1"))
-            .then(repo.insert(GroupCreate("group2")))
-            .then(repo.insert(GroupCreate("group3")))
-            .block()
+        repo.insert(GroupCreate("group2"))
+        repo.insert(GroupCreate("group3"))
 
-        StepVerifier.create(repo.getGroups(2, 2))
-            .expectNextMatches { group -> group.name == "group2" }
-            .expectNextMatches { group -> group.name == "group3" }
-            .verifyComplete()
+        val list = repo.getGroups(2, 2).toList()
+        assertEquals(2, list.size)
+        assertEquals("group2", list[0].name)
+        assertEquals("group3", list[1].name)
     }
 }
