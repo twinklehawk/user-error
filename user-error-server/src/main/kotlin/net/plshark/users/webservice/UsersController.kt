@@ -1,5 +1,8 @@
 package net.plshark.users.webservice
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
@@ -25,9 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import javax.validation.constraints.Min
 
 /**
@@ -46,94 +46,83 @@ class UsersController(
     fun getUsers(
         @RequestParam(value = "max-results", defaultValue = "50") maxResults: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
-    ): Flux<User> {
+    ): Flow<User> {
         return userRepo.getAll(maxResults, offset)
     }
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun findById(@PathVariable("id") id: Long): Mono<User> {
-        return userRepo.findById(id)
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for id") })
+    suspend fun findById(@PathVariable("id") id: Long): User {
+        return userRepo.findById(id) ?: throw ObjectNotFoundException("No user found for id")
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun create(@RequestBody user: UserCreate): Mono<User> {
+    suspend fun create(@RequestBody user: UserCreate): User {
         if (user.password.isEmpty()) throw BadRequestException("Password cannot be empty")
-        return Mono.just(user)
-            .subscribeOn(Schedulers.parallel())
-            .map { it.copy(password = passwordEncoder.encode(it.password)) }
-            .flatMap { userRepo.insert(it) }
-            .onErrorMap(DataIntegrityViolationException::class.java) { e: DataIntegrityViolationException? ->
-                DuplicateException("A user with username ${user.username} already exists", e)
-            }
+        val encoded = user.copy(password = passwordEncoder.encode(user.password))
+        try {
+            return userRepo.insert(encoded)
+        } catch (e: DataIntegrityViolationException) {
+            throw DuplicateException("A user with username ${user.username} already exists", e)
+        }
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable("id") id: Long): Mono<Void> {
-        return userRepo.deleteById(id)
+    suspend fun delete(@PathVariable("id") id: Long) {
+        userRepo.deleteById(id)
     }
 
     @PostMapping(path = ["/{id}/password"])
-    fun changePassword(
+    suspend fun changePassword(
         @PathVariable("id") id: Long,
         @RequestBody request: PasswordChangeRequest
-    ): Mono<Void> {
+    ) {
         if (request.newPassword.isEmpty()) throw BadRequestException("New password cannot be empty")
         val newPasswordEncoded = passwordEncoder.encode(request.newPassword)
         val currentPasswordEncoded = passwordEncoder.encode(request.currentPassword)
-        return findRequiredById(id)
-            .flatMap { user: User ->
-                userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
-                    .onErrorResume(EmptyResultDataAccessException::class.java) { e: EmptyResultDataAccessException? ->
-                        Mono.error(BadRequestException("Incorrect current password", e))
-                    }
-            }
+        // TODO necessary?
+        val user = findById(id)
+        try {
+            userRepo.updatePassword(user.id, currentPasswordEncoded, newPasswordEncoded)
+        } catch (e: EmptyResultDataAccessException) {
+            throw BadRequestException("Incorrect current password", e)
+        }
     }
 
     @GetMapping(path = ["/{id}/roles"])
-    fun getUserRoles(@PathVariable("id") id: Long): Flux<Role> {
+    fun getUserRoles(@PathVariable("id") id: Long): Flow<Role> {
         return userRolesRepo.findRolesByUserId(id)
     }
 
     @PutMapping(path = ["/{id}/roles"])
     @Transactional
-    fun updateUserRoles(@PathVariable("id") id: Long, @RequestBody updatedRoles: Set<Role>): Flux<Role> {
-        return findRequiredById(id)
-            .thenMany(userRolesRepo.findRolesByUserId(id))
-            .collectList()
-            .map { existingRoles ->
-                Flux.merge(
-                    Flux.fromIterable(existingRoles.minus(updatedRoles))
-                        .flatMap { userRolesRepo.deleteById(id, it.id) },
-                    Flux.fromIterable(updatedRoles.minus(existingRoles))
-                        .flatMap { userRolesRepo.insert(id, it.id) }
-                )
-            }.thenMany(Flux.fromIterable(updatedRoles))
+    suspend fun updateUserRoles(@PathVariable("id") id: Long, @RequestBody updatedRoles: Set<Role>): Flow<Role> {
+        // TODO necessary?
+        findById(id)
+        val existingRoles = userRolesRepo.findRolesByUserId(id).toList()
+        // TODO make parallel
+        existingRoles.minus(updatedRoles).forEach { userRolesRepo.deleteById(id, it.id) }
+        updatedRoles.minus(existingRoles).forEach { userRolesRepo.insert(id, it.id) }
+        return flow {
+            updatedRoles.forEach { emit(it) }
+        }
     }
 
     @GetMapping(path = ["/{id}/groups"])
-    fun getUserGroups(@PathVariable("id") id: Long): Flux<Group> {
+    fun getUserGroups(@PathVariable("id") id: Long): Flow<Group> {
         return userGroupsRepo.findGroupsByUserId(id)
     }
 
     @PutMapping(path = ["/{id}/groups"])
     @Transactional
-    fun updateUserGroups(@PathVariable("id") id: Long, @RequestBody updatedGroups: Set<Group>): Flux<Group> {
-        return findRequiredById(id)
-            .thenMany(userGroupsRepo.findGroupsByUserId(id))
-            .collectList()
-            .map { existingGroups ->
-                Flux.merge(
-                    Flux.fromIterable(existingGroups.minus(updatedGroups))
-                        .flatMap { userGroupsRepo.deleteById(id, it.id) },
-                    Flux.fromIterable(updatedGroups.minus(existingGroups))
-                        .flatMap { userGroupsRepo.insert(id, it.id) }
-                )
-            }.thenMany(Flux.fromIterable(updatedGroups))
-    }
-
-    private fun findRequiredById(id: Long): Mono<User> {
-        return findById(id)
-            .switchIfEmpty(Mono.error { ObjectNotFoundException("No user found for $id") })
+    suspend fun updateUserGroups(@PathVariable("id") id: Long, @RequestBody updatedGroups: Set<Group>): Flow<Group> {
+        // TODO necessary?
+        findById(id)
+        val existingGroups = userGroupsRepo.findGroupsByUserId(id).toList()
+        // TODO make parallel
+        existingGroups.minus(updatedGroups).forEach { userGroupsRepo.deleteById(id, it.id) }
+        updatedGroups.minus(existingGroups).forEach { userGroupsRepo.insert(id, it.id) }
+        return flow {
+            updatedGroups.forEach { emit(it) }
+        }
     }
 }

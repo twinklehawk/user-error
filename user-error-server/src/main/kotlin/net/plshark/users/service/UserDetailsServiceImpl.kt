@@ -1,7 +1,11 @@
 package net.plshark.users.service
 
-import net.plshark.users.model.Role
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactor.mono
 import net.plshark.users.model.PrivateUser
+import net.plshark.users.model.Role
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
@@ -24,13 +28,14 @@ class UserDetailsServiceImpl(
 ) : ReactiveUserDetailsService {
 
     override fun findByUsername(username: String): Mono<UserDetails> {
-        return userRepo.findByUsernameWithPassword(username)
+        return mono { userRepo.findByUsernameWithPassword(username) }
             .switchIfEmpty(Mono.error { UsernameNotFoundException("No matching user for $username") })
             .flatMap { user ->
-                userRolesRepo.findRolesByUserId(user.id)
-                    .mergeWith(userGroupsRepo.findGroupRolesByUserId(user.id))
-                    .collectList()
-                    .map { roles -> buildUserDetails(user, roles) }
+                mono {
+                    userRolesRepo.findRolesByUserId(user.id)
+                        .onCompletion { emitAll(userGroupsRepo.findGroupRolesByUserId(user.id)) }
+                        .toList()
+                }.map { roles -> buildUserDetails(user, roles) }
             }
     }
 

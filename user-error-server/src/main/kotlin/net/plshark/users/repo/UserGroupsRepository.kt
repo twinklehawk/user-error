@@ -1,39 +1,36 @@
 package net.plshark.users.repo
 
+import kotlinx.coroutines.flow.Flow
 import net.plshark.users.model.Group
 import net.plshark.users.model.Role
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 interface UserGroupsRepository {
 
     /**
      * Find all the groups a user belongs to
      * @param userId the ID of the user
-     * @return a [Flux] emitting the groups
+     * @return a [Flow] emitting the groups
      */
-    fun findGroupsByUserId(userId: Long): Flux<Group>
+    fun findGroupsByUserId(userId: Long): Flow<Group>
 
     /**
      * Find all roles a user has through the groups a user belongs to
      * @param userId the ID of the user
-     * @return a [Flux] emitting the roles
+     * @return a [Flow] emitting the roles
      */
-    fun findGroupRolesByUserId(userId: Long): Flux<Role>
+    fun findGroupRolesByUserId(userId: Long): Flow<Role>
 
     /**
      * Add a user to a group
      * @param userId the user ID
      * @param groupId the group ID
-     * @return a [Mono] signalling when complete
      */
-    fun insert(userId: Long, groupId: Long): Mono<Void>
+    suspend fun insert(userId: Long, groupId: Long)
 
     /**
      * Remove a user from a group
      * @param userId the user ID
      * @param groupId the group ID
-     * @return a [Mono] signalling when complete
      */
-    fun deleteById(userId: Long, groupId: Long): Mono<Void>
+    suspend fun deleteById(userId: Long, groupId: Long)
 }

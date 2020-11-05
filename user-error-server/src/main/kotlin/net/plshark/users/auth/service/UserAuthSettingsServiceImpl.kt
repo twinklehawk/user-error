@@ -4,7 +4,6 @@ import net.plshark.users.auth.AuthProperties
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.auth.repo.UserAuthSettingsRepository
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 
 /**
  * Implementation of [UserAuthSettingsService]
@@ -13,8 +12,8 @@ import reactor.core.publisher.Mono
 class UserAuthSettingsServiceImpl(
     private val settingsRepo: UserAuthSettingsRepository,
     authProperties: AuthProperties
-) :
-    UserAuthSettingsService {
+) : UserAuthSettingsService {
+
     private val defaultAuthSettings: UserAuthSettings = UserAuthSettings(
         id = null,
         userId = null,
@@ -22,9 +21,8 @@ class UserAuthSettingsServiceImpl(
         refreshTokenExpiration = authProperties.tokenExpiration
     )
 
-    override fun findByUsername(username: String): Mono<UserAuthSettings> {
-        return settingsRepo.findByUsername(username)
-            .defaultIfEmpty(defaultAuthSettings)
+    override suspend fun findByUsername(username: String): UserAuthSettings {
+        return settingsRepo.findByUsername(username) ?: defaultAuthSettings
     }
 
     override fun getDefaultTokenExpiration(): Long {

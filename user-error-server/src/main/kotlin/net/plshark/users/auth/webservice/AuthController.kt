@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/auth")
@@ -19,7 +18,7 @@ class AuthController(private val authService: AuthService) {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun authenticate(@RequestBody credentials: AccountCredentials): Mono<AuthToken> {
+    suspend fun authenticate(@RequestBody credentials: AccountCredentials): AuthToken {
         return authService.authenticate(credentials)
     }
 
@@ -28,7 +27,7 @@ class AuthController(private val authService: AuthService) {
         consumes = [MediaType.TEXT_PLAIN_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun refresh(@RequestBody refreshToken: String): Mono<AuthToken> {
+    suspend fun refresh(@RequestBody refreshToken: String): AuthToken {
         return authService.refresh(refreshToken)
     }
 
@@ -37,7 +36,7 @@ class AuthController(private val authService: AuthService) {
         consumes = [MediaType.TEXT_PLAIN_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun validateToken(@RequestBody accessToken: String): Mono<AuthenticatedUser> {
+    suspend fun validateToken(@RequestBody accessToken: String): AuthenticatedUser {
         return authService.validateToken(accessToken)
     }
 }

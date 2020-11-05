@@ -5,7 +5,7 @@ import net.plshark.users.auth.model.AuthToken
 import net.plshark.users.auth.model.AuthenticatedUser
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
+import org.springframework.web.reactive.function.client.awaitBody
 import java.net.URI
 
 /**
@@ -13,27 +13,27 @@ import java.net.URI
  */
 class AuthServiceClient(private val webClient: WebClient, private val baseUri: String) : AuthService {
 
-    override fun authenticate(credentials: AccountCredentials): Mono<AuthToken> {
+    override suspend fun authenticate(credentials: AccountCredentials): AuthToken {
         return webClient.post()
             .uri(URI.create("$baseUri/auth"))
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(credentials)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(AuthToken::class.java)
+            .awaitBody()
     }
 
-    override fun refresh(refreshToken: String): Mono<AuthToken> {
+    override suspend fun refresh(refreshToken: String): AuthToken {
         return webClient.post()
             .uri(URI.create("$baseUri/auth/refresh"))
             .contentType(MediaType.TEXT_PLAIN)
             .bodyValue(refreshToken)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(AuthToken::class.java)
+            .awaitBody()
     }
 
-    override fun validateToken(accessToken: String): Mono<AuthenticatedUser> {
+    override suspend fun validateToken(accessToken: String): AuthenticatedUser {
         // TODO needs authentication, remove from this class
         return webClient.post()
             .uri(URI.create("$baseUri/auth/validate"))
@@ -41,6 +41,6 @@ class AuthServiceClient(private val webClient: WebClient, private val baseUri: S
             .bodyValue(accessToken)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(AuthenticatedUser::class.java)
+            .awaitBody()
     }
 }

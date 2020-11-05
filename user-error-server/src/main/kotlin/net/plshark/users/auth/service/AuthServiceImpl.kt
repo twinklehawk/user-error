@@ -1,5 +1,6 @@
 package net.plshark.users.auth.service
 
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import net.plshark.users.auth.model.AccountCredentials
 import net.plshark.users.auth.model.AuthToken
 import net.plshark.users.auth.model.AuthenticatedUser
@@ -10,8 +11,6 @@ import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 
 /**
  * Default AuthService server side implementation
@@ -25,34 +24,28 @@ class AuthServiceImpl(
     private val userAuthSettingsService: UserAuthSettingsService
 ) : AuthService {
 
-    override fun authenticate(credentials: AccountCredentials): Mono<AuthToken> {
+    override suspend fun authenticate(credentials: AccountCredentials): AuthToken {
         val username = credentials.username
-        return userDetailsService.findByUsername(username)
-            .publishOn(Schedulers.parallel())
-            .filter { user: UserDetails -> passwordEncoder.matches(credentials.password, user.password) }
-            .switchIfEmpty(Mono.error { BadCredentialsException("Invalid Credentials") })
-            .flatMap { user: UserDetails -> buildAuthToken(user) }
+        val userDetails = userDetailsService.findByUsername(username).awaitFirstOrNull()
+        if (userDetails == null || !passwordEncoder.matches(credentials.password, userDetails.password)) throw
+            BadCredentialsException("Invalid credentials")
+        return buildAuthToken(userDetails)
     }
 
-    override fun refresh(refreshToken: String): Mono<AuthToken> {
-        return Mono.just(refreshToken)
-            .publishOn(Schedulers.parallel())
-            .map { token: String -> tokenVerifier.verifyRefreshToken(token) }
-            .flatMap { username: String -> userDetailsService.findByUsername(username) }
-            .switchIfEmpty(Mono.error { BadCredentialsException("Invalid Credentials") })
-            // TODO run any checks to see if user is allowed to refresh
-            .flatMap { user: UserDetails -> buildAuthToken(user) }
+    override suspend fun refresh(refreshToken: String): AuthToken {
+        val username = tokenVerifier.verifyRefreshToken(refreshToken)
+        val userDetails = userDetailsService.findByUsername(username).awaitFirstOrNull()
+            ?: throw BadCredentialsException("Invalid credentials")
+        return buildAuthToken(userDetails)
     }
 
-    override fun validateToken(accessToken: String): Mono<AuthenticatedUser> {
-        return Mono.just(accessToken)
-            .publishOn(Schedulers.parallel())
-            .map { token: String -> tokenVerifier.verifyToken(token) }
+    override suspend fun validateToken(accessToken: String): AuthenticatedUser {
+        return tokenVerifier.verifyToken(accessToken)
     }
 
-    private fun buildAuthToken(user: UserDetails): Mono<AuthToken> {
-        return userAuthSettingsService.findByUsername(user.username)
-            .map { settings: UserAuthSettings -> buildAuthToken(user, settings) }
+    private suspend fun buildAuthToken(user: UserDetails): AuthToken {
+        val settings = userAuthSettingsService.findByUsername(user.username)
+        return buildAuthToken(user, settings)
     }
 
     private fun buildAuthToken(user: UserDetails, settings: UserAuthSettings): AuthToken {

@@ -1,6 +1,8 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.ApplicationCreate
@@ -8,10 +10,10 @@ import net.plshark.users.model.GroupCreate
 import net.plshark.users.model.RoleCreate
 import net.plshark.users.model.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.r2dbc.core.DatabaseClient
-import reactor.test.StepVerifier
 
 class SpringDataUserGroupsRepositoryTest : DbIntTest() {
 
@@ -37,32 +39,32 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
     @Test
     fun `insert should save a group and user association and should be retrievable`() = runBlocking {
         val group = groupsRepo.insert(GroupCreate("test-name"))
-        val user = usersRepo.insert(UserCreate("test-user", "pass")).block()!!
+        val user = usersRepo.insert(UserCreate("test-user", "pass"))
 
-        repo.insert(user.id, group.id).block()
+        repo.insert(user.id, group.id)
 
-        assertEquals(listOf(group), repo.findGroupsByUserId(user.id).collectList().block())
+        assertEquals(listOf(group), repo.findGroupsByUserId(user.id).toList())
     }
 
     @Test
-    fun `retrieving should return empty when no users are assigned to the group`() {
-        assertEquals(0, repo.findGroupsByUserId(123).count().block())
+    fun `retrieving should return empty when no users are assigned to the group`() = runBlocking {
+        assertEquals(0, repo.findGroupsByUserId(123).count())
     }
 
     @Test
     fun `delete should delete a group-user association`() = runBlocking {
         val group = groupsRepo.insert(GroupCreate("test-group"))
-        val user = usersRepo.insert(UserCreate("test-user", "pass")).block()!!
-        repo.insert(user.id, group.id).block()
+        val user = usersRepo.insert(UserCreate("test-user", "pass"))
+        repo.insert(user.id, group.id)
 
-        repo.deleteById(user.id, group.id).block()
+        repo.deleteById(user.id, group.id)
 
-        assertEquals(0, repo.findGroupsByUserId(user.id).count().block())
+        assertEquals(0, repo.findGroupsByUserId(user.id).count())
     }
 
     @Test
-    fun `delete should not throw an exception if the group-user association does not already exist`() {
-        repo.deleteById(100, 200).block()
+    fun `delete should not throw an exception if the group-user association does not already exist`() = runBlocking {
+        repo.deleteById(100, 200)
     }
 
     @Test
@@ -72,15 +74,14 @@ class SpringDataUserGroupsRepositoryTest : DbIntTest() {
         val role2 = rolesRepo.insert(RoleCreate(app1.id, "role2"))
         rolesRepo.insert(RoleCreate(app1.id, "role3"))
         val group = groupsRepo.insert(GroupCreate("test-group"))
-        val user = usersRepo.insert(UserCreate("user", "pass")).block()!!
+        val user = usersRepo.insert(UserCreate("user", "pass"))
         groupRolesRepo.insert(group.id, role1.id)
         groupRolesRepo.insert(group.id, role2.id)
-        repo.insert(user.id, group.id).block()
+        repo.insert(user.id, group.id)
 
-        StepVerifier.create(repo.findGroupRolesByUserId(user.id).collectList())
-            .expectNextMatches { list -> list.size == 2 && list.contains(role1) && list.contains(role2) }
-            .verifyComplete()
-
-        return@runBlocking
+        val list = repo.findGroupRolesByUserId(user.id).toList()
+        assertEquals(2, list.size)
+        assertTrue(list.contains(role1))
+        assertTrue(list.contains(role2))
     }
 }

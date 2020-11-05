@@ -1,7 +1,6 @@
 package net.plshark.users.auth.repo
 
 import net.plshark.users.auth.model.UserAuthSettings
-import reactor.core.publisher.Mono
 
 /**
  * Methods for user authentication settings in the repository
@@ -11,21 +10,21 @@ interface UserAuthSettingsRepository {
     /**
      * Find settings for a user
      * @param userId the user ID
-     * @return a [Mono] emitting the settings or empty if not found
+     * @return the settings or null if not found
      */
-    fun findByUserId(userId: Long): Mono<UserAuthSettings>
+    suspend fun findByUserId(userId: Long): UserAuthSettings?
 
     /**
      * Find settings for a user by the username
      * @param username the username
-     * @return a [Mono] emitting the settings or empty if not found
+     * @return the settings or null if not found
      */
-    fun findByUsername(username: String): Mono<UserAuthSettings>
+    suspend fun findByUsername(username: String): UserAuthSettings?
 
     /**
      * Save settings for a user
      * @param userAuthSettings the settings, the user ID must not be null
-     * @return a [Mono] emitting the inserted settings with the ID set
+     * @return the inserted settings with the ID set
      */
-    fun insert(userAuthSettings: UserAuthSettings): Mono<UserAuthSettings>
+    suspend fun insert(userAuthSettings: UserAuthSettings): UserAuthSettings
 }

@@ -1,5 +1,6 @@
 package net.plshark.users.auth.jwt
 
+import kotlinx.coroutines.reactor.mono
 import net.plshark.users.auth.model.AuthenticatedUser
 import net.plshark.users.auth.service.AuthService
 import org.springframework.security.authentication.BadCredentialsException
@@ -40,6 +41,6 @@ class JwtReactiveAuthenticationManager(private val authService: AuthService) : R
      * @return user info from the JWT or BadCredentialsException if the token is invalid
      */
     private fun verifyToken(token: String): Mono<AuthenticatedUser> {
-        return authService.validateToken(token)
+        return mono { authService.validateToken(token) }
     }
 }

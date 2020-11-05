@@ -1,6 +1,6 @@
 package net.plshark.users.auth.jwt
 
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import net.plshark.users.auth.model.AuthenticatedUser
 import net.plshark.users.auth.service.AuthService
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 class JwtReactiveAuthenticationManagerTest {
@@ -24,18 +23,20 @@ class JwtReactiveAuthenticationManagerTest {
             authenticated = false,
             authorities = setOf()
         )
-        every { authService.validateToken("test-token") } returns Mono.just(AuthenticatedUser(
+        coEvery { authService.validateToken("test-token") } returns AuthenticatedUser(
             username = "test-user",
-            authorities = setOf("a", "b"))
+            authorities = setOf("a", "b")
         )
 
         StepVerifier.create(manager.authenticate(token))
-            .expectNext(JwtAuthenticationToken(
-                username = "test-user",
-                token = null,
-                authenticated = true,
-                authorities = setOf(SimpleGrantedAuthority("a"), SimpleGrantedAuthority("b"))
-            )).verifyComplete()
+            .expectNext(
+                JwtAuthenticationToken(
+                    username = "test-user",
+                    token = null,
+                    authenticated = true,
+                    authorities = setOf(SimpleGrantedAuthority("a"), SimpleGrantedAuthority("b"))
+                )
+            ).verifyComplete()
     }
 
     @Test
@@ -46,7 +47,7 @@ class JwtReactiveAuthenticationManagerTest {
             authenticated = false,
             authorities = setOf()
         )
-        every { authService.validateToken("bad-token") } returns Mono.error { BadCredentialsException("bad") }
+        coEvery { authService.validateToken("bad-token") } throws BadCredentialsException("bad")
 
         StepVerifier.create(manager.authenticate(token))
             .verifyError(BadCredentialsException::class.java)

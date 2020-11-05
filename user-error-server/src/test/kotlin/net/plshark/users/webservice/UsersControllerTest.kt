@@ -1,7 +1,12 @@
 package net.plshark.users.webservice
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import net.plshark.errors.BadRequestException
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
@@ -13,17 +18,13 @@ import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UserGroupsRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
-import reactor.kotlin.test.test
-import reactor.test.StepVerifier
-import reactor.test.publisher.PublisherProbe
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 class UsersControllerTest {
@@ -35,158 +36,166 @@ class UsersControllerTest {
     private val controller = UsersController(userRepo, userRolesRepo, userGroupsRepo, encoder)
 
     @Test
-    fun `new users have password encoded`() {
+    fun `new users have password encoded`() = runBlocking {
         every { encoder.encode("pass") } returns "pass-encoded"
-        every { userRepo.insert(UserCreate("user", "pass-encoded")) } returns
-                Mono.just(User(1, "user"))
+        coEvery { userRepo.insert(UserCreate("user", "pass-encoded")) } returns
+                User(1, "user")
 
-        StepVerifier.create(controller.create(UserCreate("user", "pass")))
-            .expectNext(User(1, "user"))
-            .verifyComplete()
+        assertEquals(User(1, "user"), controller.create(UserCreate("user", "pass")))
     }
 
     @Test
     fun `an insert request is rejected if the password is empty`() {
-        val request = UserCreate("user", "")
-
-        assertThrows<BadRequestException> { controller.create(request) }
+        assertThrows<BadRequestException> {
+            runBlocking {
+                controller.create(UserCreate("user", ""))
+            }
+        }
     }
 
     @Test
     fun `create should map the exception for a duplicate username to a DuplicateException`() {
         val request = UserCreate("app", "pass")
         every { encoder.encode("pass") } returns "pass"
-        every { userRepo.insert(request) } returns Mono.error(DataIntegrityViolationException("test error"))
+        coEvery { userRepo.insert(request) } throws DataIntegrityViolationException("test error")
 
-        StepVerifier.create(controller.create(request))
-            .verifyError(DuplicateException::class.java)
+        assertThrows<DuplicateException> {
+            runBlocking {
+                controller.create(request)
+            }
+        }
     }
 
     @Test
     fun `cannot update a user to have an empty password`() {
-        assertThrows<BadRequestException> { controller.changePassword(123, PasswordChangeRequest("current", "")) }
+        assertThrows<BadRequestException> {
+            runBlocking {
+                controller.changePassword(123, PasswordChangeRequest("current", ""))
+            }
+        }
     }
 
     @Test
-    fun `new password is encoded when updating password`() {
+    fun `new password is encoded when updating password`() = runBlocking {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new-pass") } returns "new-pass-encoded"
-        every { userRepo.findById(100) } returns Mono.just(User(100, "test"))
-        val probe = PublisherProbe.empty<Void>()
-        every { userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") } returns probe.mono()
+        coEvery { userRepo.findById(100) } returns User(100, "test")
+        coEvery { userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") } coAnswers { }
 
-        StepVerifier.create(controller.changePassword(100, PasswordChangeRequest("current", "new-pass")))
-            .verifyComplete()
-        probe.assertWasSubscribed()
-        probe.assertWasRequested()
-        probe.assertWasNotCancelled()
+        controller.changePassword(100, PasswordChangeRequest("current", "new-pass"))
+
+        coVerify { userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") }
     }
 
     @Test
     fun `no matching user when updating password throws exception`() {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new") } returns "new-encoded"
-        every { userRepo.findById(200) } returns Mono.empty()
+        coEvery { userRepo.findById(200) } returns null
 
-        StepVerifier.create(controller.changePassword(200, PasswordChangeRequest("current", "new")))
-            .verifyError(ObjectNotFoundException::class.java)
+        assertThrows<ObjectNotFoundException> {
+            runBlocking {
+                controller.changePassword(200, PasswordChangeRequest("current", "new"))
+            }
+        }
     }
 
     @Test
     fun `no matching existing password when updating password throws exception`() {
         every { encoder.encode("current") } returns "current-encoded"
         every { encoder.encode("new") } returns "new-encoded"
-        every { userRepo.findById(100) } returns Mono.just(User(100, "ted"))
-        every { userRepo.updatePassword(100, "current-encoded", "new-encoded") } returns Mono.error(
+        coEvery { userRepo.findById(100) } returns User(100, "ted")
+        coEvery { userRepo.updatePassword(100, "current-encoded", "new-encoded") } throws
             EmptyResultDataAccessException(1)
-        )
 
-        StepVerifier.create(controller.changePassword(100, PasswordChangeRequest("current", "new")))
-            .verifyError(BadRequestException::class.java)
+        assertThrows<BadRequestException> {
+            runBlocking {
+                controller.changePassword(100, PasswordChangeRequest("current", "new"))
+            }
+        }
     }
 
     @Test
-    fun `the user is removed when the user is deleted`() {
-        val userProbe = PublisherProbe.empty<Void>()
-        every { userRepo.deleteById(100) } returns userProbe.mono()
-
-        StepVerifier.create(controller.delete(100))
-            .verifyComplete()
-        userProbe.assertWasSubscribed()
+    fun `the user is removed when the user is deleted`() = runBlocking {
+        coEvery { userRepo.deleteById(100) } coAnswers { }
+        controller.delete(100)
+        coVerify { userRepo.deleteById(100) }
     }
 
     @Test
-    fun `deleting by username deletes the user`() {
-        val userProbe = PublisherProbe.empty<Void>()
-        every { userRepo.deleteById(100) } returns userProbe.mono()
-
-        StepVerifier.create(controller.delete(100))
-            .verifyComplete()
-        userProbe.assertWasSubscribed()
+    fun `deleting by username deletes the user`() = runBlocking {
+        coEvery { userRepo.deleteById(100) } coAnswers { }
+        controller.delete(100)
+        coVerify { userRepo.deleteById(100) }
     }
 
     @Test
-    fun `getUsers should return all results`() {
+    fun `getUsers should return all results`() = runBlocking {
         val user1 = User(1, "user")
         val user2 = User(2, "user2")
-        every { userRepo.getAll(5, 0) } returns Flux.just(user1, user2)
+        every { userRepo.getAll(5, 0) } returns flowOf(user1, user2)
 
-        StepVerifier.create(controller.getUsers(5, 0))
-            .expectNext(user1, user2)
-            .verifyComplete()
+        val list = controller.getUsers(5, 0).toList()
+        assertEquals(2, list.size)
+        assertTrue(list.contains(user1))
+        assertTrue(list.contains(user2))
     }
 
     @Test
-    fun `getUserRoles should return all roles`() {
+    fun `getUserRoles should return all roles`() = runBlocking {
         val r1 = Role(1, 2, "role1")
         val r2 = Role(2, 2, "role2")
-        every { userRepo.findById(3) } returns User(3, "test-user").toMono()
-        every { userRolesRepo.findRolesByUserId(3) } returns Flux.just(r1, r2)
+        coEvery { userRepo.findById(3) } returns User(3, "test-user")
+        every { userRolesRepo.findRolesByUserId(3) } returns flowOf(r1, r2)
 
-        controller.getUserRoles(3).test()
-            .expectNext(r1, r2)
-            .verifyComplete()
+        val list = controller.getUserRoles(3).toList()
+        assertEquals(2, list.size)
+        assertTrue(list.contains(r1))
+        assertTrue(list.contains(r2))
     }
 
     @Test
-    fun `updateUserRoles passes through`() {
+    fun `updateUserRoles passes through`() = runBlocking {
         val r1 = Role(1, 2, "role1")
         val r2 = Role(2, 2, "role2")
         val r3 = Role(3, 1, "role3")
-        every { userRepo.findById(123) } returns User(123, "test-user").toMono()
-        every { userRolesRepo.findRolesByUserId(123) } returns Flux.just(r1, r2)
-        every { userRolesRepo.deleteById(123, 2) } returns Mono.empty()
-        every { userRolesRepo.insert(123, 3) } returns Mono.empty()
+        coEvery { userRepo.findById(123) } returns User(123, "test-user")
+        every { userRolesRepo.findRolesByUserId(123) } returns flowOf(r1, r2)
+        coEvery { userRolesRepo.deleteById(123, 2) } coAnswers { }
+        coEvery { userRolesRepo.insert(123, 3) } coAnswers { }
 
-        controller.updateUserRoles(123, setOf(r1, r3)).test()
-            .expectNext(r1, r3)
-            .verifyComplete()
+        val roles = controller.updateUserRoles(123, setOf(r1, r3)).toList()
+        assertEquals(2, roles.size)
+        assertTrue(roles.contains(r1))
+        assertTrue(roles.contains(r3))
     }
 
     @Test
-    fun `getUserGroups passes through`() {
+    fun `getUserGroups passes through`() = runBlocking {
         val g1 = Group(1, "group1")
         val g2 = Group(2, "group2")
-        every { userRepo.findById(4) } returns User(4, "test-user").toMono()
-        every { userGroupsRepo.findGroupsByUserId(4) } returns Flux.just(g1, g2)
+        coEvery { userRepo.findById(4) } returns User(4, "test-user")
+        every { userGroupsRepo.findGroupsByUserId(4) } returns flowOf(g1, g2)
 
-        controller.getUserGroups(4).test()
-            .expectNext(g1, g2)
-            .verifyComplete()
+        val groups = controller.getUserGroups(4).toList()
+        assertEquals(2, groups.size)
+        assertTrue(groups.contains(g1))
+        assertTrue(groups.contains(g2))
     }
 
     @Test
-    fun `updateUserGroups passes through`() {
+    fun `updateUserGroups passes through`() = runBlocking {
         val g1 = Group(1, "group1")
         val g2 = Group(2, "group2")
         val g3 = Group(3, "group3")
-        every { userRepo.findById(123) } returns User(123, "test-user").toMono()
-        every { userGroupsRepo.findGroupsByUserId(123) } returns Flux.just(g1, g2)
-        every { userGroupsRepo.deleteById(123, 2) } returns Mono.empty()
-        every { userGroupsRepo.insert(123, 3) } returns Mono.empty()
+        coEvery { userRepo.findById(123) } returns User(123, "test-user")
+        every { userGroupsRepo.findGroupsByUserId(123) } returns flowOf(g1, g2)
+        coEvery { userGroupsRepo.deleteById(123, 2) } coAnswers { }
+        coEvery { userGroupsRepo.insert(123, 3) } coAnswers { }
 
-        controller.updateUserGroups(123, setOf(g1, g3)).test()
-            .expectNext(g1, g3)
-            .verifyComplete()
+        val groups = controller.updateUserGroups(123, setOf(g1, g3)).toList()
+        assertEquals(2, groups.size)
+        assertTrue(groups.contains(g1))
+        assertTrue(groups.contains(g3))
     }
 }
