@@ -32,7 +32,7 @@ interface AuthService {
      * Validate an access token
      * @param accessToken the access token
      * @return the username and authorities
-     * @throws BadCredentialsException if the if the token is invalid
+     * @throws BadCredentialsException if the token is invalid
      */
     suspend fun validateToken(accessToken: String): AuthenticatedUser
 }
