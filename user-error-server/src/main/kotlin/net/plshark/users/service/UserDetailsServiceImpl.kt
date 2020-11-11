@@ -27,6 +27,7 @@ class UserDetailsServiceImpl(
     private val userGroupsRepo: UserGroupsRepository
 ) : ReactiveUserDetailsService {
 
+    @Suppress("EXPERIMENTAL_API_USAGE")
     override fun findByUsername(username: String): Mono<UserDetails> {
         return mono { userRepo.findByUsernameWithPassword(username) }
             .switchIfEmpty(Mono.error { UsernameNotFoundException("No matching user for $username") })
