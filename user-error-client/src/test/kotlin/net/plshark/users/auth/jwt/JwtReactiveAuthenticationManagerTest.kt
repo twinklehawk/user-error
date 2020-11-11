@@ -60,4 +60,23 @@ class JwtReactiveAuthenticationManagerTest {
         StepVerifier.create(manager.authenticate(token))
             .verifyError(BadCredentialsException::class.java)
     }
+
+    @Test
+    fun `a null authentication should throw a BadCredentialsException`() {
+        StepVerifier.create(manager.authenticate(null))
+            .verifyError(BadCredentialsException::class.java)
+    }
+
+    @Test
+    fun `null credentials inside the token should throw a BadCredentialsException`() {
+        val token = JwtAuthenticationToken(
+            username = null,
+            token = null,
+            authenticated = false,
+            authorities = setOf()
+        )
+
+        StepVerifier.create(manager.authenticate(token))
+            .verifyError(BadCredentialsException::class.java)
+    }
 }

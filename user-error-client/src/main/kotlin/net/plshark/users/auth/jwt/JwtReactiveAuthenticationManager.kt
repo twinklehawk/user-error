@@ -8,23 +8,15 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 
 /**
  * Authentication manager that validates JWT authentication
  */
 class JwtReactiveAuthenticationManager(private val authService: AuthService) : ReactiveAuthenticationManager {
 
-    override fun authenticate(authentication: Authentication): Mono<Authentication> {
-        // TODO authentication can be null?
-        return Mono.just(authentication)
-            .filter { auth: Authentication? -> auth is JwtAuthenticationToken }
-            .map { auth: Authentication -> auth as JwtAuthenticationToken }
-            // TODO credentials can be null?
-            .map { token: JwtAuthenticationToken -> token.credentials }
-            .publishOn(Schedulers.parallel())
-            .flatMap { token: String? -> verifyToken(token!!) }
-            .switchIfEmpty(Mono.error { BadCredentialsException("Invalid credentials") })
+    override fun authenticate(authentication: Authentication?): Mono<Authentication> {
+        return Mono.fromCallable { extractToken(authentication) }
+            .flatMap { verifyToken(it) }
             .map { (username, authorities) ->
                 JwtAuthenticationToken(
                     username = username,
@@ -33,6 +25,13 @@ class JwtReactiveAuthenticationManager(private val authService: AuthService) : R
                     token = null
                 )
             }
+    }
+
+    private fun extractToken(authentication: Authentication?): String {
+        if (authentication is JwtAuthenticationToken && authentication.credentials != null)
+            return authentication.credentials!!
+        else
+            throw BadCredentialsException("Invalid credentials")
     }
 
     /**
