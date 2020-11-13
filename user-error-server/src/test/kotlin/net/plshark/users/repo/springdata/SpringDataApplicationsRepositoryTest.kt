@@ -1,9 +1,11 @@
 package net.plshark.users.repo.springdata
 
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.ApplicationCreate
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -71,5 +73,21 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     @Test
     fun `no exception is thrown when attempting to delete an application by ID that does not exist`() = runBlocking {
         repo.deleteById(10000)
+    }
+
+    @Test
+    fun `getAll should return a page of results`() = runBlocking {
+        val app1 = repo.insert(ApplicationCreate("app1"))
+        val app2 = repo.insert(ApplicationCreate("app2"))
+
+        // table already contains a user-error app
+        assertThat(repo.getAll(1, 1).toList())
+            .hasSize(1).contains(app1)
+        assertThat(repo.getAll(1, 2).toList())
+            .hasSize(1).contains(app2)
+        assertThat(repo.getAll(5, 0).toList())
+            .hasSize(3).contains(app1, app2)
+
+        return@runBlocking
     }
 }

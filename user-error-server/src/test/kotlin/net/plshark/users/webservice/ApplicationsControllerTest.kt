@@ -2,13 +2,17 @@ package net.plshark.users.webservice
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.repo.ApplicationsRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -65,5 +69,17 @@ class ApplicationsControllerTest {
         coEvery { appsRepo.deleteById(1) } coAnswers { }
         runBlocking { controller.delete(1) }
         coVerify { appsRepo.deleteById(1) }
+    }
+
+    @Test
+    fun `getAll should return a page of results`() = runBlocking {
+        val app1 = Application(1, "app1")
+        val app2 = Application(2, "app2")
+        every { appsRepo.getAll(100, 0) } returns flowOf(app1, app2)
+
+        assertThat(controller.getApplications(100, 0).toList())
+            .hasSize(2).contains(app1, app2)
+
+        return@runBlocking
     }
 }

@@ -1,5 +1,6 @@
 package net.plshark.users.repo
 
+import kotlinx.coroutines.flow.Flow
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
 
@@ -21,6 +22,14 @@ interface ApplicationsRepository {
      * @return the matching application or null if not found
      */
     suspend fun findByName(name: String): Application?
+
+    /**
+     * Get all applications
+     * @param limit the maximum number of results to return
+     * @param offset the offset to start results at
+     * @return a [Flow] emitting the results
+     */
+    fun getAll(limit: Int, offset: Int): Flow<Application>
 
     /**
      * Insert a new application

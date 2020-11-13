@@ -1,7 +1,6 @@
 package net.plshark.users.webservice
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.asFlow
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Application
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
 import javax.validation.constraints.Min
 
 /**
@@ -30,10 +28,9 @@ class ApplicationsController(private val appsRepo: ApplicationsRepository) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getApplications(
         @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
-        @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Long
+        @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Int
     ): Flow<Application> {
-        // TODO
-        return Flux.empty<Application>().asFlow()
+        return appsRepo.getAll(limit, offset)
     }
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
