@@ -74,7 +74,7 @@ class RolesControllerTest {
     fun `should be able to retrieve all roles`() = runBlocking {
         val role1 = Role(1, 2, "role1")
         val role2 = Role(2, 2, "role2")
-        coEvery { rolesRepo.findRolesByApplicationId(2) } returns flow {
+        coEvery { rolesRepo.findRolesByApplicationId(2, 100, 0) } returns flow {
             emit(role1)
             emit(role2)
         }

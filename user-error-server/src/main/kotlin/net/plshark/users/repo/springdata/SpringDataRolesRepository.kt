@@ -33,10 +33,10 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
             .awaitOneOrNull()
     }
 
-    override fun getRoles(maxResults: Int, offset: Long): Flow<Role> {
-        require(maxResults >= 1) { "Max results must be greater than 0" }
+    override fun getRoles(limit: Int, offset: Int): Flow<Role> {
+        require(limit >= 1) { "Max results must be greater than 0" }
         require(offset >= 0) { "Offset cannot be negative" }
-        val sql = "SELECT * FROM roles ORDER BY id OFFSET $offset ROWS FETCH FIRST $maxResults ROWS ONLY"
+        val sql = "SELECT * FROM roles ORDER BY id OFFSET $offset ROWS FETCH FIRST $limit ROWS ONLY"
         return client.execute(sql)
             .map { row -> mapRow(row) }
             .all()
@@ -66,6 +66,18 @@ class SpringDataRolesRepository(private val client: DatabaseClient) : RolesRepos
 
     override fun findRolesByApplicationId(applicationId: Long): Flow<Role> {
         return client.execute("SELECT * FROM roles WHERE application_id = :applicationId ORDER BY id")
+            .bind("applicationId", applicationId)
+            .map { row -> mapRow(row) }
+            .all()
+            .asFlow()
+    }
+
+    override fun findRolesByApplicationId(applicationId: Long, limit: Int, offset: Int): Flow<Role> {
+        require(offset >= 0) { "offset cannot be negative" }
+        require(limit > 0) { "limit must be greater than 0" }
+        return client.execute(
+            "SELECT * FROM roles WHERE application_id = :applicationId ORDER BY id LIMIT $limit OFFSET $offset"
+        )
             .bind("applicationId", applicationId)
             .map { row -> mapRow(row) }
             .all()

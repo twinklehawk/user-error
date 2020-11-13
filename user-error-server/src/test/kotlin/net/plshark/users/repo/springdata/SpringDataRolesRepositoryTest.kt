@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import net.plshark.testutils.DbIntTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.RoleCreate
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -128,7 +129,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRolesForApplication should return all rows with a matching application ID`(): Unit = runBlocking {
+    fun `getRolesForApplication should return all rows with a matching application ID`() = runBlocking {
         val app = appsRepo.insert(ApplicationCreate("app"))
         val app2 = appsRepo.insert(ApplicationCreate("app2"))
         repo.insert(RoleCreate(app.id, "r1"))
@@ -139,5 +140,23 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
         assertEquals(2, list.size)
         assertEquals("r1", list[0].name)
         assertEquals("r2", list[1].name)
+    }
+
+    @Test
+    fun `getRolesForApplication should return up to the limit`(): Unit = runBlocking {
+        val app = appsRepo.insert(ApplicationCreate("app"))
+        val app2 = appsRepo.insert(ApplicationCreate("app2"))
+        repo.insert(RoleCreate(app.id, "r1"))
+        repo.insert(RoleCreate(app.id, "r2"))
+        repo.insert(RoleCreate(app2.id, "r3"))
+
+        assertThat(repo.findRolesByApplicationId(app.id, 1, 0).toList())
+            .hasSize(1).anyMatch { it.name == "r1" }
+        assertThat(repo.findRolesByApplicationId(app.id, 1, 1).toList())
+            .hasSize(1).anyMatch { it.name == "r2" }
+        assertThat(repo.findRolesByApplicationId(app.id, 5, 0).toList())
+            .hasSize(2).anyMatch { it.name == "r1" }.anyMatch { it.name == "r2" }
+
+        return@runBlocking
     }
 }

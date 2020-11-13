@@ -1,8 +1,6 @@
 package net.plshark.users.webservice
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.take
 import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import net.plshark.users.model.Role
@@ -53,13 +51,10 @@ class RolesController(private val rolesRepo: RolesRepository) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findRolesByApplication(
         @PathVariable("applicationId") applicationId: Long,
-        @RequestParam(value = "max-results", defaultValue = "50") maxResults: @Min(1) Int,
+        @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
         @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Int
     ): Flow<Role> {
-        // TODO better pagination
-        return rolesRepo.findRolesByApplicationId(applicationId)
-            .drop(offset)
-            .take(maxResults)
+        return rolesRepo.findRolesByApplicationId(applicationId, limit, offset)
     }
 
     @GetMapping(path = ["/{roleId}"], produces = [MediaType.APPLICATION_JSON_VALUE])

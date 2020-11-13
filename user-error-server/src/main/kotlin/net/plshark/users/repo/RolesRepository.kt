@@ -26,11 +26,11 @@ interface RolesRepository {
 
     /**
      * Find all roles up to the maximum result count and starting at an offset
-     * @param maxResults the maximum number of results to return
+     * @param limit the maximum number of results to return
      * @param offset the offset to start the list at, 0 to start at the beginning
      * @return a [Flow] emitting the roles
      */
-    fun getRoles(maxResults: Int, offset: Long): Flow<Role>
+    fun getRoles(limit: Int, offset: Int): Flow<Role>
 
     /**
      * Find all roles belonging to an application
@@ -38,6 +38,15 @@ interface RolesRepository {
      * @return a [Flow] emitting the roles
      */
     fun findRolesByApplicationId(applicationId: Long): Flow<Role>
+
+    /**
+     * Find roles belonging to an application
+     * @param applicationId the application ID
+     * @param limit the maximum results to return
+     * @param offset the offset to start results at
+     * @return a [Flow] emitting the roles
+     */
+    fun findRolesByApplicationId(applicationId: Long, limit: Int, offset: Int): Flow<Role>
 
     /**
      * Insert a new role
