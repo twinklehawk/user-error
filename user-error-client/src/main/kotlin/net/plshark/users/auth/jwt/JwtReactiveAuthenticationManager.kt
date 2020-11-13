@@ -28,10 +28,9 @@ class JwtReactiveAuthenticationManager(private val authService: AuthService) : R
     }
 
     private fun extractToken(authentication: Authentication?): String {
-        if (authentication is JwtAuthenticationToken && authentication.credentials != null)
-            return authentication.credentials!!
-        else
-            throw BadCredentialsException("Invalid credentials")
+        if (authentication !is JwtAuthenticationToken || authentication.credentials == null) throw
+                BadCredentialsException("Invalid credentials")
+        return authentication.credentials!!
     }
 
     /**
