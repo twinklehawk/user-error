@@ -25,11 +25,11 @@ interface GroupsRepository {
 
     /**
      * Find all groups up to a maximum number of results
-     * @param maxResults the max results to return
+     * @param limit the max results to return
      * @param offset the offset to start at
      * @return a [Flow] emitting the groups
      */
-    fun getGroups(maxResults: Int, offset: Long): Flow<Group>
+    fun getGroups(limit: Int, offset: Int): Flow<Group>
 
     /**
      * Save a new group

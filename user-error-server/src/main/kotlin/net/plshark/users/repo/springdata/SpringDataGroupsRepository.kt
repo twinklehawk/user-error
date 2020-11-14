@@ -32,10 +32,10 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
             .awaitOneOrNull()
     }
 
-    override fun getGroups(maxResults: Int, offset: Long): Flow<Group> {
-        require(maxResults >= 1) { "Max results must be greater than 0" }
-        require(offset >= 0) { "Offset cannot be negative" }
-        val sql = "SELECT * FROM groups ORDER BY id OFFSET $offset ROWS FETCH FIRST $maxResults ROWS ONLY"
+    override fun getGroups(limit: Int, offset: Int): Flow<Group> {
+        require(limit >= 1) { "limit must be greater than 0" }
+        require(offset >= 0) { "offset cannot be negative" }
+        val sql = "SELECT * FROM groups ORDER BY id OFFSET $offset ROWS FETCH FIRST $limit ROWS ONLY"
         return client.execute(sql)
             .map { row -> mapRow(row) }
             .all()

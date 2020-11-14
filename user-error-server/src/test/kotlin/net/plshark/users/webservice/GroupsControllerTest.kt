@@ -2,8 +2,10 @@ package net.plshark.users.webservice
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.errors.DuplicateException
@@ -18,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.DataIntegrityViolationException
 
-@Suppress("ReactiveStreamsUnusedPublisher")
 class GroupsControllerTest {
 
     private val groupsRepo = mockk<GroupsRepository>()
@@ -42,6 +43,15 @@ class GroupsControllerTest {
                 controller.findById(2)
             }
         }
+    }
+
+    @Test
+    fun `should be able to retrieve all groups`() = runBlocking {
+        val g1 = Group(123, "group1")
+        val g2 = Group(321, "group2")
+        every { groupsRepo.getGroups(2, 0) } returns flowOf(g1, g2)
+
+        assertEquals(listOf(g1, g2), controller.getAll(2, 0).toList())
     }
 
     @Test

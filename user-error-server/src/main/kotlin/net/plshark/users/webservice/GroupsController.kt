@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.constraints.Min
 
 /**
  * Controller to provide web service methods for groups
@@ -30,7 +32,13 @@ class GroupsController(private val groupsRepo: GroupsRepository, private val gro
         return groupsRepo.findById(id) ?: throw ObjectNotFoundException("No group found for $id")
     }
 
-    // TODO getGroups
+    @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAll(
+        @RequestParam(value = "limit", defaultValue = "50") @Min(1) limit: Int,
+        @RequestParam(value = "offset", defaultValue = "0") @Min(0) offset: Int
+    ): Flow<Group> {
+        return groupsRepo.getGroups(limit, offset)
+    }
 
     @PostMapping(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
