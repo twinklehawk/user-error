@@ -51,8 +51,8 @@ class RolesController(private val rolesRepo: RolesRepository) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findRolesByApplication(
         @PathVariable("applicationId") applicationId: Long,
-        @RequestParam(value = "limit", defaultValue = "50") limit: @Min(1) Int,
-        @RequestParam(value = "offset", defaultValue = "0") offset: @Min(0) Int
+        @RequestParam(value = "limit", defaultValue = "50") @Min(1) limit: Int,
+        @RequestParam(value = "offset", defaultValue = "0") @Min(0) offset: Int
     ): Flow<Role> {
         return rolesRepo.findRolesByApplicationId(applicationId, limit, offset)
     }
