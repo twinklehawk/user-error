@@ -24,7 +24,7 @@ class UserDetailsServiceImplTest {
     private val service = UserDetailsServiceImpl(usersRepo, userRolesRepo, userGroupsRepo)
 
     @Test
-    fun `a user and its roles are mapped to the correct UserDetails`() = runBlocking {
+    fun `a user and its roles are mapped to the correct UserDetails`() = runBlocking<Unit> {
         coEvery { usersRepo.findByUsernameWithPassword("user") } returns
                 PrivateUser(25, "user", "pass")
         every { userRolesRepo.findRolesByUserId(25) } returns flow {
@@ -47,7 +47,6 @@ class UserDetailsServiceImplTest {
                         details.authorities.contains(SimpleGrantedAuthority("ROLE_group-role-2"))
             }
             .verifyComplete()
-        return@runBlocking
     }
 
     @Test
@@ -60,7 +59,7 @@ class UserDetailsServiceImplTest {
     }
 
     @Test
-    fun `empty roles returns no granted authorities`() = runBlocking {
+    fun `empty roles returns no granted authorities`() = runBlocking<Unit> {
         coEvery { usersRepo.findByUsernameWithPassword("user") } returns PrivateUser(25, "user", "pass")
         every { userRolesRepo.findRolesByUserId(25) } returns flow {  }
         every { userGroupsRepo.findGroupRolesByUserId(25) } returns flow {  }
@@ -68,6 +67,5 @@ class UserDetailsServiceImplTest {
         StepVerifier.create(service.findByUsername("user"))
             .expectNextMatches { details -> details.authorities.isEmpty() }
             .verifyComplete()
-        return@runBlocking
     }
 }

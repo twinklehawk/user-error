@@ -143,7 +143,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRolesForApplication should return up to the limit`(): Unit = runBlocking {
+    fun `getRolesForApplication should return up to the limit`(): Unit = runBlocking<Unit> {
         val app = appsRepo.insert(ApplicationCreate("app"))
         val app2 = appsRepo.insert(ApplicationCreate("app2"))
         repo.insert(RoleCreate(app.id, "r1"))
@@ -156,7 +156,5 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
             .hasSize(1).anyMatch { it.name == "r2" }
         assertThat(repo.findRolesByApplicationId(app.id, 5, 0).toList())
             .hasSize(2).anyMatch { it.name == "r1" }.anyMatch { it.name == "r2" }
-
-        return@runBlocking
     }
 }

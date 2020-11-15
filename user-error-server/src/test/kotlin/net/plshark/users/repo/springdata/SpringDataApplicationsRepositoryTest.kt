@@ -76,7 +76,7 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getAll should return a page of results`() = runBlocking {
+    fun `getAll should return a page of results`() = runBlocking<Unit> {
         val app1 = repo.insert(ApplicationCreate("app1"))
         val app2 = repo.insert(ApplicationCreate("app2"))
 
@@ -87,7 +87,5 @@ class SpringDataApplicationsRepositoryTest : DbIntTest() {
             .hasSize(1).contains(app2)
         assertThat(repo.getAll(5, 0).toList())
             .hasSize(3).contains(app1, app2)
-
-        return@runBlocking
     }
 }
