@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
     }
     group = "net.plshark"
     version = "0.4.1"
