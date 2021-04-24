@@ -82,8 +82,8 @@ configure(subprojects.filter{ it.name == "user-error-client" || it.name == "user
                 name = "github"
                 url = uri("https://maven.pkg.github.com/twinklehawk/user-error")
                 credentials {
-                    username = System.getenv("BINTRAY_USER")
-                    password = System.getenv("BINTRAY_API_KEY")
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
                 }
             }
         }
