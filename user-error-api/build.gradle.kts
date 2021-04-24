@@ -1,9 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm")
     kotlin("plugin.spring")
-    `maven-publish`
 }
 
 val internal by configurations.creating {
@@ -31,47 +27,4 @@ dependencies {
     testImplementation("io.mockk:mockk")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    withSourcesJar()
-}
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "1.8"
-    }
-}
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "bintray"
-            val bintrayUsername = "twinklehawk"
-            val bintrayRepoName = "user-error"
-            val bintrayPackageName = "net.plshark"
-            url = uri("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=1")
-            credentials {
-                username = System.getenv("BINTRAY_USER")
-                password = System.getenv("BINTRAY_API_KEY")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            versionMapping {
-                usage("java-api") {
-                    fromResolutionResult()
-                }
-                usage("java-runtime") {
-                    fromResolutionResult()
-                }
-            }
-        }
-    }
 }

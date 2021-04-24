@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.springframework.boot")
-    kotlin("jvm")
     kotlin("plugin.spring")
 }
 
@@ -32,21 +29,4 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core")
     testRuntimeOnly("org.postgresql:postgresql")
     testRuntimeOnly(project(":db"))
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "1.8"
-    }
-}
-tasks.withType<Test> {
-    val runIntTests = System.getProperties().getProperty("runIntTests") == "true"
-    useJUnitPlatform {
-        if (!runIntTests)
-            excludeTags("integrationTest")
-    }
 }
