@@ -2,7 +2,7 @@ plugins {
     kotlin("plugin.spring")
 }
 
-val internal by configurations.creating {
+val internal: Configuration by configurations.creating {
     isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = false
