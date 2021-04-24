@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.4.32" apply false
-    kotlin("plugin.spring") version "1.3.72" apply false
+    kotlin("plugin.spring") version "1.4.32" apply false
     id("org.springframework.boot") version "2.4.5" apply false
     id("com.jfrog.bintray") version "1.8.5" apply false
     id("com.github.ben-manes.versions") version "0.38.0"
