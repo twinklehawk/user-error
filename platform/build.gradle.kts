@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 dependencies {
-    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.4.5"))
+    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.5.0"))
 
     constraints {
         api("com.auth0:java-jwt:3.16.0")
