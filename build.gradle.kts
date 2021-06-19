@@ -4,14 +4,12 @@ plugins {
     id("org.springframework.boot") version "2.4.5" apply false
     id("com.jfrog.bintray") version "1.8.5" apply false
     id("com.github.ben-manes.versions") version "0.39.0"
-    id("io.gitlab.arturbosch.detekt") version "1.16.0" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.17.1" apply false
 }
 
 allprojects {
     repositories {
         mavenCentral()
-        // have to keep jcenter around until detekt updates to using org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3
-        jcenter()
     }
     group = "net.plshark"
     version = "0.4.1"
@@ -28,7 +26,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     dependencies {
-        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.16.0")
+        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
     }
 
     configure<JavaPluginExtension> {
