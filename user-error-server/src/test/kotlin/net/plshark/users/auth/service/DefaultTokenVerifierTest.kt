@@ -19,7 +19,8 @@ class DefaultTokenVerifierTest {
         val token = JWT.create().withSubject("test-user")
                 .withArrayClaim(PlsharkClaim.AUTHORITIES, arrayOf("user")).sign(algorithm)
 
-        assertEquals(AuthenticatedUser(username = "test-user", authorities = setOf("user")), verifier.verifyToken(token))
+        assertEquals(AuthenticatedUser(username = "test-user", authorities = setOf("user")),
+            verifier.verifyToken(token))
     }
 
     @Test

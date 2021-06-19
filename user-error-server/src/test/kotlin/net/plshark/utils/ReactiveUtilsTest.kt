@@ -17,10 +17,10 @@ class ReactiveUtilsTest {
 
     @Test
     fun `the created mono signals an error if the callable fails`() {
-        val c = Callable<String> { throw RuntimeException() }
+        val c = Callable<String> { throw IllegalStateException() }
 
         StepVerifier.create(ReactiveUtils.wrapWithMono(c))
-                .verifyError(RuntimeException::class.java)
+                .verifyError(IllegalStateException::class.java)
     }
 
     @Test
@@ -35,9 +35,9 @@ class ReactiveUtilsTest {
 
     @Test
     fun `the created flux signals an error if the callable fails`() {
-        val c = Callable<List<String>> { throw RuntimeException() }
+        val c = Callable<List<String>> { throw IllegalStateException() }
 
         StepVerifier.create(ReactiveUtils.wrapWithFlux(c))
-                .verifyError(RuntimeException::class.java)
+                .verifyError(IllegalStateException::class.java)
     }
 }

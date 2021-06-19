@@ -35,7 +35,7 @@ class IpThrottlingFilterTest {
     }
 
     @Test
-    fun `should pull the correct IP and username when the forwarded header is not set and continue execution if they are not blocked`() {
+    fun `pulls the correct IP and username when the header is not set and continues execution if not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns null
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
 
@@ -46,7 +46,7 @@ class IpThrottlingFilterTest {
     }
 
     @Test
-    fun `should pull the correct IP and username when the forwarded header is set and continue execution if they are not blocked`() {
+    fun `pulls the correct IP and username when the header is set and continues execution if not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns "192.168.1.2"
         every { request.remoteAddress } returns null
 
@@ -57,12 +57,13 @@ class IpThrottlingFilterTest {
     }
 
     @Test
+    @Suppress("UnusedPrivateMember")
     fun `should block the request if the IP has made too many requests`() {
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
         every { headers.getFirst("X-Forwarded-For") } returns null
         every { response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS) } returns true
 
-        for (x in 0 until 3)
+        for (x in 0..2)
             StepVerifier.create(filter.filter(exchange, chain)).verifyComplete()
 
         verify { response.statusCode = HttpStatus.TOO_MANY_REQUESTS }

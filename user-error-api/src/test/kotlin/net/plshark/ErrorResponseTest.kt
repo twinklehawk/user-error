@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class ErrorResponseSpec {
+class ErrorResponseTest {
 
     @Test
     fun `serialized to correct JSON`() {
@@ -24,7 +24,8 @@ class ErrorResponseSpec {
             path = "/path"
         ))
 
-        assertEquals("""{"timestamp":"2011-09-20T11:57:30.000000012-04:00","status":200,"statusDetail":"status","message":"great","path":"/path"}""", str)
+        assertEquals("{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200,\"statusDetail\":" +
+                "\"status\",\"message\":\"great\",\"path\":\"/path\"}", str)
     }
 
     @Test
@@ -34,7 +35,8 @@ class ErrorResponseSpec {
         val dt = ZonedDateTime.of(2011, 9, 20, 11, 57, 30, 12, ZoneId.of("America/New_York"))
             .toOffsetDateTime()
 
-        val response = mapper.readValue("""{"timestamp":"2011-09-20T11:57:30.000000012-04:00","status":200,"statusDetail":"status","message":"great","path":"/path"}""",
+        val response = mapper.readValue("{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200," +
+                "\"statusDetail\":\"status\",\"message\":\"great\",\"path\":\"/path\"}",
             ErrorResponse::class.java)
 
         assertEquals("great", response.message)

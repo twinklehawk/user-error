@@ -9,6 +9,7 @@ import org.junit.jupiter.api.parallel.ResourceLock
 @Tag("integrationTest")
 @Execution(ExecutionMode.SAME_THREAD)
 @ResourceLock("integration", mode = ResourceAccessMode.READ_WRITE)
+@Suppress("UtilityClassWithPublicConstructor")
 open class IntTest {
     companion object {
         const val DB_URL = "r2dbc:postgresql://test_user:test_user_pass@localhost:5432/postgres?schema=users"

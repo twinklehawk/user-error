@@ -46,7 +46,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     fun `can add a role to a user`() = runBlocking {
         repo.insert(user1.id, testRole1.id)
 
-        assertTrue(repo.findRolesByUserId(user1.id).toList().stream().anyMatch{ role -> role.id == testRole1.id})
+        assertTrue(repo.findRolesByUserId(user1.id).toList().stream().anyMatch { role -> role.id == testRole1.id })
     }
 
     @Test
@@ -57,8 +57,8 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         val roles = repo.findRolesByUserId(user1.id).toList()
 
         assertEquals(2, roles.size)
-        assertTrue(roles.stream().anyMatch{role -> role.id == testRole1.id})
-        assertTrue(roles.stream().anyMatch{role -> role.id == testRole2.id})
+        assertTrue(roles.stream().anyMatch { role -> role.id == testRole1.id })
+        assertTrue(roles.stream().anyMatch { role -> role.id == testRole2.id })
     }
 
     @Test
@@ -69,7 +69,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
         val roles = repo.findRolesByUserId(user1.id).toList()
 
         assertEquals(1, roles.size)
-        assertTrue(roles.stream().anyMatch{role -> role.id == testRole1.id})
+        assertTrue(roles.stream().anyMatch { role -> role.id == testRole1.id })
     }
 
     @Test

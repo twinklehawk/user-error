@@ -61,8 +61,8 @@ class UserDetailsServiceImplTest {
     @Test
     fun `empty roles returns no granted authorities`() = runBlocking<Unit> {
         coEvery { usersRepo.findByUsernameWithPassword("user") } returns PrivateUser(25, "user", "pass")
-        every { userRolesRepo.findRolesByUserId(25) } returns flow {  }
-        every { userGroupsRepo.findGroupRolesByUserId(25) } returns flow {  }
+        every { userRolesRepo.findRolesByUserId(25) } returns flow { }
+        every { userGroupsRepo.findGroupRolesByUserId(25) } returns flow { }
 
         StepVerifier.create(service.findByUsername("user"))
             .expectNextMatches { details -> details.authorities.isEmpty() }

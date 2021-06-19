@@ -36,7 +36,7 @@ class LoginAttemptThrottlingFilterTest {
     }
 
     @Test
-    fun `should pull the correct IP and username when the forwarded header is not set and continue execution if they are not blocked`() {
+    fun `pulls the correct IP and username when the header is not set and continues execution if not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns null
         every { request.remoteAddress } returns InetSocketAddress.createUnresolved("192.168.1.2", 80)
         every { extractor.extractUsername(request) } returns "test-user"
@@ -51,7 +51,7 @@ class LoginAttemptThrottlingFilterTest {
     }
 
     @Test
-    fun `should pull the correct IP and username when the forwarded header is set and continue execution if they are not blocked`() {
+    fun `pulls the correct IP and username when the header is set and continues execution if not blocked`() {
         every { headers.getFirst("X-Forwarded-For") } returns "192.168.1.2"
         every { request.remoteAddress } returns null
         every { extractor.extractUsername(request) } returns "test-user"

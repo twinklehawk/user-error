@@ -24,8 +24,10 @@ class AuthServiceImplTest {
     private val tokenVerifier = mockk<TokenVerifier>()
     private val tokenBuilder = mockk<TokenBuilder>()
     private val authSettingsService = mockk<UserAuthSettingsService>()
-    private val service = AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder, authSettingsService)
-    private val settings = UserAuthSettings(id = null, userId = null, authTokenExpiration = 1000, refreshTokenExpiration = 1000)
+    private val service = AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder,
+        authSettingsService)
+    private val settings = UserAuthSettings(id = null, userId = null, authTokenExpiration = 1000,
+        refreshTokenExpiration = 1000)
 
     @Test
     fun `authenticate should build access and refresh tokens with the correct expiration`() = runBlocking {

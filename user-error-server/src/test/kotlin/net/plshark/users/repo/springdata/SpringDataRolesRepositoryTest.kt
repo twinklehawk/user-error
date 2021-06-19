@@ -75,7 +75,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
 
         repo.deleteById(inserted.id)
         val retrieved = repo.findById(inserted.id)
-        
+
         assertNull(retrieved)
     }
 
