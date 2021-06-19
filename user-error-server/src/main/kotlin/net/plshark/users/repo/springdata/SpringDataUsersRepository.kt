@@ -9,9 +9,9 @@ import net.plshark.users.model.User
 import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.UsersRepository
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.data.r2dbc.core.DatabaseClient
-import org.springframework.data.r2dbc.core.await
-import org.springframework.data.r2dbc.core.awaitOneOrNull
+import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.r2dbc.core.await
+import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
 
 /**
@@ -21,21 +21,21 @@ import org.springframework.stereotype.Repository
 class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepository {
 
     override suspend fun findByUsername(username: String): User? {
-        return client.execute("SELECT id, username FROM users WHERE username = :username")
+        return client.sql("SELECT id, username FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRow(row) }
             .awaitOneOrNull()
     }
 
     override suspend fun findById(id: Long): User? {
-        return client.execute("SELECT * FROM users WHERE id = :id")
+        return client.sql("SELECT * FROM users WHERE id = :id")
             .bind("id", id)
             .map { row -> mapRow(row) }
             .awaitOneOrNull()
     }
 
     override suspend fun findByUsernameWithPassword(username: String): PrivateUser? {
-        return client.execute("SELECT * FROM users WHERE username = :username")
+        return client.sql("SELECT * FROM users WHERE username = :username")
             .bind("username", username)
             .map { row -> mapRowWithPassword(row) }
             .awaitOneOrNull()
@@ -43,7 +43,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
 
     override suspend fun insert(user: UserCreate): User {
         require(user.password.isNotEmpty()) { "Cannot insert user with blank password" }
-        val id = client.execute("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
+        val id = client.sql("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
             .bind("username", user.username)
             .bind("password", user.password)
             .fetch().one()
@@ -53,13 +53,13 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
     }
 
     override suspend fun deleteById(userId: Long) {
-        return client.execute("DELETE FROM users WHERE id = :id")
+        return client.sql("DELETE FROM users WHERE id = :id")
             .bind("id", userId)
             .await()
     }
 
     override suspend fun updatePassword(id: Long, currentPassword: String, newPassword: String) {
-        val updates = client.execute(
+        val updates = client.sql(
             "UPDATE users SET password = :newPassword WHERE id = :id AND password = :oldPassword"
         )
             .bind("newPassword", newPassword)
@@ -75,7 +75,7 @@ class SpringDataUsersRepository(private val client: DatabaseClient) : UsersRepos
         require(offset >= 0) { "Offset cannot be negative" }
         val sql =
             "SELECT * FROM users ORDER BY id OFFSET $offset ROWS FETCH FIRST $maxResults ROWS ONLY"
-        return client.execute(sql)
+        return client.sql(sql)
             .map { row -> mapRow(row) }
             .all()
             .asFlow()

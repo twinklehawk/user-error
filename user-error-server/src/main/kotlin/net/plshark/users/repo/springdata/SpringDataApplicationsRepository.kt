@@ -7,9 +7,9 @@ import kotlinx.coroutines.reactive.awaitSingle
 import net.plshark.users.model.Application
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.repo.ApplicationsRepository
-import org.springframework.data.r2dbc.core.DatabaseClient
-import org.springframework.data.r2dbc.core.await
-import org.springframework.data.r2dbc.core.awaitOneOrNull
+import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.r2dbc.core.await
+import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
 
 /**
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Repository
 class SpringDataApplicationsRepository(private val client: DatabaseClient) : ApplicationsRepository {
 
     override suspend fun findById(id: Long): Application? {
-        return client.execute("SELECT * FROM applications WHERE id = :id")
+        return client.sql("SELECT * FROM applications WHERE id = :id")
             .bind("id", id)
             .map { row -> mapRow(row) }
             .awaitOneOrNull()
     }
 
     override suspend fun findByName(name: String): Application? {
-        return client.execute("SELECT * FROM applications WHERE name = :name")
+        return client.sql("SELECT * FROM applications WHERE name = :name")
             .bind("name", name)
             .map { row -> mapRow(row) }
             .awaitOneOrNull()
@@ -35,13 +35,13 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
     override fun getAll(limit: Int, offset: Int): Flow<Application> {
         require(limit > 0) { "limit must be positive" }
         require(offset >= 0) { "offset cannot be negative" }
-        return client.execute("SELECT * FROM applications ORDER BY id LIMIT $limit OFFSET $offset")
+        return client.sql("SELECT * FROM applications ORDER BY id LIMIT $limit OFFSET $offset")
             .map { row -> mapRow(row) }
             .all().asFlow()
     }
 
     override suspend fun insert(application: ApplicationCreate): Application {
-        val id = client.execute("INSERT INTO applications (name) VALUES (:name) RETURNING id")
+        val id = client.sql("INSERT INTO applications (name) VALUES (:name) RETURNING id")
             .bind("name", application.name)
             .fetch().one()
             .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
@@ -50,7 +50,7 @@ class SpringDataApplicationsRepository(private val client: DatabaseClient) : App
     }
 
     override suspend fun deleteById(id: Long) {
-        client.execute("DELETE FROM applications WHERE id = :id")
+        client.sql("DELETE FROM applications WHERE id = :id")
             .bind("id", id)
             .await()
     }

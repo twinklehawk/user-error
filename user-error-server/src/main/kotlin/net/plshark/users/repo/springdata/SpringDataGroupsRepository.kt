@@ -7,9 +7,9 @@ import kotlinx.coroutines.reactive.awaitSingle
 import net.plshark.users.model.Group
 import net.plshark.users.model.GroupCreate
 import net.plshark.users.repo.GroupsRepository
-import org.springframework.data.r2dbc.core.DatabaseClient
-import org.springframework.data.r2dbc.core.await
-import org.springframework.data.r2dbc.core.awaitOneOrNull
+import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.r2dbc.core.await
+import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
 
 /**
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Repository
 class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRepository {
 
     override suspend fun findById(id: Long): Group? {
-        return client.execute("SELECT * FROM groups WHERE id = :id")
+        return client.sql("SELECT * FROM groups WHERE id = :id")
             .bind("id", id)
             .map { row: Row -> mapRow(row) }
             .awaitOneOrNull()
     }
 
     override suspend fun findByName(name: String): Group? {
-        return client.execute("SELECT * FROM groups WHERE name = :name")
+        return client.sql("SELECT * FROM groups WHERE name = :name")
             .bind("name", name)
             .map { row -> mapRow(row) }
             .awaitOneOrNull()
@@ -36,14 +36,14 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
         require(limit >= 1) { "limit must be greater than 0" }
         require(offset >= 0) { "offset cannot be negative" }
         val sql = "SELECT * FROM groups ORDER BY id OFFSET $offset ROWS FETCH FIRST $limit ROWS ONLY"
-        return client.execute(sql)
+        return client.sql(sql)
             .map { row -> mapRow(row) }
             .all()
             .asFlow()
     }
 
     override suspend fun insert(group: GroupCreate): Group {
-        val id = client.execute("INSERT INTO groups (name) VALUES (:name) RETURNING id")
+        val id = client.sql("INSERT INTO groups (name) VALUES (:name) RETURNING id")
             .bind("name", group.name)
             .fetch().one()
             .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
@@ -52,7 +52,7 @@ class SpringDataGroupsRepository(private val client: DatabaseClient) : GroupsRep
     }
 
     override suspend fun deleteById(groupId: Long) {
-        return client.execute("DELETE FROM groups WHERE id = :id")
+        return client.sql("DELETE FROM groups WHERE id = :id")
             .bind("id", groupId)
             .await()
     }
