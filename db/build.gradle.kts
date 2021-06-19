@@ -1,11 +1,11 @@
 buildscript {
     dependencies {
-        classpath("org.postgresql:postgresql:42.2.20")
+        classpath("org.postgresql:postgresql:42.2.22")
     }
 }
 
 plugins {
-    id("org.flywaydb.flyway") version "7.9.2"
+    id("org.flywaydb.flyway") version "7.10.0"
     java
 }
 
