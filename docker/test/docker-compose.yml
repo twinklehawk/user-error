@@ -8,7 +8,7 @@ services:
     ports:
       - "5432:5432"
   users-service:
-    build: ../../user-error/
+    build: ../../user-error-server/
     depends_on:
       - db
     ports:
