@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.4.5" apply false
     id("com.jfrog.bintray") version "1.8.5" apply false
     id("com.github.ben-manes.versions") version "0.39.0"
-    id("io.gitlab.arturbosch.detekt") version "1.16.0" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.17.1" apply false
 }
 
 allprojects {
