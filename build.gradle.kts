@@ -48,9 +48,9 @@ configure(subprojects.filter{ it.name != "platform" }) {
     }
     tasks.withType<JacocoReport> {
         reports {
-            xml.isEnabled = true
-            html.isEnabled = true
-            csv.isEnabled = false
+            xml.required.set(true)
+            html.required.set(true)
+            csv.required.set(false)
         }
     }
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
