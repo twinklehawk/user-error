@@ -1,9 +1,8 @@
 package net.plshark.users.repo.springdata
 
-import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import net.plshark.testutils.DbIntTest
+import net.plshark.testutils.DbTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.RoleCreate
 import org.assertj.core.api.Assertions.assertThat
@@ -14,15 +13,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 
-class SpringDataRolesRepositoryTest : DbIntTest() {
+@DbTest
+class SpringDataRolesRepositoryTest {
 
     private lateinit var repo: SpringDataRolesRepository
     private lateinit var appsRepo: SpringDataApplicationsRepository
 
     @BeforeEach
-    fun setup() {
-        val connectionFactory = ConnectionFactories.get(DB_URL)
-        val db = DatabaseClient.create(connectionFactory)
+    fun setup(db: DatabaseClient) {
         repo = SpringDataRolesRepository(db)
         appsRepo = SpringDataApplicationsRepository(db)
     }
@@ -143,7 +141,7 @@ class SpringDataRolesRepositoryTest : DbIntTest() {
     }
 
     @Test
-    fun `getRolesForApplication should return up to the limit`(): Unit = runBlocking<Unit> {
+    fun `getRolesForApplication should return up to the limit`(): Unit = runBlocking {
         val app = appsRepo.insert(ApplicationCreate("app"))
         val app2 = appsRepo.insert(ApplicationCreate("app2"))
         repo.insert(RoleCreate(app.id, "r1"))
