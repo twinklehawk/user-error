@@ -65,7 +65,7 @@ class LoginAttemptServiceImplTest {
         service.onLoginFailed("test", "192.168.1.2")
         service.onLoginFailed("test", "192.168.1.2")
         service.onLoginFailed("test", "192.168.1.2")
-        Thread.sleep(2 * 1000)
+        Thread.sleep(2L * 1000)
 
         assertFalse(service.isIpBlocked("192.168.1.2"))
         assertFalse(service.isUsernameBlocked("test"))
