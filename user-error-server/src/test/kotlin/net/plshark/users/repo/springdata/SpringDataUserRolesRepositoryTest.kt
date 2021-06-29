@@ -1,9 +1,8 @@
 package net.plshark.users.repo.springdata
 
-import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import net.plshark.testutils.DbIntTest
+import net.plshark.testutils.DbTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.Role
 import net.plshark.users.model.RoleCreate
@@ -15,7 +14,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 
-class SpringDataUserRolesRepositoryTest : DbIntTest() {
+@DbTest
+class SpringDataUserRolesRepositoryTest {
 
     private lateinit var repo: SpringDataUserRolesRepository
     private lateinit var usersRepo: SpringDataUsersRepository
@@ -27,9 +27,7 @@ class SpringDataUserRolesRepositoryTest : DbIntTest() {
     private lateinit var user2: User
 
     @BeforeEach
-    fun setup() = runBlocking {
-        val connectionFactory = ConnectionFactories.get(DB_URL)
-        val client = DatabaseClient.create(connectionFactory)
+    fun setup(client: DatabaseClient) = runBlocking {
         repo = SpringDataUserRolesRepository(client)
         usersRepo = SpringDataUsersRepository(client)
         rolesRepo = SpringDataRolesRepository(client)

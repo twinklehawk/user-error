@@ -1,8 +1,7 @@
 package net.plshark.users.auth.repo.springdata
 
-import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.runBlocking
-import net.plshark.testutils.DbIntTest
+import net.plshark.testutils.DbTest
 import net.plshark.users.auth.model.UserAuthSettings
 import net.plshark.users.model.UserCreate
 import net.plshark.users.repo.springdata.SpringDataUsersRepository
@@ -15,15 +14,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.r2dbc.core.DatabaseClient
 
-class SpringDataUserAuthSettingsRepositoryTest : DbIntTest() {
+@DbTest
+class SpringDataUserAuthSettingsRepositoryTest {
 
     private lateinit var repo: SpringDataUserAuthSettingsRepository
     private lateinit var usersRepo: SpringDataUsersRepository
 
     @BeforeEach
-    fun setup() {
-        val connectionFactory = ConnectionFactories.get(DB_URL)
-        val db = DatabaseClient.create(connectionFactory)
+    fun setup(db: DatabaseClient) {
         repo = SpringDataUserAuthSettingsRepository(db)
         usersRepo = SpringDataUsersRepository(db)
     }

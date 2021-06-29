@@ -1,10 +1,9 @@
 package net.plshark.users.repo.springdata
 
-import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import net.plshark.testutils.DbIntTest
+import net.plshark.testutils.DbTest
 import net.plshark.users.model.ApplicationCreate
 import net.plshark.users.model.GroupCreate
 import net.plshark.users.model.RoleCreate
@@ -14,7 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 
-class SpringDataGroupRolesRepositoryTest : DbIntTest() {
+@DbTest
+class SpringDataGroupRolesRepositoryTest {
 
     private lateinit var repo: SpringDataGroupRolesRepository
     private lateinit var groupsRepo: SpringDataGroupsRepository
@@ -22,9 +22,7 @@ class SpringDataGroupRolesRepositoryTest : DbIntTest() {
     private lateinit var appsRepo: SpringDataApplicationsRepository
 
     @BeforeEach
-    fun setup() {
-        val connectionFactory = ConnectionFactories.get(DB_URL)
-        val dbClient = DatabaseClient.create(connectionFactory)
+    fun setup(dbClient: DatabaseClient) {
         repo = SpringDataGroupRolesRepository(dbClient)
         groupsRepo = SpringDataGroupsRepository(dbClient)
         rolesRepo = SpringDataRolesRepository(dbClient)

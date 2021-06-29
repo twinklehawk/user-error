@@ -1,9 +1,8 @@
 package net.plshark.users.repo.springdata
 
-import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import net.plshark.testutils.DbIntTest
+import net.plshark.testutils.DbTest
 import net.plshark.users.model.PrivateUser
 import net.plshark.users.model.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,14 +13,13 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 
-class SpringDataUsersRepositoryTest : DbIntTest() {
+@DbTest
+class SpringDataUsersRepositoryTest {
 
     private lateinit var repo: SpringDataUsersRepository
 
     @BeforeEach
-    fun setup() {
-        val connectionFactory = ConnectionFactories.get(DB_URL)
-        val dbClient = DatabaseClient.create(connectionFactory)
+    fun setup(dbClient: DatabaseClient) {
         repo = SpringDataUsersRepository(dbClient)
     }
 
