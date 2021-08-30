@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.5.21" apply false
     id("org.springframework.boot") version "2.5.4" apply false
     id("com.github.ben-manes.versions") version "0.39.0"
-    id("io.gitlab.arturbosch.detekt") version "1.18.0" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.18.1" apply false
 }
 
 allprojects {
