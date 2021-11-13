@@ -31,6 +31,8 @@ dependencies {
     testImplementation("org.springframework:spring-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk")
+    testImplementation("com.squareup.okhttp3:mockwebserver")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic")
+    testRuntimeOnly("io.projectreactor.netty:reactor-netty-http")
 }
