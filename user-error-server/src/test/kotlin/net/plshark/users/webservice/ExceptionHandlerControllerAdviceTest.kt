@@ -2,15 +2,15 @@ package net.plshark.users.webservice
 
 import io.mockk.every
 import io.mockk.mockk
-import net.plshark.errors.DuplicateException
-import org.springframework.http.HttpStatus
-import org.springframework.http.server.reactive.ServerHttpRequest
 import net.plshark.errors.BadRequestException
+import net.plshark.errors.DuplicateException
 import net.plshark.errors.ObjectNotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
 import java.net.URI
 
 class ExceptionHandlerControllerAdviceTest {

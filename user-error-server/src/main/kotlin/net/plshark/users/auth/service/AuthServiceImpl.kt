@@ -25,10 +25,9 @@ class AuthServiceImpl(
 ) : AuthService {
 
     override suspend fun authenticate(credentials: AccountCredentials): AuthToken {
-        val username = credentials.username
-        val userDetails = userDetailsService.findByUsername(username).awaitFirstOrNull()
-        if (userDetails == null || !passwordEncoder.matches(credentials.password, userDetails.password)) throw
-            BadCredentialsException("Invalid credentials")
+        val userDetails = userDetailsService.findByUsername(credentials.username)
+            .filter { passwordEncoder.matches(credentials.password, it.password) }
+            .awaitFirstOrNull() ?: throw BadCredentialsException("Invalid credentials")
         return buildAuthToken(userDetails)
     }
 

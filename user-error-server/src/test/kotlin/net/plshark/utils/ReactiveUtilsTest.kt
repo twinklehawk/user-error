@@ -11,8 +11,8 @@ class ReactiveUtilsTest {
         val c = Callable { "test-val" }
 
         StepVerifier.create(ReactiveUtils.wrapWithMono(c))
-                .expectNext("test-val")
-                .verifyComplete()
+            .expectNext("test-val")
+            .verifyComplete()
     }
 
     @Test
@@ -20,7 +20,7 @@ class ReactiveUtilsTest {
         val c = Callable<String> { throw IllegalStateException() }
 
         StepVerifier.create(ReactiveUtils.wrapWithMono(c))
-                .verifyError(IllegalStateException::class.java)
+            .verifyError(IllegalStateException::class.java)
     }
 
     @Test
@@ -28,9 +28,9 @@ class ReactiveUtilsTest {
         val c = Callable { listOf("test-val", "test-val-2") }
 
         StepVerifier.create(ReactiveUtils.wrapWithFlux(c))
-                .expectNext("test-val")
-                .expectNext("test-val-2")
-                .verifyComplete()
+            .expectNext("test-val")
+            .expectNext("test-val-2")
+            .verifyComplete()
     }
 
     @Test
@@ -38,6 +38,6 @@ class ReactiveUtilsTest {
         val c = Callable<List<String>> { throw IllegalStateException() }
 
         StepVerifier.create(ReactiveUtils.wrapWithFlux(c))
-                .verifyError(IllegalStateException::class.java)
+            .verifyError(IllegalStateException::class.java)
     }
 }

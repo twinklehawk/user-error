@@ -30,14 +30,14 @@ class SpringDataUserAuthSettingsRepositoryTest {
     fun `inserting settings returns the inserted settings with the ID set`() = runBlocking {
         val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass"))
         val inserted = repo.insert(
-                UserAuthSettings(
-                    id = null,
-                    userId = user.id,
-                    refreshTokenEnabled = false,
-                    refreshTokenExpiration = null,
-                    authTokenExpiration = 40
-                )
+            UserAuthSettings(
+                id = null,
+                userId = user.id,
+                refreshTokenEnabled = false,
+                refreshTokenExpiration = null,
+                authTokenExpiration = 40
             )
+        )
 
         assertNotNull(inserted.id)
         assertEquals(user.id, inserted.userId)
@@ -83,13 +83,15 @@ class SpringDataUserAuthSettingsRepositoryTest {
     @Test
     fun `can retrieve previously inserted settings by user ID`() = runBlocking {
         val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass"))
-        val inserted = repo.insert(UserAuthSettings(
-            id = null,
-            userId = user.id,
-            refreshTokenEnabled = true,
-            refreshTokenExpiration = null,
-            authTokenExpiration = null
-        ))
+        val inserted = repo.insert(
+            UserAuthSettings(
+                id = null,
+                userId = user.id,
+                refreshTokenEnabled = true,
+                refreshTokenExpiration = null,
+                authTokenExpiration = null
+            )
+        )
 
         assertEquals(inserted, repo.findByUserId(user.id))
     }
@@ -102,13 +104,15 @@ class SpringDataUserAuthSettingsRepositoryTest {
     @Test
     fun `can retrieve previously inserted settings by username`() = runBlocking {
         val user = usersRepo.insert(UserCreate(username = "test-user", password = "test-pass"))
-        val inserted = repo.insert(UserAuthSettings(
-            id = null,
-            userId = user.id,
-            refreshTokenEnabled = true,
-            refreshTokenExpiration = null,
-            authTokenExpiration = null
-        ))
+        val inserted = repo.insert(
+            UserAuthSettings(
+                id = null,
+                userId = user.id,
+                refreshTokenEnabled = true,
+                refreshTokenExpiration = null,
+                authTokenExpiration = null
+            )
+        )
 
         assertEquals(inserted, repo.findByUsername(user.username))
     }

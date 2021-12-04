@@ -25,7 +25,7 @@ class BasicAuthenticationUsernameExtractorTest {
     @Test
     fun `should extract the username if it is present`() {
         every { headers.getFirst("Authorization") } returns "Basic " +
-                String(Base64.getEncoder().encode("username:password".toByteArray()), StandardCharsets.UTF_8)
+            String(Base64.getEncoder().encode("username:password".toByteArray()), StandardCharsets.UTF_8)
 
         assertEquals("username", extractor.extractUsername(request))
     }
@@ -33,7 +33,7 @@ class BasicAuthenticationUsernameExtractorTest {
     @Test
     fun `should return an empty optional if the username is not present in the header`() {
         every { headers.getFirst("Authorization") } returns "Basic " +
-                String(Base64.getEncoder().encode("password".toByteArray()), StandardCharsets.UTF_8)
+            String(Base64.getEncoder().encode("password".toByteArray()), StandardCharsets.UTF_8)
 
         assertNull(extractor.extractUsername(request))
     }

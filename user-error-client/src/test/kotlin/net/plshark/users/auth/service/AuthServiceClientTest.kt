@@ -41,9 +41,11 @@ class AuthServiceClientTest {
             refreshToken = "refresh",
             scope = "scope"
         )
-        server.enqueue(MockResponse()
+        server.enqueue(
+            MockResponse()
                 .setBody(mapper.writeValueAsString(authToken))
-                .setHeader("Content-Type", "application/json"))
+                .setHeader("Content-Type", "application/json")
+        )
 
         val credentials = AccountCredentials("username", "password")
         assertEquals(authToken, client.authenticate(credentials))
@@ -64,9 +66,11 @@ class AuthServiceClientTest {
             refreshToken = "refresh",
             scope = "scope"
         )
-        server.enqueue(MockResponse()
-            .setBody(mapper.writeValueAsString(authToken))
-            .setHeader("Content-Type", "application/json"))
+        server.enqueue(
+            MockResponse()
+                .setBody(mapper.writeValueAsString(authToken))
+                .setHeader("Content-Type", "application/json")
+        )
 
         assertEquals(authToken, client.refresh("refresh-token"))
 
@@ -80,9 +84,11 @@ class AuthServiceClientTest {
     @Test
     fun `validateToken should return the user associated with an access token`() = runBlocking {
         val user = AuthenticatedUser("test-user", setOf("role1", "role2"))
-        server.enqueue(MockResponse()
-            .setBody(mapper.writeValueAsString(user))
-            .setHeader("Content-Type", "application/json"))
+        server.enqueue(
+            MockResponse()
+                .setBody(mapper.writeValueAsString(user))
+                .setHeader("Content-Type", "application/json")
+        )
 
         assertEquals(user, client.validateToken("access-token"))
 
