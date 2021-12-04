@@ -12,15 +12,18 @@ class ServerHttpJwtAuthenticationConverterTest {
     @Test
     fun `should parse out the token from the authorization header`() {
         val exchange = MockServerWebExchange.from(
-                MockServerHttpRequest.get("http://test/url").header("Authorization", "Bearer test-token"))
+            MockServerHttpRequest.get("http://test/url").header("Authorization", "Bearer test-token")
+        )
 
         StepVerifier.create(converter.convert(exchange))
-            .expectNext(JwtAuthenticationToken(
-                username = null,
-                token = "test-token",
-                authenticated = false,
-                authorities = setOf()
-            )).verifyComplete()
+            .expectNext(
+                JwtAuthenticationToken(
+                    username = null,
+                    token = "test-token",
+                    authenticated = false,
+                    authorities = setOf()
+                )
+            ).verifyComplete()
     }
 
     @Test
@@ -34,7 +37,8 @@ class ServerHttpJwtAuthenticationConverterTest {
     @Test
     fun `should return empty when the header value does not start with Bearer`() {
         val exchange = MockServerWebExchange.from(
-                MockServerHttpRequest.get("http://test/url").header("Authorization", "test-token"))
+            MockServerHttpRequest.get("http://test/url").header("Authorization", "test-token")
+        )
 
         StepVerifier.create(converter.convert(exchange))
             .verifyComplete()

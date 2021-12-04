@@ -16,10 +16,13 @@ class DbExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
         .connectRetries(10)
         .locations("classpath:/db/migration/postgres")
         .schemas("users")
-        .placeholders(mutableMapOf(
-            "username" to "test_user",
-            "password" to "test_user_pass",
-            "schema" to "users"))
+        .placeholders(
+            mutableMapOf(
+                "username" to "test_user",
+                "password" to "test_user_pass",
+                "schema" to "users"
+            )
+        )
         .load()
 
     override fun beforeEach(context: ExtensionContext) {
@@ -33,8 +36,10 @@ class DbExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean =
         DatabaseClient::class.java == parameterContext.parameter.type
 
-    override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext):
-            DatabaseClient {
+    override fun resolveParameter(
+        parameterContext: ParameterContext,
+        extensionContext: ExtensionContext
+    ): DatabaseClient {
         val connectionFactory = ConnectionFactories.get(DB_URL)
         return DatabaseClient.create(connectionFactory)
     }

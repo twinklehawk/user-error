@@ -12,10 +12,12 @@ class Ecdsa256AlgorithmBuilderTest {
 
     @Test
     fun `should load the keystore from the filesystem and access the correct key for ECDSA256`() {
-        val location = Ecdsa256AlgorithmBuilderTest::class.java.getResource("test-store.jks").file
-        val props = AuthProperties.forKeystore(Ecdsa256AlgorithmBuilder.ECDSA256, "bad-users", 1000,
-                AuthProperties.Keystore("pkcs12", location, "test-pass"),
-                AuthProperties.Key("test-key", "test-pass"))
+        val location = Ecdsa256AlgorithmBuilderTest::class.java.getResource("test-store.jks")?.file!!
+        val props = AuthProperties.forKeystore(
+            Ecdsa256AlgorithmBuilder.ECDSA256, "bad-users", 1000,
+            AuthProperties.Keystore("pkcs12", location, "test-pass"),
+            AuthProperties.Key("test-key", "test-pass")
+        )
 
         val algorithm = builder.build(props)!!
 
@@ -30,21 +32,23 @@ class Ecdsa256AlgorithmBuilderTest {
             1000,
             null,
             null,
-            AuthProperties.Key("test-key", "test-pass"))
+            AuthProperties.Key("test-key", "test-pass")
+        )
 
         assertThrows<IllegalStateException> { builder.build(props) }
     }
 
     @Test
     fun `should fail if the key is null`() {
-        val location = Ecdsa256AlgorithmBuilderTest::class.java.getResource("test-store.jks").file
+        val location = Ecdsa256AlgorithmBuilderTest::class.java.getResource("test-store.jks")?.file!!
         val props = AuthProperties(
             Ecdsa256AlgorithmBuilder.ECDSA256,
             "bad-users",
             1000,
             null,
             AuthProperties.Keystore("pkcs12", location, "test-pass"),
-            null)
+            null
+        )
 
         assertThrows<IllegalStateException> { builder.build(props) }
     }

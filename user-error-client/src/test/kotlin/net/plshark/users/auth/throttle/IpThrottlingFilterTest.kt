@@ -5,7 +5,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.concurrent.TimeUnit
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpRequest
@@ -15,6 +14,7 @@ import org.springframework.web.server.WebFilterChain
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import java.net.InetSocketAddress
+import java.util.concurrent.TimeUnit
 
 class IpThrottlingFilterTest {
 

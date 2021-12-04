@@ -26,7 +26,7 @@ class UserDetailsServiceImplTest {
     @Test
     fun `a user and its roles are mapped to the correct UserDetails`() = runBlocking<Unit> {
         coEvery { usersRepo.findByUsernameWithPassword("user") } returns
-                PrivateUser(25, "user", "pass")
+            PrivateUser(25, "user", "pass")
         every { userRolesRepo.findRolesByUserId(25) } returns flow {
             emit(Role(3, 1, "normal-user"))
             emit(Role(5, 1, "admin"))
@@ -39,12 +39,12 @@ class UserDetailsServiceImplTest {
         StepVerifier.create(service.findByUsername("user"))
             .expectNextMatches { details ->
                 details.username == "user" &&
-                        details.password == "pass" &&
-                        details.authorities.size == 4 &&
-                        details.authorities.contains(SimpleGrantedAuthority("ROLE_normal-user")) &&
-                        details.authorities.contains(SimpleGrantedAuthority("ROLE_admin")) &&
-                        details.authorities.contains(SimpleGrantedAuthority("ROLE_group-role-1")) &&
-                        details.authorities.contains(SimpleGrantedAuthority("ROLE_group-role-2"))
+                    details.password == "pass" &&
+                    details.authorities.size == 4 &&
+                    details.authorities.contains(SimpleGrantedAuthority("ROLE_normal-user")) &&
+                    details.authorities.contains(SimpleGrantedAuthority("ROLE_admin")) &&
+                    details.authorities.contains(SimpleGrantedAuthority("ROLE_group-role-1")) &&
+                    details.authorities.contains(SimpleGrantedAuthority("ROLE_group-role-2"))
             }
             .verifyComplete()
     }

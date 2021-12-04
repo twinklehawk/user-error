@@ -29,7 +29,7 @@ class Ecdsa256AlgorithmBuilder : AlgorithmBuilder {
                 keyStore.load(stream, authProperties.keystore.password.toCharArray())
             }
             val privateKey = keyStore.getKey(authProperties.key.alias, authProperties.key.password.toCharArray()) as
-                    ECPrivateKey
+                ECPrivateKey
             val publicKey = keyStore.getCertificate(authProperties.key.alias).publicKey as ECPublicKey
             algorithm = Algorithm.ECDSA256(publicKey, privateKey)
         }

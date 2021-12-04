@@ -18,14 +18,9 @@ class AuthControllerTest {
     @Test
     fun `authenticate should pass the credentials through to the service`() = runBlocking {
         val token = AuthToken(
-            accessToken = "access",
-            tokenType = "type",
-            expiresIn = 1,
-            refreshToken = "refresh",
-            scope = "scope"
+            accessToken = "access", tokenType = "type", expiresIn = 1, refreshToken = "refresh", scope = "scope"
         )
-        coEvery { service.authenticate(AccountCredentials("test-user", "test-password")) } returns
-                token
+        coEvery { service.authenticate(AccountCredentials("test-user", "test-password")) } returns token
 
         assertEquals(token, controller.authenticate(AccountCredentials("test-user", "test-password")))
     }
@@ -33,11 +28,7 @@ class AuthControllerTest {
     @Test
     fun `refresh should pass the token through to the service`() = runBlocking {
         val token = AuthToken(
-            accessToken = "access",
-            tokenType = "type",
-            expiresIn = 1,
-            refreshToken = "refresh",
-            scope = "scope"
+            accessToken = "access", tokenType = "type", expiresIn = 1, refreshToken = "refresh", scope = "scope"
         )
         coEvery { service.refresh("test-token") } returns token
 
@@ -46,10 +37,9 @@ class AuthControllerTest {
 
     @Test
     fun `validateToken should pass the token through to the service`() = runBlocking {
-        coEvery { service.validateToken("refresh") } returns
-                AuthenticatedUser(username = "user", authorities = setOf())
+        val user = AuthenticatedUser(username = "user", authorities = setOf())
+        coEvery { service.validateToken("refresh") } returns user
 
-        assertEquals(AuthenticatedUser(username = "user", authorities = setOf()),
-            controller.validateToken("refresh"))
+        assertEquals(user, controller.validateToken("refresh"))
     }
 }

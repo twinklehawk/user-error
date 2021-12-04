@@ -26,7 +26,7 @@ class SpringDataUserGroupsRepository(private val client: DatabaseClient) : UserG
 
     override fun findGroupRolesByUserId(userId: Long): Flow<Role> {
         val sql = "SELECT r.* from roles r, user_groups ug, group_roles gr WHERE ug.user_id = :userId AND " +
-                "gr.group_id = ug.group_id AND r.id = gr.role_id"
+            "gr.group_id = ug.group_id AND r.id = gr.role_id"
         return client.sql(sql)
             .bind("userId", userId)
             .map { row -> SpringDataRolesRepository.mapRow(row) }

@@ -16,16 +16,19 @@ class ErrorResponseTest {
         mapper.findAndRegisterModules()
         val dt = ZonedDateTime.of(2011, 9, 20, 11, 57, 30, 12, ZoneId.of("America/New_York"))
             .toOffsetDateTime()
-        val str = mapper.writeValueAsString(ErrorResponse(
-            timestamp = dt,
-            status = 200,
-            statusDetail = "status",
-            message = "great",
-            path = "/path"
-        ))
+        val str = mapper.writeValueAsString(
+            ErrorResponse(
+                timestamp = dt,
+                status = 200,
+                statusDetail = "status",
+                message = "great",
+                path = "/path"
+            )
+        )
 
-        assertEquals("{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200,\"statusDetail\":" +
-                "\"status\",\"message\":\"great\",\"path\":\"/path\"}", str)
+        val expected = "{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200,\"statusDetail\":" +
+            "\"status\",\"message\":\"great\",\"path\":\"/path\"}"
+        assertEquals(expected, str)
     }
 
     @Test
@@ -35,9 +38,11 @@ class ErrorResponseTest {
         val dt = ZonedDateTime.of(2011, 9, 20, 11, 57, 30, 12, ZoneId.of("America/New_York"))
             .toOffsetDateTime()
 
-        val response = mapper.readValue("{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200," +
+        val response = mapper.readValue(
+            "{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200," +
                 "\"statusDetail\":\"status\",\"message\":\"great\",\"path\":\"/path\"}",
-            ErrorResponse::class.java)
+            ErrorResponse::class.java
+        )
 
         assertEquals("great", response.message)
         assertEquals(200, response.status)

@@ -30,9 +30,9 @@ interface GroupRolesRepository {
     suspend fun deleteById(groupId: Long, roleId: Long)
 
     /**
-    * Remove all associations for a group
-    * @param groupId the group ID
-    */
+     * Remove all associations for a group
+     * @param groupId the group ID
+     */
     suspend fun deleteByGroupId(groupId: Long)
 
     /**

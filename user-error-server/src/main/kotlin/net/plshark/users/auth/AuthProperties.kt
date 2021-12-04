@@ -59,7 +59,7 @@ class AuthProperties(
         }
 
         fun forKeystore(algorithm: String, issuer: String, tokenExpiration: Long, keystore: Keystore, key: Key):
-                AuthProperties {
+            AuthProperties {
             return AuthProperties(algorithm, issuer, tokenExpiration, null, keystore, key)
         }
     }

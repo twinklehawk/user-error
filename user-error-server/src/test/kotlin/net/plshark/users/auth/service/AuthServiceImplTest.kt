@@ -24,52 +24,60 @@ class AuthServiceImplTest {
     private val tokenVerifier = mockk<TokenVerifier>()
     private val tokenBuilder = mockk<TokenBuilder>()
     private val authSettingsService = mockk<UserAuthSettingsService>()
-    private val service = AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder,
-        authSettingsService)
-    private val settings = UserAuthSettings(id = null, userId = null, authTokenExpiration = 1000,
-        refreshTokenExpiration = 1000)
+    private val service =
+        AuthServiceImpl(passwordEncoder, userDetailsService, tokenVerifier, tokenBuilder, authSettingsService)
+    private val settings = UserAuthSettings(
+        id = null, userId = null, authTokenExpiration = 1000,
+        refreshTokenExpiration = 1000
+    )
 
     @Test
     fun `authenticate should build access and refresh tokens with the correct expiration`() = runBlocking {
         every { userDetailsService.findByUsername("test-user") } returns
-                Mono.just(User("test-user", "encoded-password", listOf()))
+            Mono.just(User("test-user", "encoded-password", listOf()))
         every { passwordEncoder.matches("test-password", "encoded-password") } returns true
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         coEvery { authSettingsService.findByUsername("test-user") } returns settings
         every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
-        assertEquals(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null),
-            service.authenticate(AccountCredentials("test-user", "test-password")))
+        assertEquals(
+            AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null),
+            service.authenticate(AccountCredentials("test-user", "test-password"))
+        )
     }
 
     @Test
     fun `authenticate should not return a refresh token if refresh is not enabled for the user`() = runBlocking {
         every { userDetailsService.findByUsername("test-user") } returns
-                Mono.just(User("test-user", "encoded-password", listOf()))
+            Mono.just(User("test-user", "encoded-password", listOf()))
         every { passwordEncoder.matches("test-password", "encoded-password") } returns true
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         coEvery { authSettingsService.findByUsername("test-user") } returns settings.copy(refreshTokenEnabled = false)
         every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
-        assertEquals(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = null, scope = null),
-            service.authenticate(AccountCredentials("test-user", "test-password")))
+        assertEquals(
+            AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = null, scope = null),
+            service.authenticate(AccountCredentials("test-user", "test-password"))
+        )
     }
 
     @Test
     fun `should build a token with default expiration time if no expiration time settings are set`() = runBlocking {
         every { userDetailsService.findByUsername("test-user") } returns
-                Mono.just(User("test-user", "encoded-password", listOf()))
+            Mono.just(User("test-user", "encoded-password", listOf()))
         every { passwordEncoder.matches("test-password", "encoded-password") } returns true
         every { tokenBuilder.buildAccessToken("test-user", 20000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 20000L) } returns "refresh-token"
         coEvery { authSettingsService.findByUsername("test-user") } returns
-                UserAuthSettings(null, null, false, null, null)
+            UserAuthSettings(null, null, false, null, null)
         every { authSettingsService.getDefaultTokenExpiration() } returns 20000
 
-        assertEquals(AuthToken(accessToken = "test-token", expiresIn = 20, refreshToken = null, scope = null),
-            service.authenticate(AccountCredentials("test-user", "test-password")))
+        assertEquals(
+            AuthToken(accessToken = "test-token", expiresIn = 20, refreshToken = null, scope = null),
+            service.authenticate(AccountCredentials("test-user", "test-password"))
+        )
     }
 
     @Test
@@ -86,7 +94,7 @@ class AuthServiceImplTest {
     @Test
     fun `authenticate should return an exception if the credentials are invalid`() {
         every { userDetailsService.findByUsername("test-user") } returns
-                Mono.just(User("test-user", "encoded-password", listOf()))
+            Mono.just(User("test-user", "encoded-password", listOf()))
         every { passwordEncoder.matches("test-password", "encoded-password") } returns false
 
         assertThrows<BadCredentialsException> {
@@ -100,14 +108,16 @@ class AuthServiceImplTest {
     fun `refresh should build access and refresh tokens with the correct expiration`() = runBlocking {
         every { tokenVerifier.verifyRefreshToken("refresh-token") } returns "test-user"
         every { userDetailsService.findByUsername("test-user") } returns
-                Mono.just(User("test-user", "encoded-password", listOf()))
+            Mono.just(User("test-user", "encoded-password", listOf()))
         every { tokenBuilder.buildAccessToken("test-user", 1000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 1000L) } returns "refresh-token"
         coEvery { authSettingsService.findByUsername("test-user") } returns settings
         every { authSettingsService.getDefaultTokenExpiration() } returns 5000
 
-        assertEquals(AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null),
-            service.refresh("refresh-token"))
+        assertEquals(
+            AuthToken(accessToken = "test-token", expiresIn = 1, refreshToken = "refresh-token", scope = null),
+            service.refresh("refresh-token")
+        )
     }
 
     @Test

@@ -1,4 +1,5 @@
 @file:Suppress("TooManyFunctions")
+
 package net.plshark.users.service
 
 import net.plshark.users.model.Group

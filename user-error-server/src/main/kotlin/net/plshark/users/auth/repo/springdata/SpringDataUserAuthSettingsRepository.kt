@@ -21,7 +21,7 @@ class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) :
 
     override suspend fun findByUsername(username: String): UserAuthSettings? {
         val sql = "SELECT uas.* FROM user_auth_settings uas, users u WHERE uas.user_id = u.id AND " +
-                "u.username = :username"
+            "u.username = :username"
         return client.sql(sql)
             .bind("username", username)
             .map { row -> mapRow(row) }
@@ -32,8 +32,8 @@ class SpringDataUserAuthSettingsRepository(private val client: DatabaseClient) :
         require(userAuthSettings.id == null) { "Cannot insert settings with ID already set" }
         Objects.requireNonNull(userAuthSettings.userId, "User ID cannot be null")
         val sql = "INSERT INTO user_auth_settings (user_id, refresh_token_enabled, auth_token_expiration, " +
-                "refresh_token_expiration) VALUES (:userId, :refreshTokenEnabled, :authTokenExpiration, " +
-                ":refreshTokenExpiration) RETURNING id"
+            "refresh_token_expiration) VALUES (:userId, :refreshTokenEnabled, :authTokenExpiration, " +
+            ":refreshTokenExpiration) RETURNING id"
         var spec = client.sql(sql)
             .bind("userId", userAuthSettings.userId!!)
             .bind("refreshTokenEnabled", userAuthSettings.refreshTokenEnabled)

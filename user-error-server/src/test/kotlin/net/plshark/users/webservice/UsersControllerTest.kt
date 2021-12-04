@@ -39,7 +39,7 @@ class UsersControllerTest {
     fun `new users have password encoded`() = runBlocking {
         every { encoder.encode("pass") } returns "pass-encoded"
         coEvery { userRepo.insert(UserCreate("user", "pass-encoded")) } returns
-                User(1, "user")
+            User(1, "user")
 
         assertEquals(User(1, "user"), controller.create(UserCreate("user", "pass")))
     }

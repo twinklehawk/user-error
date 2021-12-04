@@ -35,7 +35,7 @@ class RolesControllerTest {
     fun `create should map the exception for a duplicate name to a DuplicateException`() {
         val request = RoleCreate(321, "app")
         coEvery { rolesRepo.insert(request.copy(applicationId = 321)) } throws
-                DataIntegrityViolationException("test error")
+            DataIntegrityViolationException("test error")
 
         assertThrows<DuplicateException> {
             runBlocking {
