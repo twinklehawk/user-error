@@ -27,8 +27,8 @@ class WebSecurityConfig(private val authService: AuthorizationService) {
         val builder = HttpBearerBuilder(authenticationManager())
         return http
             .authorizeExchange()
-            .pathMatchers("/auth/validate").hasRole("validate-tokens")
-            .pathMatchers("/auth/**").permitAll()
+            .pathMatchers("/authorization/validate").hasRole("validate-tokens")
+            .pathMatchers("/authentication/**").permitAll()
             .pathMatchers(HttpMethod.GET, "/applications/**").hasRole("view-applications")
             .pathMatchers("/applications/**").hasRole("edit-applications")
             .pathMatchers(HttpMethod.GET, "/roles/**").hasRole("view-roles")
