@@ -1,8 +1,8 @@
 package net.plshark.usererror
 
-import net.plshark.usererror.authentication.token.AuthenticationService
 import net.plshark.usererror.authentication.token.HttpBearerBuilder
 import net.plshark.usererror.authentication.token.JwtReactiveAuthenticationManager
+import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -15,7 +15,7 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
  * Notes web security configuration
  */
 @EnableWebFluxSecurity
-class WebSecurityConfig(private val authService: AuthenticationService) {
+class WebSecurityConfig(private val authService: AuthorizationService) {
 
     /**
      * Set up the security filter chain

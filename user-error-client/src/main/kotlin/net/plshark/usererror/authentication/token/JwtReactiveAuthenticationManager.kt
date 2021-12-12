@@ -1,6 +1,8 @@
 package net.plshark.usererror.authentication.token
 
 import kotlinx.coroutines.reactor.mono
+import net.plshark.usererror.authorization.AuthenticatedUser
+import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.core.Authentication
@@ -10,7 +12,7 @@ import reactor.core.publisher.Mono
 /**
  * Authentication manager that validates JWT authentication
  */
-class JwtReactiveAuthenticationManager(private val authService: AuthenticationService) : ReactiveAuthenticationManager {
+class JwtReactiveAuthenticationManager(private val authService: AuthorizationService) : ReactiveAuthenticationManager {
 
     override fun authenticate(authentication: Authentication?): Mono<Authentication> {
         return Mono.fromCallable { extractToken(authentication) }

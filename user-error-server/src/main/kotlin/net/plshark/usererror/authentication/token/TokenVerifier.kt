@@ -1,5 +1,7 @@
 package net.plshark.usererror.authentication.token
 
+import net.plshark.usererror.authorization.AuthenticatedUser
+
 /**
  * Verifies JWTs
  */

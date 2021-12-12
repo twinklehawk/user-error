@@ -7,10 +7,10 @@ import net.plshark.usererror.authentication.AccountCredentials
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class AuthControllerTest {
+class AuthenticationControllerTest {
 
     private val service = mockk<AuthenticationService>()
-    private val controller = AuthController(service)
+    private val controller = AuthenticationController(service)
 
     @Test
     fun `authenticate should pass the credentials through to the service`() = runBlocking {
@@ -30,13 +30,5 @@ class AuthControllerTest {
         coEvery { service.refresh("test-token") } returns token
 
         assertEquals(token, controller.refresh("test-token"))
-    }
-
-    @Test
-    fun `validateToken should pass the token through to the service`() = runBlocking {
-        val user = AuthenticatedUser(username = "user", authorities = setOf())
-        coEvery { service.validateToken("refresh") } returns user
-
-        assertEquals(user, controller.validateToken("refresh"))
     }
 }

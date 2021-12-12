@@ -2,6 +2,7 @@ package net.plshark.usererror.authentication.token
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import net.plshark.usererror.authorization.AuthenticatedUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

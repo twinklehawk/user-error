@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/auth")
-class AuthController(private val authService: AuthenticationService) {
+class AuthenticationController(private val authService: AuthenticationService) {
 
     @PostMapping(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
@@ -26,14 +26,5 @@ class AuthController(private val authService: AuthenticationService) {
     )
     suspend fun refresh(@RequestBody refreshToken: String): AuthToken {
         return authService.refresh(refreshToken)
-    }
-
-    @PostMapping(
-        value = ["/validate"],
-        consumes = [MediaType.TEXT_PLAIN_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    suspend fun validateToken(@RequestBody accessToken: String): AuthenticatedUser {
-        return authService.validateToken(accessToken)
     }
 }

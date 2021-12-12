@@ -1,5 +1,6 @@
 package net.plshark.usererror.authentication.token
 
+import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.http.MediaType
 import org.springframework.security.web.server.DelegatingServerAuthenticationEntryPoint
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
@@ -18,9 +19,9 @@ class HttpBearerBuilder(
 
     /**
      * Create a new instance
-     * @param authService the authentication service
+     * @param authService the authorization service
      */
-    constructor(authService: AuthenticationService) : this(JwtReactiveAuthenticationManager(authService))
+    constructor(authService: AuthorizationService) : this(JwtReactiveAuthenticationManager(authService))
 
     /**
      * @return the bearer authorization web filter

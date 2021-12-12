@@ -2,6 +2,8 @@ package net.plshark.usererror.authentication.token
 
 import io.mockk.coEvery
 import io.mockk.mockk
+import net.plshark.usererror.authorization.AuthenticatedUser
+import net.plshark.usererror.authorization.AuthorizationService
 import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -10,7 +12,7 @@ import reactor.test.StepVerifier
 
 class JwtReactiveAuthenticationManagerTest {
 
-    private val authService = mockk<AuthenticationService>()
+    private val authService = mockk<AuthorizationService>()
     private val manager = JwtReactiveAuthenticationManager(authService)
 
     @Test

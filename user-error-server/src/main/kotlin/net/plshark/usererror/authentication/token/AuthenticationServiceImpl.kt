@@ -37,10 +37,6 @@ class AuthenticationServiceImpl(
         return buildAuthToken(userDetails)
     }
 
-    override suspend fun validateToken(accessToken: String): AuthenticatedUser {
-        return tokenVerifier.verifyToken(accessToken)
-    }
-
     private suspend fun buildAuthToken(user: UserDetails): AuthToken {
         val settings = userAuthSettingsService.findByUsername(user.username)
         return buildAuthToken(user, settings)

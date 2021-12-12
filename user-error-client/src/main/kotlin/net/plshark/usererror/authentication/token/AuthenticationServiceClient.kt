@@ -31,15 +31,4 @@ class AuthenticationServiceClient(private val webClient: WebClient, private val 
             .retrieve()
             .awaitBody()
     }
-
-    override suspend fun validateToken(accessToken: String): AuthenticatedUser {
-        // TODO needs authentication, remove from this class
-        return webClient.post()
-            .uri(URI.create("$baseUri/auth/validate"))
-            .contentType(MediaType.TEXT_PLAIN)
-            .bodyValue(accessToken)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .awaitBody()
-    }
 }

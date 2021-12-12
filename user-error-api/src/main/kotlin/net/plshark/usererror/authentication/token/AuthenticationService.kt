@@ -25,13 +25,4 @@ interface AuthenticationService {
      * @throws BadCredentialsException if the refresh token is invalid
      */
     suspend fun refresh(refreshToken: String): AuthToken
-
-    // TODO split out to separate service
-    /**
-     * Validate an access token
-     * @param accessToken the access token
-     * @return the username and authorities
-     * @throws BadCredentialsException if the token is invalid
-     */
-    suspend fun validateToken(accessToken: String): AuthenticatedUser
 }
