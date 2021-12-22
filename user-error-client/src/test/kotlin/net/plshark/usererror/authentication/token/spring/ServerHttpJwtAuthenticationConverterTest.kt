@@ -1,5 +1,6 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
+import net.plshark.usererror.authentication.token.JwtAuthenticationToken
 import org.junit.jupiter.api.Test
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange

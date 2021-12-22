@@ -17,6 +17,7 @@ import java.security.GeneralSecurityException
 @Configuration
 @EnableConfigurationProperties(AuthProperties::class)
 class AuthConfig {
+
     @Bean
     fun tokenBuilder(algorithm: Algorithm, props: AuthProperties): TokenBuilder {
         return DefaultTokenBuilder(algorithm, props.issuer)

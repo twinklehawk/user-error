@@ -1,7 +1,8 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import io.mockk.coEvery
 import io.mockk.mockk
+import net.plshark.usererror.authentication.token.JwtAuthenticationToken
 import net.plshark.usererror.authorization.AuthenticatedUser
 import net.plshark.usererror.authorization.AuthorizationService
 import org.junit.jupiter.api.Test

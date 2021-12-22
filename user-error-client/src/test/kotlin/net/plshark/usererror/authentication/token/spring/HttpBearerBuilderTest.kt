@@ -1,4 +1,4 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertNotNull

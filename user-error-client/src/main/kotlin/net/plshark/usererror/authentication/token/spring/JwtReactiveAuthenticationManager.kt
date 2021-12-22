@@ -1,6 +1,7 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import kotlinx.coroutines.reactor.mono
+import net.plshark.usererror.authentication.token.JwtAuthenticationToken
 import net.plshark.usererror.authorization.AuthenticatedUser
 import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.security.authentication.BadCredentialsException

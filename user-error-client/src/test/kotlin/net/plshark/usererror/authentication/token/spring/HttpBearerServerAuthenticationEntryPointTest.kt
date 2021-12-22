@@ -1,4 +1,4 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

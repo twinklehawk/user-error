@@ -1,4 +1,4 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException

@@ -1,4 +1,4 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.http.MediaType

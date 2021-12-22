@@ -1,7 +1,7 @@
 package net.plshark.usererror
 
-import net.plshark.usererror.authentication.token.HttpBearerBuilder
-import net.plshark.usererror.authentication.token.JwtReactiveAuthenticationManager
+import net.plshark.usererror.authentication.token.spring.HttpBearerBuilder
+import net.plshark.usererror.authentication.token.spring.JwtReactiveAuthenticationManager
 import net.plshark.usererror.authorization.AuthorizationService
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
