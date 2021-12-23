@@ -33,11 +33,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
         }
     }
     tasks.withType<Test> {
-        val runIntTests = System.getProperties().getProperty("runIntTests") == "true"
-        useJUnitPlatform {
-            if (!runIntTests)
-                excludeTags("integrationTest")
-        }
+        useJUnitPlatform()
     }
     tasks.withType<JacocoReport> {
         reports {

@@ -15,7 +15,7 @@ import org.springframework.r2dbc.core.DatabaseClient
 @DbTest
 class SpringDataApplicationsRepositoryTest {
 
-    lateinit var repo: SpringDataApplicationsRepository
+    private lateinit var repo: SpringDataApplicationsRepository
 
     @BeforeEach
     fun setup(db: DatabaseClient) {
