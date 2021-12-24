@@ -5,6 +5,8 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import net.plshark.usererror.role.UserGroupsRepository
+import net.plshark.usererror.role.UserRolesRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.core.authority.SimpleGrantedAuthority

@@ -10,6 +10,8 @@ import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.error.BadRequestException
 import net.plshark.usererror.error.DuplicateException
 import net.plshark.usererror.error.ObjectNotFoundException
+import net.plshark.usererror.role.UserGroupsRepository
+import net.plshark.usererror.role.UserRolesRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
