@@ -1,9 +1,9 @@
 package net.plshark.usererror.error
 
 /**
- * Exception indicating a request was invalid
+ * Base class for all user error exceptions
  */
-class BadRequestException : UserErrorException {
+open class UserErrorException : RuntimeException {
 
     constructor() : super()
 
