@@ -1,4 +1,4 @@
-package net.plshark.usererror.authentication.token
+package net.plshark.usererror.authentication.token.spring
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

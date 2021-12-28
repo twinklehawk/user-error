@@ -1,6 +1,5 @@
 package net.plshark.usererror.authentication.token.spring
 
-import net.plshark.usererror.authentication.token.JwtAuthenticationToken
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter
