@@ -22,7 +22,7 @@ class DefaultTokenVerifier(private val verifier: JWTVerifier) : TokenVerifier {
 
     override fun verifyRefreshToken(token: String): String {
         val jwt = decodeToken(token)
-        val refresh = jwt.getClaim(PlsharkClaim.REFRESH).asBoolean()
+        val refresh = jwt.getClaim(UserErrorClaim.REFRESH).asBoolean()
         if (refresh == null || !refresh) throw BadCredentialsException("Token is not a refresh token")
         return jwt.subject
     }
@@ -46,7 +46,7 @@ class DefaultTokenVerifier(private val verifier: JWTVerifier) : TokenVerifier {
      * @return the list of authorities from the token
      */
     private fun parseAuthorities(jwt: DecodedJWT): Set<String> {
-        return Optional.ofNullable(jwt.getClaim(PlsharkClaim.AUTHORITIES).asList(String::class.java))
+        return Optional.ofNullable(jwt.getClaim(UserErrorClaim.AUTHORITIES).asList(String::class.java))
             .map { list -> list.toSet() }
             .orElse(emptySet())
     }

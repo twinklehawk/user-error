@@ -2,10 +2,7 @@ package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.Flow
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Group
-import net.plshark.usererror.user.GroupCreate
-import net.plshark.usererror.user.Role
+import net.plshark.usererror.error.NotFoundException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -27,7 +24,7 @@ class GroupsController(private val groupsRepo: GroupsRepository, private val gro
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun findById(@PathVariable("id") id: Long): Group {
-        return groupsRepo.findById(id) ?: throw ObjectNotFoundException("No group found for $id")
+        return groupsRepo.findById(id) ?: throw NotFoundException("No group found for $id")
     }
 
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])

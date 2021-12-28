@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.error.BadRequestException
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
+import net.plshark.usererror.error.NotFoundException
+import net.plshark.usererror.role.Group
+import net.plshark.usererror.role.Role
 import net.plshark.usererror.role.UserGroupsRepository
 import net.plshark.usererror.role.UserRolesRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -87,7 +89,7 @@ class UsersControllerTest {
         every { encoder.encode("new") } returns "new-encoded"
         coEvery { userRepo.findById(200) } returns null
 
-        assertThrows<ObjectNotFoundException> {
+        assertThrows<NotFoundException> {
             runBlocking {
                 controller.changePassword(200, PasswordChangeRequest("current", "new"))
             }

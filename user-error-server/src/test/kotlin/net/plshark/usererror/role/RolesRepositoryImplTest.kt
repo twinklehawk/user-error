@@ -2,9 +2,8 @@ package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import net.plshark.usererror.role.impl.ApplicationsRepositoryImpl
 import net.plshark.usererror.testutil.DbTest
-import net.plshark.usererror.user.ApplicationCreate
-import net.plshark.usererror.user.RoleCreate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull

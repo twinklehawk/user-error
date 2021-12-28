@@ -21,7 +21,7 @@ class DefaultTokenBuilderTest {
         assertEquals("test-user", decodedToken.subject)
         assertNotNull(decodedToken.expiresAt)
         assertEquals("test-issuer", decodedToken.issuer)
-        assertEquals(2, decodedToken.getClaim(PlsharkClaim.AUTHORITIES).asList(String::class.java).size)
+        assertEquals(2, decodedToken.getClaim(UserErrorClaim.AUTHORITIES).asList(String::class.java).size)
     }
 
     @Test
@@ -32,6 +32,6 @@ class DefaultTokenBuilderTest {
         assertEquals("test-user", decodedToken.subject)
         assertNotNull(decodedToken.expiresAt)
         assertEquals("test-issuer", decodedToken.issuer)
-        assertFalse(decodedToken.getClaim(PlsharkClaim.REFRESH).isNull)
+        assertFalse(decodedToken.getClaim(UserErrorClaim.REFRESH).isNull)
     }
 }

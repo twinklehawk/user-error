@@ -12,13 +12,13 @@ class DefaultTokenBuilder(private val algorithm: Algorithm, private val issuer: 
 
     override fun buildAccessToken(username: String, expirationMs: Long, authorities: Array<String>): String {
         return buildBaseToken(username, expirationMs)
-            .withArrayClaim(PlsharkClaim.AUTHORITIES, authorities)
+            .withArrayClaim(UserErrorClaim.AUTHORITIES, authorities)
             .sign(algorithm)
     }
 
     override fun buildRefreshToken(username: String, expirationMs: Long): String {
         return buildBaseToken(username, expirationMs)
-            .withClaim(PlsharkClaim.REFRESH, true)
+            .withClaim(UserErrorClaim.REFRESH, true)
             .sign(algorithm)
     }
 

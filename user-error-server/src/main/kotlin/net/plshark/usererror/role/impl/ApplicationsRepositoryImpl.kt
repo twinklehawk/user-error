@@ -1,11 +1,12 @@
-package net.plshark.usererror.role
+package net.plshark.usererror.role.impl
 
 import io.r2dbc.spi.Row
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
-import net.plshark.usererror.user.Application
-import net.plshark.usererror.user.ApplicationCreate
+import net.plshark.usererror.role.Application
+import net.plshark.usererror.role.ApplicationCreate
+import net.plshark.usererror.role.ApplicationsRepository
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.springframework.r2dbc.core.awaitOneOrNull

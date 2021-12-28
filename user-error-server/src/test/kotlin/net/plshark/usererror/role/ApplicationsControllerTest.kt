@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Application
-import net.plshark.usererror.user.ApplicationCreate
+import net.plshark.usererror.error.NotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -35,7 +33,7 @@ class ApplicationsControllerTest {
     fun `getting an application should throw an exception when the application does not exist`() {
         coEvery { appsRepo.findById(456) } returns null
 
-        assertThrows<ObjectNotFoundException> {
+        assertThrows<NotFoundException> {
             runBlocking {
                 controller.findById(456)
             }

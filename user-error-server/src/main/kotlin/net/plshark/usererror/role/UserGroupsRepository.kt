@@ -1,8 +1,6 @@
 package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.Flow
-import net.plshark.usererror.user.Group
-import net.plshark.usererror.user.Role
 
 interface UserGroupsRepository {
 

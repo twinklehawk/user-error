@@ -42,9 +42,9 @@ class ExceptionHandlerControllerAdvice {
      * @param request the request that caused the exception
      * @return the response to return to the client
      */
-    @ExceptionHandler(net.plshark.usererror.error.ObjectNotFoundException::class)
+    @ExceptionHandler(net.plshark.usererror.error.NotFoundException::class)
     fun handleObjectNotFound(
-        e: net.plshark.usererror.error.ObjectNotFoundException,
+        e: net.plshark.usererror.error.NotFoundException,
         request: ServerHttpRequest
     ): ResponseEntity<ErrorResponse> {
         log.debug("Object not found", e)

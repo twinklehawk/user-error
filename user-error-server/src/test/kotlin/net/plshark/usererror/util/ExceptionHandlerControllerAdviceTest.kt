@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import net.plshark.usererror.error.BadRequestException
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
+import net.plshark.usererror.error.NotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -37,7 +37,7 @@ class ExceptionHandlerControllerAdviceTest {
 
     @Test
     fun `object not found builds correct response body`() {
-        val response = advice.handleObjectNotFound(ObjectNotFoundException("not found"), request)
+        val response = advice.handleObjectNotFound(NotFoundException("not found"), request)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
         assertEquals("not found", response.body?.message)

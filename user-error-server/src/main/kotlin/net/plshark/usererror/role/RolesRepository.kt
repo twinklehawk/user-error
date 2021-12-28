@@ -1,8 +1,6 @@
 package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.Flow
-import net.plshark.usererror.user.Role
-import net.plshark.usererror.user.RoleCreate
 
 /**
  * Repository for saving, deleting, and retrieving roles

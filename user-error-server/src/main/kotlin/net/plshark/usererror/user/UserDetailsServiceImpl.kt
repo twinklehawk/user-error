@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.mono
+import net.plshark.usererror.role.Role
 import net.plshark.usererror.role.UserGroupsRepository
 import net.plshark.usererror.role.UserRolesRepository
 import org.springframework.security.core.GrantedAuthority

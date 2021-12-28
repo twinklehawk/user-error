@@ -1,11 +1,12 @@
-package net.plshark.usererror.role
+package net.plshark.usererror.role.impl
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import net.plshark.usererror.role.ApplicationCreate
+import net.plshark.usererror.role.Role
+import net.plshark.usererror.role.RoleCreate
+import net.plshark.usererror.role.RolesRepositoryImpl
 import net.plshark.usererror.testutil.DbTest
-import net.plshark.usererror.user.ApplicationCreate
-import net.plshark.usererror.user.Role
-import net.plshark.usererror.user.RoleCreate
 import net.plshark.usererror.user.User
 import net.plshark.usererror.user.UserCreate
 import net.plshark.usererror.user.UsersRepositoryImpl

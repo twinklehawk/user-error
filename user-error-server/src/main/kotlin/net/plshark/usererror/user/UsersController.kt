@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import net.plshark.usererror.error.BadRequestException
-import net.plshark.usererror.error.ObjectNotFoundException
+import net.plshark.usererror.error.NotFoundException
+import net.plshark.usererror.role.Group
+import net.plshark.usererror.role.Role
 import net.plshark.usererror.role.UserGroupsRepository
 import net.plshark.usererror.role.UserRolesRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -45,7 +47,7 @@ class UsersController(
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun findById(@PathVariable("id") id: Long): User {
-        return userRepo.findById(id) ?: throw ObjectNotFoundException("No user found for id")
+        return userRepo.findById(id) ?: throw NotFoundException("No user found for id")
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])

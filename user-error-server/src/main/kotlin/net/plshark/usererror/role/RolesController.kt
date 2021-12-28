@@ -1,9 +1,7 @@
 package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.Flow
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Role
-import net.plshark.usererror.user.RoleCreate
+import net.plshark.usererror.error.NotFoundException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -62,7 +60,7 @@ class RolesController(private val rolesRepo: RolesRepository) {
     ): Role {
         val role = rolesRepo.findById(roleId)
         if (role == null || role.applicationId != applicationId)
-            throw ObjectNotFoundException("No role found for $roleId")
+            throw NotFoundException("No role found for $roleId")
         return role
     }
 }

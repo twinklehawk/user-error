@@ -16,7 +16,7 @@ class DefaultTokenVerifierTest {
 
     @Test
     fun `valid access tokens should return the username and authorities`() {
-        val token = JWT.create().withSubject("test-user").withArrayClaim(PlsharkClaim.AUTHORITIES, arrayOf("user"))
+        val token = JWT.create().withSubject("test-user").withArrayClaim(UserErrorClaim.AUTHORITIES, arrayOf("user"))
             .sign(algorithm)
 
         assertEquals(
@@ -38,7 +38,7 @@ class DefaultTokenVerifierTest {
 
     @Test
     fun `valid refresh tokens should return the username`() {
-        val token = JWT.create().withSubject("test-user").withClaim(PlsharkClaim.REFRESH, true).sign(algorithm)
+        val token = JWT.create().withSubject("test-user").withClaim(UserErrorClaim.REFRESH, true).sign(algorithm)
 
         assertEquals("test-user", verifier.verifyRefreshToken(token))
     }

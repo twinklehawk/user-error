@@ -2,9 +2,7 @@ package net.plshark.usererror.role
 
 import kotlinx.coroutines.flow.Flow
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Application
-import net.plshark.usererror.user.ApplicationCreate
+import net.plshark.usererror.error.NotFoundException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -34,7 +32,7 @@ class ApplicationsController(private val appsRepo: ApplicationsRepository) {
 
     @GetMapping(path = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun findById(@PathVariable("id") id: Long): Application {
-        return appsRepo.findById(id) ?: throw ObjectNotFoundException("No application found for $id")
+        return appsRepo.findById(id) ?: throw NotFoundException("No application found for $id")
     }
 
     @PostMapping(

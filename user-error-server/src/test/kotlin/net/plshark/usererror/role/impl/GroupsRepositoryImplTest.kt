@@ -1,9 +1,9 @@
-package net.plshark.usererror.role
+package net.plshark.usererror.role.impl
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import net.plshark.usererror.role.GroupCreate
 import net.plshark.usererror.testutil.DbTest
-import net.plshark.usererror.user.GroupCreate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull

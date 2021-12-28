@@ -1,3 +1,3 @@
-package net.plshark.usererror.user
+package net.plshark.usererror.role
 
 data class GroupCreate(val name: String)

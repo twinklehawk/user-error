@@ -3,7 +3,7 @@ package net.plshark.usererror.error
 /**
  * Exception that indicates an object was not found
  */
-class ObjectNotFoundException : RuntimeException {
+class NotFoundException : RuntimeException {
     /**
      * Create a new instance
      * @param message the detail message

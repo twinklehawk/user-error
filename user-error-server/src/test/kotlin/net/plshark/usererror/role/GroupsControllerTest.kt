@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Group
-import net.plshark.usererror.user.GroupCreate
-import net.plshark.usererror.user.Role
+import net.plshark.usererror.error.NotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -36,7 +33,7 @@ class GroupsControllerTest {
     fun `getting a group should throw an exception when the group does not exist`() {
         coEvery { groupsRepo.findById(2) } returns null
 
-        assertThrows<ObjectNotFoundException> {
+        assertThrows<NotFoundException> {
             runBlocking {
                 controller.findById(2)
             }

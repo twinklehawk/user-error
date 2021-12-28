@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.error.DuplicateException
-import net.plshark.usererror.error.ObjectNotFoundException
-import net.plshark.usererror.user.Role
-import net.plshark.usererror.user.RoleCreate
+import net.plshark.usererror.error.NotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -62,7 +60,7 @@ class RolesControllerTest {
     fun `getting a role should throw an exception when the role does not exist`() {
         coEvery { rolesRepo.findById(5) } returns null
 
-        assertThrows<ObjectNotFoundException> {
+        assertThrows<NotFoundException> {
             runBlocking {
                 controller.findById(4, 5)
             }

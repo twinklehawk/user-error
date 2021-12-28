@@ -1,9 +1,11 @@
-package net.plshark.usererror.role
+package net.plshark.usererror.role.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
-import net.plshark.usererror.user.Group
-import net.plshark.usererror.user.Role
+import net.plshark.usererror.role.Group
+import net.plshark.usererror.role.Role
+import net.plshark.usererror.role.RolesRepositoryImpl
+import net.plshark.usererror.role.UserGroupsRepository
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.springframework.stereotype.Repository
