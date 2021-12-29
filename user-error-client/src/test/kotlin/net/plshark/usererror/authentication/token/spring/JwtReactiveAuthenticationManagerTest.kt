@@ -2,8 +2,8 @@ package net.plshark.usererror.authentication.token.spring
 
 import io.mockk.coEvery
 import io.mockk.mockk
-import net.plshark.usererror.authorization.AuthenticatedUser
-import net.plshark.usererror.authorization.AuthorizationService
+import net.plshark.usererror.authorization.UserAuthorities
+import net.plshark.usererror.authorization.token.TokenAuthorizationService
 import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -12,7 +12,7 @@ import reactor.test.StepVerifier
 
 class JwtReactiveAuthenticationManagerTest {
 
-    private val authService = mockk<AuthorizationService>()
+    private val authService = mockk<TokenAuthorizationService>()
     private val manager = JwtReactiveAuthenticationManager(authService)
 
     @Test
@@ -23,7 +23,7 @@ class JwtReactiveAuthenticationManagerTest {
             authenticated = false,
             authorities = setOf()
         )
-        coEvery { authService.validateToken("test-token") } returns AuthenticatedUser(
+        coEvery { authService.getAuthoritiesForToken("test-token") } returns UserAuthorities(
             username = "test-user",
             authorities = setOf("a", "b")
         )
@@ -47,7 +47,7 @@ class JwtReactiveAuthenticationManagerTest {
             authenticated = false,
             authorities = setOf()
         )
-        coEvery { authService.validateToken("bad-token") } throws BadCredentialsException("bad")
+        coEvery { authService.getAuthoritiesForToken("bad-token") } throws BadCredentialsException("bad")
 
         StepVerifier.create(manager.authenticate(token))
             .verifyError(BadCredentialsException::class.java)
