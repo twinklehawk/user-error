@@ -13,6 +13,8 @@ configurations["testCompileClasspath"].extendsFrom(internal)
 configurations["testRuntimeClasspath"].extendsFrom(internal)
 
 dependencies {
+    annotationProcessor(enforcedPlatform(project(":platform")))
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     internal(enforcedPlatform(project(":platform")))
     api(project(":user-error-api"))
     api("org.springframework:spring-webflux")
@@ -26,6 +28,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.springframework.boot:spring-boot")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework:spring-context")
     testImplementation("org.springframework:spring-test")

@@ -16,7 +16,7 @@ class ErrorResponseTest {
         val dt = ZonedDateTime.of(2011, 9, 20, 11, 57, 30, 12, ZoneId.of("America/New_York"))
             .toOffsetDateTime()
         val str = mapper.writeValueAsString(
-            net.plshark.usererror.error.ErrorResponse(
+            ErrorResponse(
                 timestamp = dt,
                 status = 200,
                 statusDetail = "status",
@@ -40,7 +40,7 @@ class ErrorResponseTest {
         val response = mapper.readValue(
             "{\"timestamp\":\"2011-09-20T11:57:30.000000012-04:00\",\"status\":200," +
                 "\"statusDetail\":\"status\",\"message\":\"great\",\"path\":\"/path\"}",
-            net.plshark.usererror.error.ErrorResponse::class.java
+            ErrorResponse::class.java
         )
 
         assertEquals("great", response.message)

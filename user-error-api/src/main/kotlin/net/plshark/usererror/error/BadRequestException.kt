@@ -3,17 +3,13 @@ package net.plshark.usererror.error
 /**
  * Exception indicating a request was invalid
  */
-class BadRequestException : RuntimeException {
-    /**
-     * Create a new instance
-     * @param message the detail message
-     */
-    constructor(message: String?) : super(message)
+class BadRequestException : UserErrorException {
 
-    /**
-     * Create a new instance
-     * @param message the detail message
-     * @param cause the cause
-     */
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor() : super()
+
+    constructor(message: String) : super(message)
+
+    constructor(cause: Throwable) : super(cause)
+
+    constructor(message: String, cause: Throwable) : super(message, cause)
 }
