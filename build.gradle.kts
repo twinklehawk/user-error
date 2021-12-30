@@ -23,13 +23,13 @@ configure(subprojects.filter{ it.name != "platform" }) {
     }
 
     configure<JavaPluginExtension> {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
         withSourcesJar()
     }
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "1.8"
+            jvmTarget = "11"
         }
     }
     tasks.withType<Test> {
@@ -45,7 +45,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
         allRules = true
         buildUponDefaultConfig = true
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
 
