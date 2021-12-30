@@ -6,7 +6,6 @@ import net.plshark.usererror.user.UserAuthSettings
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
-import java.lang.Boolean
 import java.util.Objects
 
 @Repository
@@ -67,7 +66,7 @@ class UserAuthSettingsRepositoryImpl(private val client: DatabaseClient) :
             return UserAuthSettings(
                 id = row["id", java.lang.Long::class.java]!!.toLong(),
                 userId = row["user_id", java.lang.Long::class.java]!!.toLong(),
-                refreshTokenEnabled = row["refresh_token_enabled", Boolean::class.java]!!.booleanValue(),
+                refreshTokenEnabled = row["refresh_token_enabled", java.lang.Boolean::class.java]!!.booleanValue(),
                 authTokenExpiration = row["auth_token_expiration", java.lang.Long::class.java]?.toLong(),
                 refreshTokenExpiration = row["refresh_token_expiration", java.lang.Long::class.java]?.toLong()
             )
