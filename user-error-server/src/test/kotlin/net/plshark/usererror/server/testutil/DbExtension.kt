@@ -14,12 +14,11 @@ import org.testcontainers.utility.DockerImageName
 class DbExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     companion object {
-        private val NAMESPACE = ExtensionContext.Namespace.create(DbExtension::class.java)
         private const val POSTGRES_CONTAINER = "postgresContainer"
     }
 
     override fun beforeEach(context: ExtensionContext) {
-        val store = context.getStore(NAMESPACE)
+        val store = context.getStore(getTestNamespace(context))
         val postgres = PostgreSQLContainer(DockerImageName.parse("postgres:13.5"))
             .withDatabaseName("user-error")
             .withUsername("test_user")
@@ -50,8 +49,12 @@ class DbExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
         return DatabaseClient.create(connectionFactory)
     }
 
+    private fun getTestNamespace(context: ExtensionContext): ExtensionContext.Namespace {
+        return ExtensionContext.Namespace.create(DbExtension::class.java, context.uniqueId)
+    }
+
     private fun getPostgresContainer(context: ExtensionContext): PostgreSQLContainer<*> {
-        val store = context.getStore(NAMESPACE)
+        val store = context.getStore(getTestNamespace(context))
         return store[POSTGRES_CONTAINER] as PostgreSQLContainer<*>
     }
 
