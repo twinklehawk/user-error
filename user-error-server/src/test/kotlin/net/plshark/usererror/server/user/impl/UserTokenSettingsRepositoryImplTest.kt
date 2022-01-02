@@ -2,10 +2,8 @@ package net.plshark.usererror.server.user.impl
 
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.server.testutil.DbTest
-import net.plshark.usererror.server.user.impl.UserTokenSettingsRepositoryImpl
-import net.plshark.usererror.server.user.impl.UsersRepositoryImpl
-import net.plshark.usererror.user.UserTokenSettings
 import net.plshark.usererror.user.UserCreate
+import net.plshark.usererror.user.UserTokenSettings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull

@@ -3,7 +3,6 @@ package net.plshark.usererror.server.user.impl
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.server.testutil.DbTest
-import net.plshark.usererror.server.user.impl.UsersRepositoryImpl
 import net.plshark.usererror.user.PrivateUser
 import net.plshark.usererror.user.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals
