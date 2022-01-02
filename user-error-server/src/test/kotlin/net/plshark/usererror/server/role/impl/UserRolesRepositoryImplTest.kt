@@ -6,7 +6,7 @@ import net.plshark.usererror.role.ApplicationCreate
 import net.plshark.usererror.role.Role
 import net.plshark.usererror.role.RoleCreate
 import net.plshark.usererror.server.testutil.DbTest
-import net.plshark.usererror.server.user.UsersRepositoryImpl
+import net.plshark.usererror.server.user.impl.UsersRepositoryImpl
 import net.plshark.usererror.user.User
 import net.plshark.usererror.user.UserCreate
 import org.junit.jupiter.api.Assertions.assertEquals

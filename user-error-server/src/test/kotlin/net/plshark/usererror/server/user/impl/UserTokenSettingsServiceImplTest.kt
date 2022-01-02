@@ -1,9 +1,10 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.server.AuthProperties
+import net.plshark.usererror.server.user.UserTokenSettingsRepository
 import net.plshark.usererror.user.UserTokenSettings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

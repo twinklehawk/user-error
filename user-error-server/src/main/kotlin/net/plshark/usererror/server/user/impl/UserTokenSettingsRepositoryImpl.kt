@@ -1,7 +1,8 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import io.r2dbc.spi.Row
 import kotlinx.coroutines.reactive.awaitSingle
+import net.plshark.usererror.server.user.UserTokenSettingsRepository
 import net.plshark.usererror.user.UserTokenSettings
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitOneOrNull

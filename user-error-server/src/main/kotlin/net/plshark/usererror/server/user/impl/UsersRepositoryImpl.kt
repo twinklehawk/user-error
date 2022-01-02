@@ -1,9 +1,10 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import io.r2dbc.spi.Row
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
+import net.plshark.usererror.server.user.UsersRepository
 import net.plshark.usererror.user.PrivateUser
 import net.plshark.usererror.user.User
 import net.plshark.usererror.user.UserCreate

@@ -1,8 +1,9 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import net.plshark.usererror.server.AuthProperties
-import net.plshark.usererror.user.UserTokenSettingsService
+import net.plshark.usererror.server.user.UserTokenSettingsRepository
 import net.plshark.usererror.user.UserTokenSettings
+import net.plshark.usererror.user.UserTokenSettingsService
 import org.springframework.stereotype.Component
 
 /**

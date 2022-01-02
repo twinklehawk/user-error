@@ -1,4 +1,4 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import io.mockk.coEvery
 import io.mockk.every
@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.role.Role
 import net.plshark.usererror.server.role.UserGroupsRepository
 import net.plshark.usererror.server.role.UserRolesRepository
+import net.plshark.usererror.server.user.UsersRepository
 import net.plshark.usererror.user.PrivateUser
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
