@@ -2,17 +2,17 @@ package net.plshark.usererror.server.user
 
 import io.r2dbc.spi.Row
 import kotlinx.coroutines.reactive.awaitSingle
-import net.plshark.usererror.user.UserAuthSettings
+import net.plshark.usererror.user.UserTokenSettings
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
 import java.util.Objects
 
 @Repository
-class UserAuthSettingsRepositoryImpl(private val client: DatabaseClient) :
-    UserAuthSettingsRepository {
+class UserTokenSettingsRepositoryImpl(private val client: DatabaseClient) :
+    UserTokenSettingsRepository {
 
-    override suspend fun findByUserId(userId: Long): UserAuthSettings? {
+    override suspend fun findByUserId(userId: Long): UserTokenSettings? {
         return client.sql("SELECT * FROM user_auth_settings WHERE user_id = :userId")
             .bind("userId", userId)
             .map { row ->
@@ -23,7 +23,7 @@ class UserAuthSettingsRepositoryImpl(private val client: DatabaseClient) :
             .awaitOneOrNull()
     }
 
-    override suspend fun findByUsername(username: String): UserAuthSettings? {
+    override suspend fun findByUsername(username: String): UserTokenSettings? {
         val sql = "SELECT uas.* FROM user_auth_settings uas, users u WHERE uas.user_id = u.id AND " +
             "u.username = :username"
         return client.sql(sql)
@@ -36,20 +36,20 @@ class UserAuthSettingsRepositoryImpl(private val client: DatabaseClient) :
             .awaitOneOrNull()
     }
 
-    override suspend fun insert(userAuthSettings: UserAuthSettings): UserAuthSettings {
-        require(userAuthSettings.id == null) { "Cannot insert settings with ID already set" }
-        Objects.requireNonNull(userAuthSettings.userId, "User ID cannot be null")
+    override suspend fun insert(userTokenSettings: UserTokenSettings): UserTokenSettings {
+        require(userTokenSettings.id == null) { "Cannot insert settings with ID already set" }
+        Objects.requireNonNull(userTokenSettings.userId, "User ID cannot be null")
         val sql = "INSERT INTO user_auth_settings (user_id, refresh_token_enabled, auth_token_expiration, " +
             "refresh_token_expiration) VALUES (:userId, :refreshTokenEnabled, :authTokenExpiration, " +
             ":refreshTokenExpiration) RETURNING id"
         var spec = client.sql(sql)
-            .bind("userId", userAuthSettings.userId!!)
-            .bind("refreshTokenEnabled", userAuthSettings.refreshTokenEnabled)
-        spec = when (val l = userAuthSettings.authTokenExpiration) {
+            .bind("userId", userTokenSettings.userId!!)
+            .bind("refreshTokenEnabled", userTokenSettings.refreshTokenEnabled)
+        spec = when (val l = userTokenSettings.authTokenExpiration) {
             null -> spec.bindNull("authTokenExpiration", java.lang.Long::class.java)
             else -> spec.bind("authTokenExpiration", l)
         }
-        spec = when (val l = userAuthSettings.refreshTokenExpiration) {
+        spec = when (val l = userTokenSettings.refreshTokenExpiration) {
             null -> spec.bindNull("refreshTokenExpiration", java.lang.Long::class.java)
             else -> spec.bind("refreshTokenExpiration", l)
         }
@@ -57,13 +57,13 @@ class UserAuthSettingsRepositoryImpl(private val client: DatabaseClient) :
         return spec
             .map { row: Row -> row.get("id", java.lang.Long::class.java)!!.toLong() }
             .one()
-            .map { id: Long -> userAuthSettings.copy(id = id) }
+            .map { id: Long -> userTokenSettings.copy(id = id) }
             .awaitSingle()
     }
 
     companion object {
-        fun mapRow(row: Row): UserAuthSettings {
-            return UserAuthSettings(
+        fun mapRow(row: Row): UserTokenSettings {
+            return UserTokenSettings(
                 id = row["id", java.lang.Long::class.java]!!.toLong(),
                 userId = row["user_id", java.lang.Long::class.java]!!.toLong(),
                 refreshTokenEnabled = row["refresh_token_enabled", java.lang.Boolean::class.java]!!.booleanValue(),

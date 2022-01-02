@@ -1,28 +1,28 @@
 package net.plshark.usererror.server.user
 
 import net.plshark.usererror.server.AuthProperties
-import net.plshark.usererror.user.UserAuthSettings
-import net.plshark.usererror.user.UserAuthSettingsService
+import net.plshark.usererror.user.UserTokenSettingsService
+import net.plshark.usererror.user.UserTokenSettings
 import org.springframework.stereotype.Component
 
 /**
- * Implementation of [UserAuthSettingsService]
+ * Implementation of [UserTokenSettingsService]
  */
 @Component
-class UserAuthSettingsServiceImpl(
-    private val settingsRepo: UserAuthSettingsRepository,
+class UserTokenSettingsServiceImpl(
+    private val settingsRepo: UserTokenSettingsRepository,
     authProperties: AuthProperties
-) : UserAuthSettingsService {
+) : UserTokenSettingsService {
 
-    private val defaultAuthSettings: UserAuthSettings =
-        UserAuthSettings(
+    private val defaultAuthSettings: UserTokenSettings =
+        UserTokenSettings(
             id = null,
             userId = null,
             authTokenExpiration = authProperties.tokenExpiration,
             refreshTokenExpiration = authProperties.tokenExpiration
         )
 
-    override suspend fun findByUsername(username: String): UserAuthSettings {
+    override suspend fun findByUsername(username: String): UserTokenSettings {
         return settingsRepo.findByUsername(username) ?: defaultAuthSettings
     }
 

@@ -2,7 +2,7 @@ package net.plshark.usererror.user
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class UserAuthSettings(
+data class UserTokenSettings(
     val id: Long?,
     @JsonProperty("user_id") val userId: Long?,
     @JsonProperty("refresh_token_enabled") val refreshTokenEnabled: Boolean = true,
