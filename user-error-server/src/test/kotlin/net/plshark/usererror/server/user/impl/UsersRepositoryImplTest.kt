@@ -1,4 +1,4 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking

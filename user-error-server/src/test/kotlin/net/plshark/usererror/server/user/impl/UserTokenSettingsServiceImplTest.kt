@@ -1,22 +1,23 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.server.AuthProperties
-import net.plshark.usererror.user.UserAuthSettings
+import net.plshark.usererror.server.user.UserTokenSettingsRepository
+import net.plshark.usererror.user.UserTokenSettings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class UserAuthSettingsServiceImplTest {
+class UserTokenSettingsServiceImplTest {
 
-    private val userSettingsRepo = mockk<UserAuthSettingsRepository>()
+    private val userSettingsRepo = mockk<UserTokenSettingsRepository>()
     private val props = AuthProperties.forNone("issuer", 30)
-    private val service = UserAuthSettingsServiceImpl(userSettingsRepo, props)
+    private val service = UserTokenSettingsServiceImpl(userSettingsRepo, props)
 
     @Test
     fun `looking up settings for a user should return the matching settings when found`() = runBlocking {
-        val settings = UserAuthSettings(
+        val settings = UserTokenSettings(
             id = null,
             userId = null,
             refreshTokenEnabled = false,
@@ -33,7 +34,7 @@ class UserAuthSettingsServiceImplTest {
         coEvery { userSettingsRepo.findByUsername("test-user") } returns null
 
         assertEquals(
-            UserAuthSettings(
+            UserTokenSettings(
                 id = null,
                 userId = null,
                 refreshTokenEnabled = true,

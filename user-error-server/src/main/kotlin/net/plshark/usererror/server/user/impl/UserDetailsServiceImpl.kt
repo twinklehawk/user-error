@@ -1,4 +1,4 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.onCompletion
@@ -7,6 +7,7 @@ import kotlinx.coroutines.reactor.mono
 import net.plshark.usererror.role.Role
 import net.plshark.usererror.server.role.UserGroupsRepository
 import net.plshark.usererror.server.role.UserRolesRepository
+import net.plshark.usererror.server.user.UsersRepository
 import net.plshark.usererror.user.PrivateUser
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

@@ -4,8 +4,8 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import net.plshark.usererror.authentication.AccountCredentials
 import net.plshark.usererror.authentication.token.AuthToken
 import net.plshark.usererror.authentication.token.TokenAuthenticationService
-import net.plshark.usererror.user.UserAuthSettings
-import net.plshark.usererror.user.UserAuthSettingsService
+import net.plshark.usererror.user.UserTokenSettings
+import net.plshark.usererror.user.UserTokenSettingsService
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
@@ -23,7 +23,7 @@ class TokenAuthenticationController(
     private val userDetailsService: ReactiveUserDetailsService,
     private val tokenVerifier: TokenVerifier,
     private val tokenBuilder: TokenBuilder,
-    private val userAuthSettingsService: UserAuthSettingsService
+    private val userTokenSettingsService: UserTokenSettingsService
 ) : TokenAuthenticationService {
 
     @PostMapping(
@@ -50,17 +50,17 @@ class TokenAuthenticationController(
     }
 
     private suspend fun buildAuthToken(user: UserDetails): AuthToken {
-        val settings = userAuthSettingsService.findByUsername(user.username)
+        val settings = userTokenSettingsService.findByUsername(user.username)
         return buildAuthToken(user, settings)
     }
 
-    private fun buildAuthToken(user: UserDetails, settings: UserAuthSettings): AuthToken {
-        val tokenExpiration = settings.authTokenExpiration ?: userAuthSettingsService.getDefaultTokenExpiration()
+    private fun buildAuthToken(user: UserDetails, settings: UserTokenSettings): AuthToken {
+        val tokenExpiration = settings.authTokenExpiration ?: userTokenSettingsService.getDefaultTokenExpiration()
         val authorities = user.authorities.map { obj: GrantedAuthority -> obj.authority }.toTypedArray()
         var refreshToken: String? = null
         if (settings.refreshTokenEnabled) {
             val refreshExpiration = settings.refreshTokenExpiration
-                ?: userAuthSettingsService.getDefaultTokenExpiration()
+                ?: userTokenSettingsService.getDefaultTokenExpiration()
             refreshToken = tokenBuilder.buildRefreshToken(user.username, refreshExpiration)
         }
 

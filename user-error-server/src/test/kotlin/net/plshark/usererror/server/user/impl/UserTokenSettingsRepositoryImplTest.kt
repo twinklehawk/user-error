@@ -1,9 +1,9 @@
-package net.plshark.usererror.server.user
+package net.plshark.usererror.server.user.impl
 
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.server.testutil.DbTest
-import net.plshark.usererror.user.UserAuthSettings
 import net.plshark.usererror.user.UserCreate
+import net.plshark.usererror.user.UserTokenSettings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -14,14 +14,14 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.r2dbc.core.DatabaseClient
 
 @DbTest
-class UserAuthSettingsRepositoryImplTest {
+class UserTokenSettingsRepositoryImplTest {
 
-    private lateinit var repo: UserAuthSettingsRepositoryImpl
+    private lateinit var repo: UserTokenSettingsRepositoryImpl
     private lateinit var usersRepo: UsersRepositoryImpl
 
     @BeforeEach
     fun setup(db: DatabaseClient) {
-        repo = UserAuthSettingsRepositoryImpl(db)
+        repo = UserTokenSettingsRepositoryImpl(db)
         usersRepo = UsersRepositoryImpl(db)
     }
 
@@ -34,7 +34,7 @@ class UserAuthSettingsRepositoryImplTest {
             )
         )
         val inserted = repo.insert(
-            UserAuthSettings(
+            UserTokenSettings(
                 id = null,
                 userId = user.id,
                 refreshTokenEnabled = false,
@@ -55,7 +55,7 @@ class UserAuthSettingsRepositoryImplTest {
         assertThrows<IllegalArgumentException> {
             runBlocking {
                 repo.insert(
-                    UserAuthSettings(
+                    UserTokenSettings(
                         id = 100,
                         userId = 200,
                         refreshTokenEnabled = false,
@@ -72,7 +72,7 @@ class UserAuthSettingsRepositoryImplTest {
         assertThrows<NullPointerException> {
             runBlocking {
                 repo.insert(
-                    UserAuthSettings(
+                    UserTokenSettings(
                         id = null,
                         userId = null,
                         refreshTokenEnabled = false,
@@ -93,7 +93,7 @@ class UserAuthSettingsRepositoryImplTest {
             )
         )
         val inserted = repo.insert(
-            UserAuthSettings(
+            UserTokenSettings(
                 id = null,
                 userId = user.id,
                 refreshTokenEnabled = true,
@@ -119,7 +119,7 @@ class UserAuthSettingsRepositoryImplTest {
             )
         )
         val inserted = repo.insert(
-            UserAuthSettings(
+            UserTokenSettings(
                 id = null,
                 userId = user.id,
                 refreshTokenEnabled = true,

@@ -6,8 +6,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import net.plshark.usererror.authentication.AccountCredentials
 import net.plshark.usererror.authentication.token.AuthToken
-import net.plshark.usererror.user.UserAuthSettings
-import net.plshark.usererror.user.UserAuthSettingsService
+import net.plshark.usererror.user.UserTokenSettings
+import net.plshark.usererror.user.UserTokenSettingsService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -23,7 +23,7 @@ class TokenAuthenticationControllerTest {
     private val userDetailsService = mockk<ReactiveUserDetailsService>()
     private val tokenVerifier = mockk<TokenVerifier>()
     private val tokenBuilder = mockk<TokenBuilder>()
-    private val authSettingsService = mockk<UserAuthSettingsService>()
+    private val authSettingsService = mockk<UserTokenSettingsService>()
     private val controller =
         TokenAuthenticationController(
             passwordEncoder,
@@ -32,7 +32,7 @@ class TokenAuthenticationControllerTest {
             tokenBuilder,
             authSettingsService
         )
-    private val settings = UserAuthSettings(
+    private val settings = UserTokenSettings(
         id = null, userId = null, authTokenExpiration = 1000,
         refreshTokenExpiration = 1000
     )
@@ -87,7 +87,7 @@ class TokenAuthenticationControllerTest {
         every { tokenBuilder.buildAccessToken("test-user", 20000L, arrayOf()) } returns "test-token"
         every { tokenBuilder.buildRefreshToken("test-user", 20000L) } returns "refresh-token"
         coEvery { authSettingsService.findByUsername("test-user") } returns
-            UserAuthSettings(null, null, false, null, null)
+            UserTokenSettings(null, null, false, null, null)
         every { authSettingsService.getDefaultTokenExpiration() } returns 20000
 
         assertEquals(
