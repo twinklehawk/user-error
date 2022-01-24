@@ -2,7 +2,7 @@ plugins {
     `java-platform`
 }
 
-val testcontainersVersion = "1.16.2"
+val testcontainersVersion = "1.16.3"
 
 javaPlatform {
     allowDependencies()
