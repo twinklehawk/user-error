@@ -14,7 +14,7 @@ dependencies {
     constraints {
         api("com.auth0:java-jwt:3.18.3")
         api("io.mockk:mockk:1.12.3")
-        api("com.google.guava:guava:31.0.1-jre")
+        api("com.google.guava:guava:31.1-jre")
         api("org.testcontainers:testcontainers:$testcontainersVersion")
         api("org.testcontainers:postgresql:$testcontainersVersion")
     }
