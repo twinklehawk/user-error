@@ -12,7 +12,7 @@ dependencies {
     api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.6.7"))
 
     constraints {
-        api("com.auth0:java-jwt:3.19.2")
+        api("com.auth0:java-jwt:4.0.0")
         api("io.mockk:mockk:1.12.4")
         api("com.google.guava:guava:31.1-jre")
         api("org.testcontainers:testcontainers:$testcontainersVersion")
