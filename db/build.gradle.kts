@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id("org.flywaydb.flyway") version "8.5.12"
+    id("org.flywaydb.flyway") version "9.0.1"
     java
 }
 
