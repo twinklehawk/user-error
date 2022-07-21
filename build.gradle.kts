@@ -19,7 +19,7 @@ configure(subprojects.filter{ it.name != "platform" }) {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     dependencies {
-        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
+        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
     }
 
     configure<JavaPluginExtension> {
