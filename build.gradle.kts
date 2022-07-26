@@ -18,10 +18,6 @@ configure(subprojects.filter{ it.name != "platform" }) {
     apply(plugin = "jacoco")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
-    dependencies {
-        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
-    }
-
     configure<JavaPluginExtension> {
         sourceCompatibility = JavaVersion.VERSION_11
         withSourcesJar()
