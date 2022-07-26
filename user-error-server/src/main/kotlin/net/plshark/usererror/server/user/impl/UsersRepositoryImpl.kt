@@ -47,7 +47,7 @@ class UsersRepositoryImpl(private val client: DatabaseClient) : UsersRepository 
             .bind("username", user.username)
             .bind("password", user.password)
             .fetch().one()
-            .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
+            .map { it["id"] as Long? ?: error("No ID returned from insert") }
             .awaitSingle()
         return User(id = id, username = user.username)
     }

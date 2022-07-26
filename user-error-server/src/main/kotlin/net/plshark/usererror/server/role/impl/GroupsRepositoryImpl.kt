@@ -46,7 +46,7 @@ class GroupsRepositoryImpl(private val client: DatabaseClient) : GroupsRepositor
         val id = client.sql("INSERT INTO groups (name) VALUES (:name) RETURNING id")
             .bind("name", group.name)
             .fetch().one()
-            .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
+            .map { it["id"] as Long? ?: error("No ID returned from insert") }
             .awaitSingle()
         return Group(id = id, name = group.name)
     }

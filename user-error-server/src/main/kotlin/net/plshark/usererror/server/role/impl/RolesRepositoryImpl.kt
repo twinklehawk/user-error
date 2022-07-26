@@ -49,7 +49,7 @@ class RolesRepositoryImpl(private val client: DatabaseClient) : RolesRepository 
                 .bind("applicationId", role.applicationId)
                 .bind("name", role.name)
                 .fetch().one()
-                .map { it["id"] as Long? ?: throw IllegalStateException("No ID returned from insert") }
+                .map { it["id"] as Long? ?: error("No ID returned from insert") }
                 .awaitSingle()
         return Role(id = id, applicationId = role.applicationId, name = role.name)
     }
