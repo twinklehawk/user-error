@@ -43,7 +43,7 @@ class DbExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
     ): DatabaseClient {
         val postgres = getPostgresContainer(extensionContext)
         val url =
-            "r2dbc:postgresql://${postgres.username}:${postgres.password}@${postgres.containerIpAddress}:" +
+            "r2dbc:postgresql://${postgres.username}:${postgres.password}@${postgres.host}:" +
                 "${postgres.firstMappedPort}/${postgres.databaseName}?schema=users"
         val connectionFactory = ConnectionFactories.get(url)
         return DatabaseClient.create(connectionFactory)
